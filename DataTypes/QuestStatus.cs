@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace WorldtreeNexus.DataTypes {
+    public class QuestStatus {
+        public string QuestID = "";
+        public int CurrentStage = -1;
+        public int KillTracker = 0;
+          
+        public QuestStatus(string id, int stage) {
+            QuestID = id;
+            CurrentStage = stage;
+        }
+    }
+}

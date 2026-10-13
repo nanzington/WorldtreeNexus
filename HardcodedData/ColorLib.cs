@@ -1,0 +1,44 @@
+﻿namespace WorldtreeNexus.HardcodedData {
+    public static class ColorLib {
+        // Metals
+        public static Color Bronze = new Color(205, 127, 50, 255);
+        public static Color Iron = new Color(75, 75, 75, 255);
+        public static Color Steel = new Color(150, 150, 150, 255);
+        public static Color Mithril = Color.SteelBlue;
+        public static Color Adamant = new Color(34, 139, 34, 255);
+        public static Color Rune = Color.Turquoise;
+
+        // Logs 
+        public static Color Pine = new Color(237, 202, 161, 255);
+        public static Color Oak = new Color(207, 172, 131, 255);
+        public static Color Willow = new Color(92, 64, 51, 255);
+        public static Color Teak = new Color(255, 222, 181, 255);
+        public static Color Maple = new Color(181, 101, 29, 255);
+        public static Color Acadia = new Color(196, 164, 132, 255);
+        public static Color Mahogany = new Color(192, 64, 0, 255);
+        public static Color Yew = new Color(216, 163, 115, 255);
+        public static Color Magic = new Color(144, 213, 255, 255);
+        public static Color Elder = new Color(103, 91, 91, 255);
+
+        // Herbs
+        public static Color Guam = Color.ForestGreen;
+        public static Color Tarromin = Color.SeaGreen;
+        public static Color Marrentill = Color.SeaGreen;
+        public static Color Harralander = Color.SpringGreen;
+        public static Color Ranarr = Color.MediumSpringGreen;
+        public static Color Toadflax = Color.Green;
+        public static Color Spiritweed = Color.LawnGreen;
+        public static Color Irit = Color.Lime;
+        public static Color Wergali = Color.Crimson;
+        public static Color Avantoe = Color.SpringGreen;
+        public static Color Kwuarm = Color.Olive;
+        public static Color Bloodweed = Color.Crimson;
+        public static Color Snapdragon = Color.Orange;
+        public static Color Cadantine = Color.YellowGreen;
+        public static Color Lantadyme = Color.Teal;
+        public static Color Dwarfweed = Color.ForestGreen;
+        public static Color Torstol = Color.DarkGreen;
+        public static Color Arbuck = Color.Orange;
+        public static Color Fellstalk = Color.AntiqueWhite;
+    }
+}

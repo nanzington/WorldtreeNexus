@@ -1,0 +1,75 @@
+﻿using WorldtreeNexus.DataTypes;
+using WorldtreeNexus.Managers;
+using WorldtreeNexus.UI;
+using SadConsole;
+using SadRogue.Primitives;
+using System.ComponentModel;
+using WorldtreeNexus; 
+
+namespace WorldtreeNexus {
+    class GameLoop {
+        public const int GameWidth = 150;
+        public const int GameHeight = 50;
+        public const bool DemoMode = false;
+        public const bool BuildingWithoutMusic = false; // If you've cloned this from the repo and weren't specifically given the music files, set this to true while testing or it won't build.
+
+#pragma warning disable CS8618
+        public static SadFont SquareFont;
+        public static UIManager UIManager;
+        public static Random rand;
+        public static SoundManager SoundManager; 
+        public static SaveFile GlobalOptions;
+
+        public static WorldtreeNexus ZPO;
+#pragma warning restore CS8618  
+
+        static void Main(string[] args) { 
+            SadConsole.Settings.ResizeMode = Settings.WindowResizeOptions.Stretch;
+            Game.Create(GameWidth, GameHeight, "./fonts/ThinExtended.font", Init);  
+            Game.Instance.FrameUpdate += GlobalUpdate; 
+
+            Game.Instance.Run();
+            Game.Instance.Dispose();
+        }
+
+        private static void Init(object? sender, GameHost e) {
+            GlobalOptions = new();
+            LoadGlobalPrefs();
+
+            SquareFont = (SadFont)GameHost.Instance.LoadFont("./fonts/CheepicusExtended.font");
+            Game.Instance.MonoGameInstance.Window.Title = "Worldtree Nexus";
+            rand = new();
+            TypeDescriptor.AddAttributes(typeof(Point), new TypeConverterAttribute(typeof(PointConverter)));
+
+
+            UIManager = new();
+            SoundManager = new();
+
+            UIManager.Init();
+
+            if (!BuildingWithoutMusic) {
+                SoundManager.LoadMusic(); 
+                SoundManager.PickMusic("Lux Aeterna");
+            }
+        }
+
+        private static void GlobalUpdate(object? sender, GameHost e) {  
+            if (!GameHost.Instance.Mouse.LeftButtonDown) {
+                Helper.ProcessedClick = false;
+            }
+
+            if (!BuildingWithoutMusic)
+                SoundManager.UpdateSounds();
+        }
+
+        public static void SaveGlobalPrefs() {
+            Helper.SerializeToFile(GlobalOptions, "./globalOptions.json");
+        }
+
+        public static void LoadGlobalPrefs() {
+            if (File.Exists("./globalOptions.json")) {
+                GlobalOptions = Helper.DeserializeFromFile<SaveFile>("./globalOptions.json");
+            }
+        }
+    }
+}

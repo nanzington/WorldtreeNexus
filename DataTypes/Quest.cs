@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using WorldtreeNexus.Managers;
+
+namespace WorldtreeNexus.DataTypes {
+    public class Quest {
+        public string ID = "";
+        public string Name = "";
+        public string Length = "";
+        public string Difficulty = "";
+        public string Description = "";
+        public List<string> RegionsNeeded = new();
+
+        public string StartNPC = "";
+        public string StartLoc = "";
+
+        public int QuestPoints = 0;
+
+        public int DateFullyImplemented = 0; // YYYYMMDD, ex 20260828 for August 28, 2026
+         
+        public int CompleteStage = 0;
+
+        public List<Requirement> RequirementsToStart = new();
+
+        public Dictionary<int, QuestStage> Stages = new();
+        public List<QuestReward> Rewards = new();
+        public List<RunAction> ActionsOnComplete = new();
+
+        public Quest(string id, string name, string length, string diff, string desc, int complete, List<string> regions) {
+            ID = id;
+            Name = name;
+            Length = length;
+            Difficulty = diff;
+            Description = desc;
+
+            CompleteStage = complete;
+            RegionsNeeded = regions;
+        }
+
+
+        public bool CanStartQuest(Player p) {
+            bool allPassed = true;
+            for (int i = 0; i < RequirementsToStart.Count; i++) {
+                if (!RequirementsToStart[i].CheckRequirement(p, true)) {
+                    allPassed = false;
+                }
+            }
+
+            return allPassed;
+        }
+
+
+        public void CheckProgress(Player p, string type, string misc, int num) {
+            if (p.QuestLog.TryGetValue(ID, out QuestStatus? status)) {
+                if (status.CurrentStage == CompleteStage)
+                    return;
+
+                if (Stages.TryGetValue(status.CurrentStage, out QuestStage? stage)) {
+                    if (stage != null) {
+                        if (stage.ProgressType == type && stage.MiscString == misc && stage.MiscInt <= num) {
+                            status.CurrentStage = stage.LeadsToStage;
+                        }
+
+                        if (status.CurrentStage == CompleteStage) {
+                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You have completed " + Name + "!", Color.Lime, Color.Black));
+                            ProcessRewards(p);
+                        }
+                    }
+                }
+            } 
+        }
+
+
+        public void ProcessRewards(Player p) {
+            foreach (var kv in Rewards) {
+                if (kv.RewardType == "Experience") {
+                    GameLoop.ZPO.Log.AddMessage("You gain " + kv.MiscInt + " " + kv.MiscString + " experience.", Color.Yellow);
+                    p.TryGrantExp(kv.MiscString, kv.MiscInt, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
+                }
+
+                if (kv.RewardType == "Item") {
+                    if (kv.MiscString == "Gold") {
+                        GameLoop.ZPO.Log.AddMessage("You receive " + kv.MiscInt + " gold.", Color.Yellow);
+                        p.GiveGold(kv.MiscInt); 
+                    } else { 
+                        if (GameLoop.ZPO.ItemLibrary.TryGetValue(kv.MiscString, out Item? reward) && reward != null) {
+                            if (kv.MiscInt == 1)
+                                GameLoop.ZPO.Log.AddMessage("You receive a" + (Helper.VowelStart(reward.Name.ToLower()) ? "n " : " ") +  reward.Name.ToLower() + ".", Color.Yellow);
+                            else
+                                GameLoop.ZPO.Log.AddMessage("You receive " + kv.MiscInt + "x " + reward.Name.ToLower() + ".", Color.Yellow);
+
+                            Item pickup = new(reward);
+                            pickup.Quantity = kv.MiscInt;
+                            p.TryPickup(pickup, pickup.Quantity);
+                        }
+                    }
+                }
+
+                if (kv.RewardType == "RandomItem") {
+                    if (kv.MiscString == "kitten") {
+                        List<string> kittenColors = [ "kittenBlack", "kittenGray", "kittenWhite", "kittenOrange", "kittenBrown", "kittenCalico" ];
+
+                        if (GameLoop.ZPO.ResolveItem(kittenColors[GameLoop.rand.Next(kittenColors.Count)]) is Item kitten) { 
+                            GameLoop.ZPO.Log.AddMessage("You receive a " + kitten.Name.ToLower(), Color.Yellow);
+                            p.TryPickup(kitten, 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        public int CurrentStage() {
+            if (GameLoop.ZPO.player.QuestLog.TryGetValue(ID, out QuestStatus? status)) {
+                return status.CurrentStage;
+            }
+
+            return -1;
+        }
+    }
+}

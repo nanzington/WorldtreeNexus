@@ -1,0 +1,43 @@
+﻿Areas
+- Main Hub: Allows you to go to a world selection portal thing. Has some basic equipment shops for a variety of tech levels and magic availability, and some facilities (bank, maybe places to earn money)
+- Worlds are based on public domain works or are generic zones based on set combinations of genre, tone, etc.
+- - Public Domain possibilities
+- - - Almost certainly start with Wizard of Oz, most of which is in the public domain and has a decently large world to explore
+- - - Robin Hood
+- - - King Arthur (this could be tied at least partially into A Connecticut Yankee rather than just straight Arthurian Legend)
+- - - Various mythologies (Greek, Egyptian, Roman, Norse)
+- - - Maybe a general "fairy tale" inspired realm where a variety of classic fairy tales are scattered around? The Blue/Red Fairy Book, Grimm's Fairy Tales, Andersens, Aesops Fables
+- - - Arabian Nights, either standalone or lumped into the above
+- - - Frankenstein, Frankenstein, Dr Jekyll and Mr Hyde, Island of Dr Moreau, The King in Yellow, at least some works of Lovecraft, Edgar Allen Poe (general classic horror world?)
+- - - Picture of Dorian Gray
+- - - Treasure Island
+- - - The Time Machine 
+- - - Moby Dick
+- - - Peter Pan
+- - - Gullivers Travels
+- - - Twenty Thousand Leagues Under the Sea, Journey to the Center of the Earth
+- - - Some of Sherlock Holmes counts
+- - - Jungle Book
+- - - Alice in Wonderland
+- - - First 13 Tarzan books (by Edgar Rice Burroughs), could be a long quest storyline
+- Generic Combo Worlds
+- - Genres: Fantasy, Scifi, Horror, Post-apocalyptic, Western, Action?, Apocalypse/Disaster, Cyberpunk, Pirate
+- - Settings: Medieval, Urban, Space, School?, Ancient Greek
+- - Setting Switches: Tech level, Magic level, Control level, 
+
+Maybe work on a system for developing/sharing/loading world data as mods? Then people could create their own extra worlds based on anything they want, would be good with workshop support
+
+
+Pirate World
+- Works that could be included: Treasure Island, Moby Dick, Twenty Thousand Leagues, Gullivers Travels, maybe Journey to the Center of the Earth?
+- Maybe with a fantasy twist? Could include magic, vampires, etc.
+- Mostly takes place on the ocean and at port towns
+- Some ports may also have some surrounding areas to explore
+- Able to ride on NPC ships
+- - Passenger/cargo/merchant ships can be paid to ride to destinations, they set the destination themselves and will take generally the fastest route but may "get lost" and take longer.
+- - Navy ships pay you to sail with them, but you're expected to work or participate in combat
+- - - Pay based on rank in Navy, can eventually get command of a ship yourself and have to do missions maybe?
+- - Pirate ships won't pay you but you have to work / do combat, and you get a share of the loot
+- - In all cases of NPC ships you can try to mutiny by killing the captain and loyal crew, but may get stranded if not enough crew left to man ship. Causes reputation hit with NPC faction, possibly gain with their enemies
+- Each map tile of movement takes some amount of real time (like 30 seconds or a minute) to move and translates to some time in game (hours or days depending on how far routes end up being)
+- While on a ship, allow navigating around the different parts of the ship
