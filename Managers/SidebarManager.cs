@@ -10,6 +10,7 @@ namespace WorldtreeNexus.Managers {
         public static List<Skill> RecentlyTrainedSkills = new();
         
         public static double LastHealedTick = 0; 
+        public static double LastPrayerTick = 0; 
         public static double LastPoisonTick = 0; 
         public static int SidebarScrollTop = 0;
         public static Rectangle SidebarRect = new Rectangle(new Point(0, 15), new Point(54, 34));
@@ -17,75 +18,93 @@ namespace WorldtreeNexus.Managers {
         public static string QuestSort = "A->Z"; 
         public static string MagicTab = "Combat"; 
 
+        public static string TypingField = "";
+
         public static TwoWayString LastFoundRecipe = null;
         public static TwoWayString LastPerformedRecipe = null;
 
         public static void Draw(UI_EmbeddedMini mini, Player player) {
             Point mousePos = new MouseScreenObjectState(mini.Con, GameHost.Instance.Mouse).CellPosition;
+            double time = Helper.Time();
 
             mini.Con.DrawLine(new Point(55, 0), new Point(55, 34), 179);
              
             
-            if ((player.PrayerActive("Rapid Heal") && LastHealedTick + 1500 < Helper.Time()) || (LastHealedTick + 3000 < Helper.Time())) {
+            if (LastHealedTick + 3000 < time) {
                 if (player.Equipment.TryGetValue("Hands", out ItemWrapper? eqp) && eqp != null && eqp.ID == "braceletRegen") {
-                    player.CurrentHP = Math.Clamp(player.CurrentHP + 1, 0, player.Skills["Constitution"].Level);
+                    player.CurrentHP = Math.Clamp(player.CurrentHP + 1, 0, player.Skills["Hitpoints"].Level);
                 }
-                player.CurrentHP = Math.Clamp(player.CurrentHP + 1, 0, player.Skills["Constitution"].Level);
-                LastHealedTick = Helper.Time();
+                player.CurrentHP = Math.Clamp(player.CurrentHP + 1, 0, player.Skills["Hitpoints"].Level);
+                LastHealedTick = time;
             }
-
-            if (player.PoisonStatus > 0) {
-                if (LastPoisonTick + 15000 < Helper.Time()) {
-                    LastPoisonTick = Helper.Time();
-
-                    int poisonDamage = Math.Max(1, (int) Math.Floor((player.PoisonStatus + 4) / 5.0));
-                    GameLoop.ZPO.Log.AddMessage("You take " + poisonDamage + " damage from poison.", Color.Lime);
-                    player.TakeDamage(poisonDamage, GameLoop.ZPO.Log);
-
-                    player.PoisonStatus -= 1;
-                    if (player.PoisonStatus == 0) {
-                        GameLoop.ZPO.Log.AddMessage("You are no longer poisoned.", Color.Lime);
+            
+            int prayBonus = player.GetPrayerBonus();
+            bool prayerTicking = LastPrayerTick + 2000 + (prayBonus * 100) <= time;
+            if (prayerTicking) { // Every 1 second, plus 100ms per +1 prayer bonus on worn equipment
+                LastPrayerTick = time;
+                if (player.ActivePrayers.Count > 0) {
+                    if (player.CurrentPrayer == 0) { 
+                        player.ActivePrayers.Clear(); 
+                    } else {
+                        player.CurrentPrayer = Math.Clamp(player.CurrentPrayer - player.ActivePrayers.Count, 0, player.CurrentPrayer);
                     }
                 }
             }
 
+            if (player.PoisonStatus > 0) {
+                if (LastPoisonTick + 15000 < time) {
+                    LastPoisonTick = time;
 
-            mini.Con.Print(0, 0, "    HP: " + player.CurrentHP.ToString().Align(HorizontalAlignment.Right, 4, ' ') + " / " + player.Skills["Constitution"].Level.ToString().Align(HorizontalAlignment.Right, 4, ' '), Color.Crimson);
-            mini.Con.Print(0, 1, "Prayer: " + player.TotalActivePrayers().ToString().Align(HorizontalAlignment.Right, 4, ' ') + " / " + player.GetEffectiveSkillLevel("Prayer").ToString().Align(HorizontalAlignment.Right, 4, ' '), Color.DodgerBlue);
+                    int poisonDamage = Math.Max(1, (int) Math.Floor((player.PoisonStatus + 4) / 5.0));
+                    GameLoop.WTN.Log.AddMessage("You take " + poisonDamage + " damage from poison.", Color.Lime);
+                    player.TakeDamage(poisonDamage, GameLoop.WTN.Log);
 
-            mini.Con.Print(0, 3, "Combat Level: " + player.GetCombatLevel(), Color.Yellow); 
+                    player.PoisonStatus -= 1;
+                    if (player.PoisonStatus == 0) {
+                        GameLoop.WTN.Log.AddMessage("You are no longer poisoned.", Color.Lime);
+                    }
+                }
+            }
+
+            if (player.Clock != null) {
+                mini.Con.PrintClickable(1, 0, new ColoredString(player.Clock.GetTime(), Color.White, Color.Black), () => { player.Clock.TwelveHour = !player.Clock.TwelveHour; });
+            }
+
+            mini.Con.Print(0, 2, "    HP: " + player.CurrentHP.ToString().Align(HorizontalAlignment.Right, 4, ' ') + " / " + player.Skills["Hitpoints"].Level.ToString().Align(HorizontalAlignment.Right, 4, ' '), Color.Crimson);
+            mini.Con.Print(0, 3, "Prayer: " + player.CurrentPrayer.ToString().Align(HorizontalAlignment.Right, 4, ' ') + " / " + player.GetMaxPrayer().ToString().Align(HorizontalAlignment.Right, 4, ' '), prayerTicking ? Color.White : Color.DodgerBlue);
+            
+            
+
+            mini.Con.Print(0, 5, " Level: " + player.GetCombatLevel(), Color.Yellow); 
 
             bool magic = player.IsMaging();
 
             string dmgType = player.GetDamageType();
+            dmgType = dmgType.Contains("Ranged") ? dmgType.Replace("Ranged", "Ra") : dmgType;
+            string dmgDisp = dmgType.Substring(0, 3); 
 
-            string dmgDisp = (dmgType.Contains("Ranged") ? dmgType.Replace("Ranged", "Ra") : dmgType.Substring(0, 2));
+            dmgDisp += " " + player.GetDamageElement();
 
-            if (dmgType.Length > 7)
-                dmgType = dmgType.Substring(0, 7);
+            mini.Con.Print(0, 6, "MaxHit: " + player.MaxDamage() + " " + dmgDisp, Color.Yellow); 
+            mini.Con.Print(0, 7, "DR: " + player.TotalArmorValue("Melee") + 20.AsString() + " / " + player.TotalArmorValue("Magic") + 19.AsString() + " / " + player.TotalArmorValue("Ranged") + 18.AsString(), Color.Yellow); 
 
-            mini.Con.Print(0, 4, "  Max Hit: " + player.MaxDamage() + " " + dmgDisp, Color.Yellow); 
-            mini.Con.Print(0, 5, "Melee Def: " + player.TotalArmorValue("Melee"), Color.Yellow);
-            mini.Con.Print(0, 6, "Magic Def: " + player.TotalArmorValue("Magic"), Color.Yellow);
-            mini.Con.Print(0, 7, "Range Def: " + player.TotalArmorValue("Ranged"), Color.Yellow);
 
-            if (player.CastingSpell != "") {
-                if (GameLoop.ZPO.SpellLibrary.ContainsKey(player.CastingSpell)) {
-                    if (player.CanCast(GameLoop.ZPO.SpellLibrary[player.CastingSpell]) != "") {
-                        player.CastingSpell = ""; 
-                    }
-                }
-            }
+            if (player.CombatCasting != null) {
+                string castingWhich = "Casting Spell #";
 
-            if (player.CastingSpell != "") {
-                if (GameLoop.ZPO.SpellLibrary.ContainsKey(player.CastingSpell)) { 
-                    mini.Con.PrintClickable(0, 9, new ColoredString("*" + GameLoop.ZPO.SpellLibrary[player.CastingSpell].Name.Align(HorizontalAlignment.Center, 18) + "*", Color.SkyBlue, Color.Black), () => { player.CastingSpell = ""; });
-                }
+                if (player.CombatSpell1 != null && player.CombatSpell1.Equals(player.CombatCasting)) { castingWhich += "1"; }
+                else if (player.CombatSpell2 != null && player.CombatSpell2.Equals(player.CombatCasting)) { castingWhich += "2"; }
+                else if (player.CombatSpell3 != null && player.CombatSpell3.Equals(player.CombatCasting)) { castingWhich += "3"; }
+                else if (player.CombatSpell4 != null && player.CombatSpell4.Equals(player.CombatCasting)) { castingWhich += "4"; }
+                else if (player.CombatSpell5 != null && player.CombatSpell5.Equals(player.CombatCasting)) { castingWhich += "5"; }
+                else { castingWhich += "E"; }
+                    
+                mini.Con.PrintClickable(0, 9, new ColoredString("*" + castingWhich.Align(HorizontalAlignment.Center, 18) + "*", Color.SkyBlue, Color.Black), () => { player.CombatCasting = null; });
             }
 
             if (player.CoinPouch) {
-                mini.Con.PrintClickable(0, 11, new ColoredString(("Gold: " + String.Format($"{player.HeldGold:n0}")).Align(HorizontalAlignment.Right, 19), Color.Goldenrod, Color.Black), () => {
-                    if (GameLoop.ZPO.ResolveItem("coins") is Item coin) {
+                mini.Con.PrintClickable(0, 11, new ColoredString((String.Format($"{player.HeldGold:n0}") + 15.AsString()).Align(HorizontalAlignment.Right, 19), Color.Goldenrod, Color.Black), () => {
+                    if (GameLoop.WTN.ResolveItem("coins") is Item coin) {
                         int qty = 1;
                         if (Helper.EitherShift()) { qty *= 5; }
                         if (Helper.EitherControl()) { qty *= 10; }
@@ -106,12 +125,17 @@ namespace WorldtreeNexus.Managers {
                     int toNext = RecentlyTrainedSkills[i].EXPNeeded();
                     mini.Con.Print(21, 2 + i, "| " + RecentlyTrainedSkills[i].Name);
                     mini.Con.Print(38, 2 + i, RecentlyTrainedSkills[i].Level.ToString().PadLeft(3));
-                    mini.Con.Print(47, 2 + i, toNext.ToString().PadLeft(7));
+
+                    if (RecentlyTrainedSkills[i].Level < 100) {
+                        mini.Con.Print(47, 2 + i, toNext.ToString().PadLeft(7));
+                    } else { 
+                        mini.Con.Print(47, 2 + i, "MAXED".PadLeft(7), Color.Lime);
+                    }
                 }
             }
 
-            if (GameLoop.ZPO.Atlas.ContainsKey(player.NavLoc)) {
-                Location curr = GameLoop.ZPO.Atlas[player.NavLoc];
+            if (GameLoop.WTN.Atlas.ContainsKey(player.NavLoc)) {
+                Location curr = GameLoop.WTN.Atlas[player.NavLoc];
 
 
                 if (curr.ItemSpawns.Count > 0) {  
@@ -129,8 +153,8 @@ namespace WorldtreeNexus.Managers {
                                         spawnedCount += curr.ItemsHere[j].Quantity;
                                     }
                                 } else {
-                                    if (GameLoop.ZPO.ItemLibrary.ContainsKey(curr.ItemSpawns[i].ItemID)) {
-                                        if (curr.ItemsHere[j].ID == GameLoop.ZPO.ItemLibrary[curr.ItemSpawns[i].ItemID].ID && curr.ItemsHere[j].Inaccessible == curr.ItemSpawns[i].Inaccessible) { 
+                                    if (GameLoop.WTN.ItemLibrary.ContainsKey(curr.ItemSpawns[i].ItemID)) {
+                                        if (curr.ItemsHere[j].ID == GameLoop.WTN.ItemLibrary[curr.ItemSpawns[i].ItemID].ID && curr.ItemsHere[j].Inaccessible == curr.ItemSpawns[i].Inaccessible) { 
                                             spawnedCount += curr.ItemsHere[j].Quantity;
                                         }
                                     }
@@ -138,14 +162,14 @@ namespace WorldtreeNexus.Managers {
                             }
 
                             if (spawnedCount < curr.ItemSpawns[i].SpawnCount) {
-                                if (GameLoop.ZPO.ItemLibrary.ContainsKey(curr.ItemSpawns[i].ItemID)) {
-                                    Item spawn = new(GameLoop.ZPO.ItemLibrary[curr.ItemSpawns[i].ItemID]);
+                                if (GameLoop.WTN.ItemLibrary.ContainsKey(curr.ItemSpawns[i].ItemID)) {
+                                    Item spawn = new(GameLoop.WTN.ItemLibrary[curr.ItemSpawns[i].ItemID]);
 
                                     if (curr.ItemSpawns[i].Inaccessible) {
                                         spawn.Inaccessible = true;
                                     }
 
-                                    GameLoop.ZPO.TryPlaceItem(curr.ID, new(spawn, spawn.Inaccessible));
+                                    GameLoop.WTN.TryPlaceItem(curr.ID, new(spawn, spawn.Inaccessible));
                                     curr.ItemSpawns[i].LastPickedUp = Helper.Time();
                                 }
                             }
@@ -205,8 +229,9 @@ namespace WorldtreeNexus.Managers {
                             scrollTop = i - 9;
                         }
                     }
-
-                    SidebarManager.SidebarScrollTop = Math.Clamp(scrollTop, 0, songs.Count - 18);
+                    
+                    SidebarScrollTop = Math.Clamp(scrollTop, 0, songs.Count);
+                    //SidebarScrollTop = Math.Clamp(scrollTop, 0, songs.Count - 18);
                 });
 
 
@@ -219,7 +244,7 @@ namespace WorldtreeNexus.Managers {
 
                         if (i < player.Inventory.Count && player.Inventory[i].GetRef() is Item inv) {
                             int shop = curr.ShopItemsHere.Contains(player.Inventory[i].ID) ? 2 : curr.ShopItemsHere.Count > 0 ? 1 : 0;
-                            ColoredString name = inv.GetNameCS(player.Inventory[i].Quantity, shop, player.Inventory[i].Charges, player.Inventory[i].Noted);
+                            ColoredString name = inv.GetNameCS(player.Inventory[i].Quantity, shop, player.Inventory[i].Charges, player.Inventory[i].Noted, player.Inventory[i]);
 
                             mini.Con.Print(0, 15 + i, (mousePos.X < 55 && mousePos.Y == 15 + i) ? name.GetDarker() : name);
 
@@ -232,35 +257,16 @@ namespace WorldtreeNexus.Managers {
                             if (dropped)
                                 break;
 
-                             if (GameLoop.ZPO.SpellLibrary.TryGetValue("utilAlchemyHigh", out Spell? highAlch) && highAlch != null) { 
+                             if (GameLoop.WTN.SpellLibrary.TryGetValue("utilAlchemyHigh", out Spell? highAlch) && highAlch != null) { 
                                 if (player.CanCast(highAlch) == "") {
                                     mini.Con.PrintClickable(px, 15 + i, new ColoredString(247.AsString() + " ", Color.Lime, Color.Black), () => {
                                         if (player.Inventory[i].GetRef() is Item alched) {
                                             if (alched.HighAlchVal() > 0) {  
-                                                player.Inventory[i].Quantity -= 1; 
-                                                if (!player.Inventory[i].ID.Contains("mtaAlch")) {
-                                                    highAlch.Cast(player, GameLoop.ZPO.Log, RecentlyTrainedSkills);  
-                                                    player.GiveGold(alched.HighAlchVal()); 
-                                                    GameLoop.ZPO.Log.AddMessage(new ColoredString("You cast High Alchemy and convert the " + alched.Name + " into " + alched.HighAlchVal() + " gold.", Color.Goldenrod, Color.Black));
-                                                } else {
-                                                    int val = 1;
-                                                    if (MinigameManager.MTA_Alchs[1] == alched.ID) { val = 5; }
-                                                    if (MinigameManager.MTA_Alchs[2] == alched.ID) { val = 8; }
-                                                    if (MinigameManager.MTA_Alchs[3] == alched.ID) { val = 15; }
-                                                    if (MinigameManager.MTA_Alchs[4] == alched.ID) { val = 30; }
-
-                                                    if (alched.ID != MinigameManager.MTA_Alchs[MinigameManager.MTA_FreeAlch]) { 
-                                                        highAlch.Cast(player, GameLoop.ZPO.Log, RecentlyTrainedSkills);  
-                                                    } else {
-                                                        player.TryGrantExp("Magic", highAlch.ExpOnCast, GameLoop.ZPO.Log, RecentlyTrainedSkills);
-                                                    }
-                                                    
-                                                    GameLoop.ZPO.Log.AddMessage(new ColoredString("You cast High Alchemy and convert the " + alched.Name + " into " + val + " coins.", Color.DarkGoldenrod, Color.Black));
-
-                                                    if (GameLoop.ZPO.ItemLibrary.TryGetValue("mtaAlchCoin", out Item? coin) && coin != null) {
-                                                        player.TryPickup(new Item(coin), val);
-                                                    }
-                                                }
+                                                player.Inventory[i].Quantity -= 1;  
+                                                highAlch.Cast(player, GameLoop.WTN.Log, RecentlyTrainedSkills);  
+                                                player.GiveGold(alched.HighAlchVal()); 
+                                                GameLoop.WTN.Log.AddMessage(new ColoredString("You cast High Alchemy and convert the " + alched.Name + " into " + alched.HighAlchVal() + " gold.", Color.Goldenrod, Color.Black));
+                                                
                                             }
                                         }
                                     }); 
@@ -276,36 +282,16 @@ namespace WorldtreeNexus.Managers {
                             if (dropped)
                                 break;
 
-                            if (GameLoop.ZPO.SpellLibrary.TryGetValue("utilAlchemyLow", out Spell? lowAlch) && lowAlch != null) { 
+                            if (GameLoop.WTN.SpellLibrary.TryGetValue("utilAlchemyLow", out Spell? lowAlch) && lowAlch != null) { 
                                 if (player.CanCast(lowAlch) == "") {
                                     mini.Con.PrintClickable(px, 15 + i, new ColoredString("~ ", Color.Green, Color.Black), () => {
                                         if (player.Inventory[i].GetRef() is Item alched) {
                                             if (alched.LowAlchVal() > 0) {  
                                                 player.Inventory[i].Quantity -= 1;
-
-                                                if (!alched.ID.Contains("mtaAlch")) {
-                                                    lowAlch.Cast(player, GameLoop.ZPO.Log, RecentlyTrainedSkills);  
-                                                    player.GiveGold(alched.LowAlchVal()); 
-                                                    GameLoop.ZPO.Log.AddMessage(new ColoredString("You cast Low Alchemy and convert the " + alched.Name + " into " + alched.LowAlchVal() + " gold.", Color.DarkGoldenrod, Color.Black));
-                                                } else {
-                                                    int val = 1;
-                                                    if (MinigameManager.MTA_Alchs[1] == alched.ID) { val = 5; }
-                                                    if (MinigameManager.MTA_Alchs[2] == alched.ID) { val = 8; }
-                                                    if (MinigameManager.MTA_Alchs[3] == alched.ID) { val = 15; }
-                                                    if (MinigameManager.MTA_Alchs[4] == alched.ID) { val = 30; }
-
-                                                    if (alched.ID != MinigameManager.MTA_Alchs[MinigameManager.MTA_FreeAlch]) { 
-                                                        lowAlch.Cast(player, GameLoop.ZPO.Log, RecentlyTrainedSkills);  
-                                                    } else {
-                                                        player.TryGrantExp("Magic", lowAlch.ExpOnCast, GameLoop.ZPO.Log, RecentlyTrainedSkills);
-                                                    }
-
-                                                    GameLoop.ZPO.Log.AddMessage(new ColoredString("You cast Low Alchemy and convert the " + alched.Name + " into " + val + " coins.", Color.DarkGoldenrod, Color.Black));
-
-                                                    if (GameLoop.ZPO.ItemLibrary.TryGetValue("mtaAlchCoin", out Item? coin) && coin != null) {
-                                                        player.TryPickup(new Item(coin), val);
-                                                    }
-                                                }
+                                                 
+                                                lowAlch.Cast(player, GameLoop.WTN.Log, RecentlyTrainedSkills);  
+                                                player.GiveGold(alched.LowAlchVal()); 
+                                                GameLoop.WTN.Log.AddMessage(new ColoredString("You cast Low Alchemy and convert the " + alched.Name + " into " + alched.LowAlchVal() + " gold.", Color.DarkGoldenrod, Color.Black));
                                             }
                                         }
                                     }); 
@@ -328,27 +314,27 @@ namespace WorldtreeNexus.Managers {
                                         int minSinceFed = player.Inventory[i].MiscInt / 60;
                                         int minSincePlay = player.Inventory[i].MiscInt2 / 60;
                                         int minAge = player.Inventory[i].MiscInt3 / 60;
-                                        GameLoop.ZPO.Log.AddMessage(new ColoredString(inv.ExamineText + " (" + minSinceFed + " minutes since fed, " + minSincePlay + " minutes without play, " + minAge + " minutes old)", Color.SandyBrown, Color.Black));
+                                        GameLoop.WTN.Log.AddMessage(new ColoredString(inv.ExamineText + " (" + minSinceFed + " minutes since fed, " + minSincePlay + " minutes without play, " + minAge + " minutes old)", Color.SandyBrown, Color.Black));
                                     } else {
                                         List<string> catColors = [ "catBlack", "catGray", "catWhite", "catOrange", "catBrown", "catCalico" ];
                                         if (catColors.Contains(player.Inventory[i].ID)) {
                                             int minAge = player.Inventory[i].MiscInt3 / 60;
-                                            GameLoop.ZPO.Log.AddMessage(new ColoredString(inv.ExamineText + " (" + minAge + " minutes old)", Color.SandyBrown, Color.Black));
+                                            GameLoop.WTN.Log.AddMessage(new ColoredString(inv.ExamineText + " (" + minAge + " minutes old)", Color.SandyBrown, Color.Black));
                                         } else {
-                                            GameLoop.ZPO.Log.AddMessage(new ColoredString(inv.ExamineText, Color.SandyBrown, Color.Black));
+                                            GameLoop.WTN.Log.AddMessage(new ColoredString(inv.ExamineText, Color.SandyBrown, Color.Black));
                                         }
                                     }
                                 } else {
                                     string build = inv.Name + ": ";
 
                                     for (int con = 0; con < player.Inventory[i].Containing.Count; con++) {
-                                        build += (con != 0 ? ", " : "") + (player.Inventory[i].Containing[con].Quantity > 1 ? player.Inventory[i].Containing[con].Quantity + "x " : " ") + GameLoop.ZPO.ResolveItemName(player.Inventory[i].Containing[con].ID);
+                                        build += (con != 0 ? ", " : "") + (player.Inventory[i].Containing[con].Quantity > 1 ? player.Inventory[i].Containing[con].Quantity + "x " : " ") + GameLoop.WTN.ResolveItemName(player.Inventory[i].Containing[con].ID);
                                     } 
 
-                                    GameLoop.ZPO.Log.AddMessage(build, Color.SandyBrown); 
+                                    GameLoop.WTN.Log.AddMessage(build, Color.SandyBrown); 
                                 }
 
-                                foreach (var kv in GameLoop.ZPO.QuestLibrary) {
+                                foreach (var kv in GameLoop.WTN.QuestLibrary) {
                                     kv.Value.CheckProgress(player, "ExamineItem", player.Inventory[i].ID, 0);
                                 }
                             });
@@ -388,32 +374,24 @@ namespace WorldtreeNexus.Managers {
 
                                         if (inv.ConsumedOnUse && success) { 
                                             if (inv.UsesCharges) {
-                                                if (player.Inventory[i].Charges > 0) {
-                                                    if (player.PrayerActive("Cornucopia") && GameLoop.rand.Next(10) == 0) {
-                                                        GameLoop.ZPO.Log.AddMessage(new ColoredString("The blessing of the cornucopia preserves your charge.", Color.Goldenrod, Color.Black));
-                                                    } else { 
-                                                        player.Inventory[i].Charges--; 
-                                                        if (player.Inventory[i].Charges <= 0 && inv.ShattersAtZeroCharges) { 
-                                                            flagForDeletion = true;
-                                                            if (inv.ItemReturned == "") {
-                                                                GameLoop.ZPO.Log.AddMessage("Your " + inv.Name + " runs out of uses and shatters.", Color.MediumPurple);
-                                                            }
-                                                        } else if (player.Inventory[i].Charges <= 0 && !inv.ShattersAtZeroCharges) {  
-                                                            GameLoop.ZPO.Log.AddMessage("Your " + inv.Name + " runs out of charges.", Color.MediumPurple);
-                                                        }
-                                                    }
-                                                } else if (player.Inventory[i].Charges == 0) { 
-                                                    GameLoop.ZPO.Log.AddMessage("That item doesn't have any charges left.", Color.Crimson);
-                                                }
-                                            } else {
-                                                if (player.PrayerActive("Cornucopia") && inv.ID != "coins" && GameLoop.rand.Next(10) == 0) { 
-                                                    GameLoop.ZPO.Log.AddMessage(new ColoredString("The blessing of the cornucopia preserves your item.", Color.Goldenrod, Color.Black));
-                                                } else {
-                                                    player.Inventory[i].Quantity -= 1; 
-                                                    if (player.Inventory[i].Quantity <= 0) {
+                                                if (player.Inventory[i].Charges > 0) { 
+                                                    player.Inventory[i].Charges--; 
+                                                    if (player.Inventory[i].Charges <= 0 && inv.ShattersAtZeroCharges) { 
                                                         flagForDeletion = true;
-                                                    }
+                                                        if (inv.ItemReturned == "") {
+                                                            GameLoop.WTN.Log.AddMessage("Your " + inv.Name + " runs out of uses and shatters.", Color.MediumPurple);
+                                                        }
+                                                    } else if (player.Inventory[i].Charges <= 0 && !inv.ShattersAtZeroCharges) {  
+                                                        GameLoop.WTN.Log.AddMessage("Your " + inv.Name + " runs out of charges.", Color.MediumPurple);
+                                                    } 
+                                                } else if (player.Inventory[i].Charges == 0) { 
+                                                    GameLoop.WTN.Log.AddMessage("That item doesn't have any charges left.", Color.Crimson);
                                                 }
+                                            } else { 
+                                                player.Inventory[i].Quantity -= 1; 
+                                                if (player.Inventory[i].Quantity <= 0) {
+                                                    flagForDeletion = true;
+                                                } 
                                             }
                                         } 
 
@@ -426,7 +404,7 @@ namespace WorldtreeNexus.Managers {
                                             player.Inventory.RemoveAt(i);
                                             dropped = true;
                                              
-                                            if (inv.ItemReturned != "" && GameLoop.ZPO.ResolveItem(inv.ItemReturned) is Item returned) {
+                                            if (inv.ItemReturned != "" && GameLoop.WTN.ResolveItem(inv.ItemReturned) is Item returned) {
                                                 player.TryPickup(returned, 1);
                                             }
                                         } 
@@ -474,7 +452,7 @@ namespace WorldtreeNexus.Managers {
 
                     mini.Con.Print(45, 34, ":");
 
-                    mini.Con.PrintClickable(47, 34, 4 - player.DefenseExpSplit + " CON", () => {
+                    mini.Con.PrintClickable(47, 34, 4 - player.DefenseExpSplit + " HIT", () => {
                         player.DefenseExpSplit = Math.Clamp(player.DefenseExpSplit - 1, 0, 4);
                     });
 
@@ -824,7 +802,7 @@ namespace WorldtreeNexus.Managers {
 
                     mini.Con.Print(1, 15, "Skill Name");
                     mini.Con.Print(21, 15, "Lv");
-                    mini.Con.Print(31, 15, "To Next");
+                    mini.Con.Print(29, 15, "Next Lv At");
                     mini.Con.Print(45, 15, "Total Exp");
 
                     mini.Con.DrawLine(new Point(0, 16), new Point(54, 16), 196);
@@ -868,112 +846,84 @@ namespace WorldtreeNexus.Managers {
                             mini.Con.Print(25, printY, ("(" + esl.ToString() + ")"), mouseHovering ? Color.Yellow : esl < playerSkills[i].Level ? Color.Crimson : Color.Lime);
                         }
 
-                        if (player.PayToWin == 0) { 
-                            mini.Con.Print(31, printY, playerSkills[i].ExpToLevel().ToString().PadLeft(8), mouseHovering ? Color.Yellow : Color.White);
-                        } else {
-                            int actualExpNeeded = (int)Math.Ceiling((double) playerSkills[i].EXPNeeded() / (double) player.ExpMultiplier);
-                            Color couldBuy = Color.Lime;
-                            if (player.GoldTotal() < player.PayToWin * actualExpNeeded) { couldBuy = Color.Crimson; }
+                        if (playerSkills[i].Level < 100) {
+                            if (player.PayToWin == 0) { 
+                                mini.Con.Print(30, printY, $"{playerSkills[i].ExpToLevel():n00}".PadLeft(10), mouseHovering ? Color.Yellow : Color.White);
+                            } else {
+                                int actualExpNeeded = (int)Math.Ceiling((double) playerSkills[i].EXPNeeded() / (double) player.ExpMultiplier);
+                                Color couldBuy = Color.Lime;
+                                if (player.GoldTotal() < player.PayToWin * actualExpNeeded) { couldBuy = Color.Crimson; }
 
-                            mini.Con.PrintClickable(31, printY, new ColoredString(playerSkills[i].EXPNeeded().ToString().PadLeft(8), mouseHovering ? couldBuy : Color.White, Color.Black), () => {
-                                player.TryGrantExp(playerSkills[i].Name, actualExpNeeded, GameLoop.ZPO.Log, RecentlyTrainedSkills, true);
-                            });
+                                mini.Con.PrintClickable(30, printY, new ColoredString($"{playerSkills[i].EXPNeeded():n00}".PadLeft(10), mouseHovering ? couldBuy : Color.White, Color.Black), () => {
+                                    player.TryGrantExp(playerSkills[i].Name, actualExpNeeded, GameLoop.WTN.Log, RecentlyTrainedSkills, true);
+                                });
+                            }
+                        } else {
+                            mini.Con.Print(35, printY, "MAXED", mouseHovering ? Color.Yellow : Color.Lime);
                         }
 
 
-                        mini.Con.Print(46, printY, playerSkills[i].Exp.ToString().PadLeft(8), mouseHovering ? Color.Yellow : Color.White);
+                        mini.Con.Print(41, printY, $"{playerSkills[i].Exp:n00}".PadLeft(13), mouseHovering ? Color.Yellow : Color.White);
 
                         printY++;
                     }
                 }
 
-                else if (SidebarMenu == "Prayer") {
-                    mini.Con.Print(1, 15, "Prayer Name");
-                    mini.Con.Print(20, 15, "Lv");
-                    mini.Con.Print(23, 15, "Description");
-                    mini.Con.DrawLine(new Point(0, 16), new Point(54, 16), 196);
-
-                    List<Prayer> prayers = player.Prayers.Values.OrderBy(o => o.Level).ThenBy(o => o.Name).ToList();
-                    int printLine = 17;
-                    int skipped = 0;
-
-                    int prayLv = player.Skills["Prayer"].Level;
-
-                    mini.Con.PrintClickable(43, 15, new ColoredString("Disable All", Color.Crimson, Color.Black), () => {
-                        foreach (var kv in player.Prayers) {
-                            kv.Value.Active = false;
-                        }
-                    });
-
-                    int qty = 1;
-                    if (Helper.EitherShift()) { qty *= 5; }
-                    if (Helper.EitherControl()) { qty *= 10; }
-
-                    SidebarScrollTop = Math.Clamp(SidebarScrollTop, 0, prayers.Count - 18);
-                    
-                    if (SidebarRect.Contains(mousePos)) {
-                        if (prayers.Count > 18) {
-                            if (Helper.ScrolledUp()) { SidebarScrollTop = Math.Clamp(SidebarScrollTop - qty, 0, prayers.Count - 18); }
-                            if (Helper.ScrolledDown()) { SidebarScrollTop = Math.Clamp(SidebarScrollTop + qty, 0, prayers.Count - 18); }
-                        } else {
-                            SidebarScrollTop = 0;
-                        }
-                    }
-
-                    for (int i = 0; i < prayers.Count; i++) {
-                        if (prayers[i].Book == player.PrayerBook) {
-                            if (skipped >= SidebarScrollTop && printLine < 35) {
-                                mini.Con.PrintClickable(1, printLine, new ColoredString(prayers[i].Name, prayers[i].Active ? Color.Lime : prayers[i].Level > prayLv ? Color.DarkSlateGray : Color.White, Color.Black), () => { player.TryTogglePrayer(prayers[i].Name); });
-                                mini.Con.Print(20, printLine, prayers[i].Level.ToString(), prayers[i].Level > prayLv ? Color.DarkSlateGray : Color.White); 
-                                mini.Con.Print(23, printLine++, prayers[i].Description, prayers[i].Level > prayLv ? Color.DarkSlateGray : Color.White);
-                            } else {
-                                skipped++;
-                            }
-                        }
-                    }
-                } else if (SidebarMenu == "Emote") {
+                else if (SidebarMenu == "Emote") {
                     mini.Con.Print(1, 15, "Emote Name"); 
                     mini.Con.DrawLine(new Point(0, 16), new Point(54, 16), 196);
 
                     int printY = 17; 
-                    mini.Con.PrintClickable(1, printY++, "Nod Head", () => { GameLoop.ZPO.Log.AddMessage("You nod your head."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Nod"); });
-                    mini.Con.PrintClickable(1, printY++, "Shake Head", () => { GameLoop.ZPO.Log.AddMessage("You shake your head."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Shake"); });
-                    mini.Con.PrintClickable(1, printY++, "Think", () => { GameLoop.ZPO.Log.AddMessage("You ponder for a moment."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Think"); });
-                    mini.Con.PrintClickable(1, printY++, "Beckon", () => { GameLoop.ZPO.Log.AddMessage("You beckon to nobody in particular."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Beckon"); });
-                    mini.Con.PrintClickable(1, printY++, "Dance", () => { GameLoop.ZPO.Log.AddMessage("You shake your body in a dance."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Dance"); });
-                    mini.Con.PrintClickable(1, printY++, "Cry", () => { GameLoop.ZPO.Log.AddMessage("You break down and cry for a moment."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Cry"); }); 
-                    mini.Con.PrintClickable(1, printY++, "Clap", () => { GameLoop.ZPO.Log.AddMessage("You clap your hands."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Clap"); });
-                    mini.Con.PrintClickable(1, printY++, "Wave", () => { GameLoop.ZPO.Log.AddMessage("You wave your arm vigorously."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Wave"); });
+                    mini.Con.PrintClickable(1, printY++, "Nod Head", () => { GameLoop.WTN.Log.AddMessage("You nod your head.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Nod"); });
+                    mini.Con.PrintClickable(1, printY++, "Shake Head", () => { GameLoop.WTN.Log.AddMessage("You shake your head.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Shake"); });
+                    mini.Con.PrintClickable(1, printY++, "Think", () => { GameLoop.WTN.Log.AddMessage("You ponder for a moment.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Think"); });
+                    mini.Con.PrintClickable(1, printY++, "Beckon", () => { GameLoop.WTN.Log.AddMessage("You beckon to nobody in particular.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Beckon"); });
+                    mini.Con.PrintClickable(1, printY++, "Dance", () => { GameLoop.WTN.Log.AddMessage("You shake your body in a dance.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Dance"); });
+                    mini.Con.PrintClickable(1, printY++, "Cry", () => { GameLoop.WTN.Log.AddMessage("You break down and cry for a moment.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Cry"); }); 
+                    mini.Con.PrintClickable(1, printY++, "Clap", () => { GameLoop.WTN.Log.AddMessage("You clap your hands.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Clap"); });
+                    mini.Con.PrintClickable(1, printY++, "Wave", () => { GameLoop.WTN.Log.AddMessage("You wave your arm vigorously.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Wave"); });
 
                     printY = 17;
-                    mini.Con.PrintClickable(20, printY++, "Laugh", () => { GameLoop.ZPO.Log.AddMessage("You throw your head back and laugh heartily."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Laugh"); });
-                    mini.Con.PrintClickable(20, printY++, "Jig", () => { GameLoop.ZPO.Log.AddMessage("You dance a little jig."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Jig"); });
-                    mini.Con.PrintClickable(20, printY++, "Blow Kiss", () => { GameLoop.ZPO.Log.AddMessage("You blow a kiss."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "BlowKiss"); }); 
-                    mini.Con.PrintClickable(20, printY++, "Salute", () => { GameLoop.ZPO.Log.AddMessage("You put your hand to your head in a crisp salute."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Salute"); });
-                    mini.Con.PrintClickable(20, printY++, "Bow", () => { GameLoop.ZPO.Log.AddMessage("You take a bow."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Bow"); });
-                    mini.Con.PrintClickable(20, printY++, "Shrug", () => { GameLoop.ZPO.Log.AddMessage("You shrug your shoulders."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Shrug"); });
-                    mini.Con.PrintClickable(20, printY++, "Jump for Joy", () => { GameLoop.ZPO.Log.AddMessage("You jump for joy."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "JumpForJoy"); });
-                    mini.Con.PrintClickable(20, printY++, "Spin", () => { GameLoop.ZPO.Log.AddMessage("You twirl around quickly with your arms stretched out."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Spin"); });
+                    mini.Con.PrintClickable(20, printY++, "Laugh", () => { GameLoop.WTN.Log.AddMessage("You throw your head back and laugh heartily.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Laugh"); });
+                    mini.Con.PrintClickable(20, printY++, "Jig", () => { GameLoop.WTN.Log.AddMessage("You dance a little jig.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Jig"); });
+                    mini.Con.PrintClickable(20, printY++, "Blow Kiss", () => { GameLoop.WTN.Log.AddMessage("You blow a kiss.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "BlowKiss"); }); 
+                    mini.Con.PrintClickable(20, printY++, "Salute", () => { GameLoop.WTN.Log.AddMessage("You put your hand to your head in a crisp salute.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Salute"); });
+                    mini.Con.PrintClickable(20, printY++, "Bow", () => { GameLoop.WTN.Log.AddMessage("You take a bow.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Bow"); });
+                    mini.Con.PrintClickable(20, printY++, "Shrug", () => { GameLoop.WTN.Log.AddMessage("You shrug your shoulders.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Shrug"); });
+                    mini.Con.PrintClickable(20, printY++, "Jump for Joy", () => { GameLoop.WTN.Log.AddMessage("You jump for joy.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "JumpForJoy"); });
+                    mini.Con.PrintClickable(20, printY++, "Spin", () => { GameLoop.WTN.Log.AddMessage("You twirl around quickly with your arms stretched out.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Spin"); });
 
                     printY = 17;
-                    mini.Con.PrintClickable(40, printY++, "Panic", () => { GameLoop.ZPO.Log.AddMessage("You panic for a moment."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Panic"); });
-                    mini.Con.PrintClickable(40, printY++, "Shake Fist", () => { GameLoop.ZPO.Log.AddMessage("You shake your fist in anger."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "ShakeFist"); });
-                    mini.Con.PrintClickable(40, printY++, "Cheer", () => { GameLoop.ZPO.Log.AddMessage("You cheer. Hurray!"); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Cheer"); });
-                    mini.Con.PrintClickable(40, printY++, "Yawn", () => { GameLoop.ZPO.Log.AddMessage("You let out a yawn."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Yawn"); });
-                    mini.Con.PrintClickable(40, printY++, "Headbang", () => { GameLoop.ZPO.Log.AddMessage("You bang your head to music only you can hear."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Headbang"); });
-                    mini.Con.PrintClickable(40, printY++, "Raspberry", () => { GameLoop.ZPO.Log.AddMessage("You blow a raspberry."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "Raspberry"); });
-                    mini.Con.PrintClickable(40, printY++, "Sit Down", () => { GameLoop.ZPO.Log.AddMessage("You sit down for a bit. This was nice."); ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Emote", "SitDown"); });
+                    mini.Con.PrintClickable(40, printY++, "Panic", () => { GameLoop.WTN.Log.AddMessage("You panic for a moment.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Panic"); });
+                    mini.Con.PrintClickable(40, printY++, "Shake Fist", () => { GameLoop.WTN.Log.AddMessage("You shake your fist in anger.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "ShakeFist"); });
+                    mini.Con.PrintClickable(40, printY++, "Cheer", () => { GameLoop.WTN.Log.AddMessage("You cheer. Hurray!", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Cheer"); });
+                    mini.Con.PrintClickable(40, printY++, "Yawn", () => { GameLoop.WTN.Log.AddMessage("You let out a yawn.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Yawn"); });
+                    mini.Con.PrintClickable(40, printY++, "Headbang", () => { GameLoop.WTN.Log.AddMessage("You bang your head to music only you can hear.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Headbang"); });
+                    mini.Con.PrintClickable(40, printY++, "Raspberry", () => { GameLoop.WTN.Log.AddMessage("You blow a raspberry.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "Raspberry"); });
+                    mini.Con.PrintClickable(40, printY++, "Sit Down", () => { GameLoop.WTN.Log.AddMessage("You sit down for a bit. This was nice.", Color.Yellow); ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Emote", "SitDown"); });
                 } else if (SidebarMenu == "Quest") {
                     mini.Con.Print(1, 15, "Quest Name");
                     mini.Con.DrawLine(new Point(0, 16), new Point(54, 16), 196);
 
                     int printQuest = 0;
-                    int count = -1;
 
                     int questPoints = 0;
                     int totalPossibleQP = 0;
 
-                    List<Quest> sortedList = GameLoop.ZPO.QuestLibrary.Values.ToList();
+                    int questsCompleted = 0;
+                    int totalQuests = 0;
+
+                    foreach (var quest in GameLoop.WTN.QuestLibrary) {
+                        if (quest.Value.CurrentStage() == quest.Value.CompleteStage) {
+                            questPoints += quest.Value.QuestPoints;
+                            questsCompleted++;
+                        }
+
+                        totalPossibleQP += quest.Value.QuestPoints;
+                        totalQuests++;
+                    }
+
+                    List<Quest> sortedList = GameLoop.WTN.QuestLibrary.Values.Where(o => o.CurrentStage() > -1).ToList();
 
                     if (QuestSort == "A->Z") {
                         sortedList = sortedList.OrderBy(o => o.Name).ToList();
@@ -1001,10 +951,6 @@ namespace WorldtreeNexus.Managers {
                     }
 
                     for (int quest = SidebarScrollTop; quest < sortedList.Count && quest < SidebarScrollTop + 18; quest++) {
-                        totalPossibleQP += sortedList[quest].QuestPoints;
-                        if (sortedList[quest].CurrentStage() == sortedList[quest].CompleteStage)
-                            questPoints += sortedList[quest].QuestPoints; 
-
                         Color col = Color.DarkSlateGray;
 
                         if (sortedList[quest].CanStartQuest(player)) {
@@ -1033,8 +979,11 @@ namespace WorldtreeNexus.Managers {
 
                         printQuest++; 
                     }
+
+                    mini.Con.Print(28, 15, "Quests Complete: " + questsCompleted.ToString().Align(HorizontalAlignment.Right, 3) + " / " + totalQuests.ToString().Align(HorizontalAlignment.Right, 3));
+
                      
-                    mini.Con.Print(32, 15, "Quest Points: " + questPoints.ToString().Align(HorizontalAlignment.Right, 3) + " / " + totalPossibleQP.ToString().Align(HorizontalAlignment.Right, 3));
+                    mini.Con.Print(31, 34, "Quest Points: " + questPoints.ToString().Align(HorizontalAlignment.Right, 3) + " / " + totalPossibleQP.ToString().Align(HorizontalAlignment.Right, 3));
 
                     mini.Con.DrawLine(new Point(0, 33), new Point(54, 33), 196);
 
@@ -1061,55 +1010,251 @@ namespace WorldtreeNexus.Managers {
 
                     mini.Con.DrawLine(new Point(0, 16), new Point(54, 16), 196);
 
-                    List<Spell> spells = new();
+                    if (MagicTab == "Combat") { 
+                        if (player.CombatViewing == null) { player.CombatViewing = new(); }
 
-                    foreach (var kv in GameLoop.ZPO.SpellLibrary) {
-                        if (kv.Value.Book == player.MagicBook && kv.Value.Category == MagicTab) {
-                            spells.Add(kv.Value);
-                        }
-                    }
-
-                    for (int i = 0; i < spells.Count; i++) {
-                        string cast = player.CanCast(spells[i]);
-
-                        mini.Con.PrintClickable(6, 17 + i, new ColoredString(spells[i].Name, player.CastingSpell == spells[i].ID ? Color.Lime : cast.Contains("cooldown") ? Color.Yellow : cast.Contains("Magic") ? Color.DarkSlateGray : cast != "" ? Color.Crimson : Color.White, Color.Black), () => { 
-                            if (cast == "") {
-                                if (MagicTab == "Combat") {
-                                    player.CastingSpell = spells[i].ID;
-                                }
-
-                                if (MagicTab == "Tele") {
-                                    if (spells[i].ID != "teleHome") {
-                                        spells[i].Cast(player, GameLoop.ZPO.Log, RecentlyTrainedSkills);
+                        // Saved spell configurations
+                        {
+                            // Spell 1
+                            if (player.CombatSpell1 != null) {
+                                mini.Con.PrintClickable(1, 17, new ColoredString(player.CombatSpell1.GetName(), player.CombatViewing.Equals(player.CombatSpell1) ? Color.Lime : Color.White, Color.Black), () => {
+                                    player.CombatViewing = new(player.CombatSpell1);
+                                });  
+                                string canCast = player.CanCast(player.CombatSpell1);
+                                mini.Con.PrintClickable(43, 17, "[" + new ColoredString(19.AsString(), canCast == "" ? Color.Turquoise : Color.Crimson, Color.Black) + new ColoredString("]"), () => { 
+                                    if (canCast == "") {
+                                        player.CombatCasting = new(player.CombatSpell1); 
+                                        player.CombatViewing = new(player.CombatSpell1); 
+                                    } else {
+                                        GameLoop.WTN.Log.AddMessage("Cannot cast this spell: " + canCast, Color.Crimson);
                                     }
-
-                                    foreach (var act in spells[i].CastActions) {
-                                        act.Execute();
-                                    }
-                                }
-
-                                if (MagicTab == "Utility") {
-                                    if (spells[i].ID == "utilBonesBananas" || spells[i].ID == "utilBonesPeaches" || spells[i].ID == "utilSuperheat" || spells[i].ID.Contains("utilEnchant")) {
-                                        foreach (var act in spells[i].CastActions) {
-                                            act.Execute();
-                                        } 
-                                    }
-
-                                    if (spells[i].ID == "utilAlchemyLow") {   
-                                        GameLoop.ZPO.Log.AddMessage("Cast this by clicking the ~ icon on an item line in your inventory.", Color.Crimson); 
-                                    }
-
-                                    if (spells[i].ID == "utilAlchemyHigh") {   
-                                        GameLoop.ZPO.Log.AddMessage("Cast this by clicking the " + 247.AsString() + " icon on an item line in your inventory.", Color.Crimson); 
-                                    }
-                                }
+                                });
+                                
+                                mini.Con.PrintClickable(47, 17, "[" + new ColoredString("X", Color.Crimson, Color.Black) + new ColoredString("]"), () => { player.CombatSpell1 = null; });
                             } else {
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString("Cannot cast spell: " + cast, Color.Crimson, Color.Black));
+                                mini.Con.Print(1, 17, "(empty spell slot)", Color.DarkSlateGray); 
                             }
+                            mini.Con.PrintClickable(51, 17, "[" + new ColoredString("+", Color.Lime, Color.Black) + new ColoredString("]"), () => { player.CombatSpell1 = new(player.CombatViewing); });
+
+                            // Spell 2
+                            if (player.CombatSpell2 != null) {
+                                mini.Con.PrintClickable(1, 18, new ColoredString(player.CombatSpell2.GetName(), player.CombatViewing.Equals(player.CombatSpell2) ? Color.Lime : Color.White, Color.Black), () => {
+                                    player.CombatViewing = new(player.CombatSpell2);
+                                });  
+                                string canCast = player.CanCast(player.CombatSpell2);
+                                mini.Con.PrintClickable(43, 18, "[" + new ColoredString(19.AsString(), canCast == "" ? Color.Turquoise : Color.Crimson, Color.Black) + new ColoredString("]"), () => { 
+                                    if (canCast == "") {
+                                        player.CombatCasting = new(player.CombatSpell2); 
+                                        player.CombatViewing = new(player.CombatSpell2); 
+                                    } else {
+                                        GameLoop.WTN.Log.AddMessage("Cannot cast this spell: " + canCast, Color.Crimson);
+                                    }
+                                });
+                                
+                                mini.Con.PrintClickable(47, 18, "[" + new ColoredString("X", Color.Crimson, Color.Black) + new ColoredString("]"), () => { player.CombatSpell2 = null; });
+                            } else {
+                                mini.Con.Print(1, 18, "(empty spell slot)", Color.DarkSlateGray); 
+                            }
+                            mini.Con.PrintClickable(51, 18, "[" + new ColoredString("+", Color.Lime, Color.Black) + new ColoredString("]"), () => { player.CombatSpell2 = new(player.CombatViewing); });
+
+                            // Spell 3
+                            if (player.CombatSpell3 != null) {
+                                mini.Con.PrintClickable(1, 19, new ColoredString(player.CombatSpell3.GetName(), player.CombatViewing.Equals(player.CombatSpell3) ? Color.Lime : Color.White, Color.Black), () => {
+                                    player.CombatViewing = new(player.CombatSpell3);
+                                });  
+                                string canCast = player.CanCast(player.CombatSpell3);
+                                mini.Con.PrintClickable(43, 19, "[" + new ColoredString(19.AsString(), canCast == "" ? Color.Turquoise : Color.Crimson, Color.Black) + new ColoredString("]"), () => { 
+                                    if (canCast == "") {
+                                        player.CombatCasting = new(player.CombatSpell3); 
+                                        player.CombatViewing = new(player.CombatSpell3); 
+                                    } else {
+                                        GameLoop.WTN.Log.AddMessage("Cannot cast this spell: " + canCast, Color.Crimson);
+                                    }
+                                });
+                                
+                                mini.Con.PrintClickable(47, 19, "[" + new ColoredString("X", Color.Crimson, Color.Black) + new ColoredString("]"), () => { player.CombatSpell3 = null; });
+                            } else {
+                                mini.Con.Print(1, 19, "(empty spell slot)", Color.DarkSlateGray); 
+                            }
+                            mini.Con.PrintClickable(51, 19, "[" + new ColoredString("+", Color.Lime, Color.Black) + new ColoredString("]"), () => { player.CombatSpell3 = new(player.CombatViewing); });
+                        
+                            // Spell 4
+                            if (player.CombatSpell4 != null) {
+                                mini.Con.PrintClickable(1, 20, new ColoredString(player.CombatSpell4.GetName(), player.CombatViewing.Equals(player.CombatSpell4) ? Color.Lime : Color.White, Color.Black), () => {
+                                    player.CombatViewing = new(player.CombatSpell4);
+                                });  
+                                string canCast = player.CanCast(player.CombatSpell4);
+                                mini.Con.PrintClickable(43, 20, "[" + new ColoredString(19.AsString(), canCast == "" ? Color.Turquoise : Color.Crimson, Color.Black) + new ColoredString("]"), () => { 
+                                    if (canCast == "") {
+                                        player.CombatCasting = new(player.CombatSpell4); 
+                                        player.CombatViewing = new(player.CombatSpell4); 
+                                    } else {
+                                        GameLoop.WTN.Log.AddMessage("Cannot cast this spell: " + canCast, Color.Crimson);
+                                    }
+                                });
+                                
+                                mini.Con.PrintClickable(47, 20, "[" + new ColoredString("X", Color.Crimson, Color.Black) + new ColoredString("]"), () => { player.CombatSpell4 = null; });
+                            } else {
+                                mini.Con.Print(1, 20, "(empty spell slot)", Color.DarkSlateGray); 
+                            }
+                            mini.Con.PrintClickable(51, 20, "[" + new ColoredString("+", Color.Lime, Color.Black) + new ColoredString("]"), () => { player.CombatSpell4 = new(player.CombatViewing); });
+                            
+                            // Spell 5
+                            if (player.CombatSpell5 != null) {
+                                mini.Con.PrintClickable(1, 21, new ColoredString(player.CombatSpell5.GetName(), player.CombatViewing.Equals(player.CombatSpell5) ? Color.Lime : Color.White, Color.Black), () => {
+                                    player.CombatViewing = new(player.CombatSpell5);
+                                });  
+                                string canCast = player.CanCast(player.CombatSpell5);
+                                mini.Con.PrintClickable(43, 21, "[" + new ColoredString(19.AsString(), canCast == "" ? Color.Turquoise : Color.Crimson, Color.Black) + new ColoredString("]"), () => { 
+                                    if (canCast == "") {
+                                        player.CombatCasting = new(player.CombatSpell5); 
+                                        player.CombatViewing = new(player.CombatSpell5); 
+                                    } else {
+                                        GameLoop.WTN.Log.AddMessage("Cannot cast this spell: " + canCast, Color.Crimson);
+                                    }
+                                });
+                                
+                                mini.Con.PrintClickable(47, 21, "[" + new ColoredString("X", Color.Crimson, Color.Black) + new ColoredString("]"), () => { player.CombatSpell5 = null; });
+                            } else {
+                                mini.Con.Print(1, 21, "(empty spell slot)", Color.DarkSlateGray); 
+                            }
+                            mini.Con.PrintClickable(51, 21, "[" + new ColoredString("+", Color.Lime, Color.Black) + new ColoredString("]"), () => { player.CombatSpell5 = new(player.CombatViewing); });
+                        }
+                        mini.Con.DrawLine(new Point(0, 22), new Point(54, 22), 196);
+
+                        mini.Con.Print(1, 23, "AutoName: " + player.CombatViewing.GetName(true)); 
+                        mini.Con.PrintStringField(1, 24, "Set Name: ", ref player.CombatViewing.Name, ref TypingField, "combatViewName");
+
+                        mini.Con.Print(1, 26, "    Element: "); 
+                        mini.Con.PrintClickable(14, 26, new ColoredString("Metal", player.CombatViewing.Element == "Metal" ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Element = "Metal"; });
+                        mini.Con.PrintClickable(22, 26, new ColoredString("Water", player.CombatViewing.Element == "Water" ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Element = "Water"; });
+                        mini.Con.PrintClickable(30, 26, new ColoredString("Wood", player.CombatViewing.Element == "Wood" ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Element = "Wood"; });
+                        mini.Con.PrintClickable(38, 26, new ColoredString("Fire", player.CombatViewing.Element == "Fire" ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Element = "Fire"; });
+                        mini.Con.PrintClickable(46, 26, new ColoredString("Earth", player.CombatViewing.Element == "Earth" ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Element = "Earth"; });
+
+                        mini.Con.Print(1, 27, "Damage Type: "); 
+                        mini.Con.PrintClickable(14, 27, new ColoredString("Bolt", player.CombatViewing.DamageType == "Bolt" ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.DamageType = "Bolt"; });
+                        mini.Con.PrintClickable(22, 27, new ColoredString("Ray", player.CombatViewing.DamageType == "Ray" ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.DamageType = "Ray"; });
+                        mini.Con.PrintClickable(30, 27, new ColoredString("Wave", player.CombatViewing.DamageType == "Wave" ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.DamageType = "Wave"; });
+                        
+                        mini.Con.Print(1, 28, " Cast Speed: "); 
+                        mini.Con.PrintClickable(14, 28, new ColoredString("Slower", player.CombatViewing.Speed == 1.5 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.5; });
+                        mini.Con.PrintClickable(22, 28, new ColoredString("Slow", player.CombatViewing.Speed == 1.25 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.25; });
+                        mini.Con.PrintClickable(30, 28, new ColoredString("Medium", player.CombatViewing.Speed ==  1.0 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.0; });
+                        mini.Con.PrintClickable(38, 28, new ColoredString("Fast", player.CombatViewing.Speed == 1.25 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.25; });
+                        mini.Con.PrintClickable(46, 28, new ColoredString("Faster", player.CombatViewing.Speed == 1.5 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.5; });
+                        
+                        mini.Con.PrintClickable(1, 29, "Empowered " + Helper.Checkmark(player.CombatViewing.Empowered), () => { player.CombatViewing.Empowered.Flip(); });
+                        mini.Con.PrintClickable(13, 29, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage("Spell damage +25%. Spell costs (tier / 2) elemental talismans complementary to main element. ", Color.Yellow); });
+                        mini.Con.PrintClickableBool(19, 29, "Lingering ", ref player.CombatViewing.Lingering);
+                        mini.Con.PrintClickable(31, 29, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage("A successful hit set bleed to " + player.CombatViewing.Tier + ", dealing that much damage and then reducing by 1 each second. Spell costs 50% more Destruction talismans.", Color.Yellow); });
+                        mini.Con.PrintClickableBool(37, 29, "Vampiric ", ref player.CombatViewing.Vampiric);
+                        mini.Con.PrintClickable(49, 29, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage("Heal for 10% of damage dealt, rounded to nearest whole number (minimum 0). Spell costs (tier / 2) Restoration talismans.", Color.Yellow); });
+
+                        mini.Con.Print(1, 31, "Tier: "); 
+                        mini.Con.PrintClickable(7, 31, new ColoredString("I", player.CombatViewing.Tier == 1 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 1) { player.CombatViewing.Tier = 1; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 1 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(9, 31, new ColoredString("II", player.CombatViewing.Tier == 2 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 10) { player.CombatViewing.Tier = 2; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 10 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(12, 31, new ColoredString("III", player.CombatViewing.Tier == 3 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 20) { player.CombatViewing.Tier = 3; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 20 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(16, 31, new ColoredString("IV", player.CombatViewing.Tier == 4 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 30) { player.CombatViewing.Tier = 4; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 30 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(19, 31, new ColoredString("V", player.CombatViewing.Tier == 5 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 40) { player.CombatViewing.Tier = 5; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 40 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(21, 31, new ColoredString("VI", player.CombatViewing.Tier == 6 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 50) { player.CombatViewing.Tier = 6; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 50 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(24, 31, new ColoredString("VII", player.CombatViewing.Tier == 7 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 60) { player.CombatViewing.Tier = 7; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 60 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(28, 31, new ColoredString("VIII", player.CombatViewing.Tier == 8 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 70) { player.CombatViewing.Tier = 8; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 70 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(33, 31, new ColoredString("IX", player.CombatViewing.Tier == 9 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 80) { player.CombatViewing.Tier = 9; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 80 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(36, 31, new ColoredString("X", player.CombatViewing.Tier == 10 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 90) { player.CombatViewing.Tier = 10; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 90 or higher to use that tier.", Color.Crimson); }
+                        });
+                        mini.Con.PrintClickable(38, 31, new ColoredString("XI", player.CombatViewing.Tier == 11 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => {
+                            if (player.GetEffectiveSkillLevel("Magic") >= 100) { player.CombatViewing.Tier = 11; }
+                            else { GameLoop.WTN.Log.AddMessage("Must have an effective Magic level of 100 or higher to use that tier.", Color.Crimson); }
                         });
 
-                        mini.Con.Print(1, 17+i, spells[i].Level.ToString().Align(HorizontalAlignment.Right, 2));
-                        mini.Con.PrintClickable(4, 17+i, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.ZPO.Log.AddMessage(spells[i].Description); });
+                        List<string> talismans = player.CombatViewing.Talismans();
+                        string build = ""; 
+                        foreach (var tali in talismans) {
+                            string[] split = tali.Split(",");
+                            build += (tali == talismans[0] ? "" : ", ") + split[1] + "x " + split[0].Replace("talisman", "");
+                        }
+                        mini.Con.Print(1, 33, "Talisman Cost: ");
+                        mini.Con.Print(1, 34, build);
+
+                        mini.Con.Print(23, 33, "Theoretical Max Damage  : " + player.MaxDamage(true));
+                        mini.Con.PrintClickable(46, 33, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage("Magic damage is based on spell tier and Magic level, but spell tier is capped by the tier of your equipped weapon.", Color.Yellow); });
+                    } else {
+                        List<Spell> spells = new();
+
+                        foreach (var kv in GameLoop.WTN.SpellLibrary) {
+                            if (kv.Value.Book == player.MagicBook && kv.Value.Category == MagicTab) {
+                                spells.Add(kv.Value);
+                            }
+                        }
+
+                        for (int i = 0; i < spells.Count; i++) {
+                            string cast = player.CanCast(spells[i]);
+
+                            mini.Con.PrintClickable(6, 17 + i, new ColoredString(spells[i].Name, cast.Contains("cooldown") ? Color.Yellow : cast.Contains("Magic") ? Color.DarkSlateGray : cast != "" ? Color.Crimson : Color.White, Color.Black), () => { 
+                                if (cast == "") {
+                                    if (MagicTab == "Tele") {
+                                        if (spells[i].ID != "teleHome") {
+                                            spells[i].Cast(player, GameLoop.WTN.Log, RecentlyTrainedSkills);
+                                        }
+
+                                        foreach (var act in spells[i].CastActions) {
+                                            act.Execute();
+                                        }
+                                    }
+
+                                    if (MagicTab == "Utility") {
+                                        if (spells[i].ID == "utilBonesBananas" || spells[i].ID == "utilBonesPeaches" || spells[i].ID == "utilSuperheat" || spells[i].ID.Contains("utilEnchant")) {
+                                            foreach (var act in spells[i].CastActions) {
+                                                act.Execute();
+                                            } 
+                                        }
+
+                                        if (spells[i].ID == "utilAlchemyLow") {   
+                                            GameLoop.WTN.Log.AddMessage("Cast this by clicking the ~ icon on an item line in your inventory.", Color.Crimson); 
+                                        }
+
+                                        if (spells[i].ID == "utilAlchemyHigh") {   
+                                            GameLoop.WTN.Log.AddMessage("Cast this by clicking the " + 247.AsString() + " icon on an item line in your inventory.", Color.Crimson); 
+                                        }
+                                    }
+                                } else {
+                                    GameLoop.WTN.Log.AddMessage(new ColoredString("Cannot cast spell: " + cast, Color.Crimson, Color.Black));
+                                }
+                            });
+
+                            mini.Con.Print(1, 17+i, spells[i].Level.ToString().Align(HorizontalAlignment.Right, 2));
+                            mini.Con.PrintClickable(4, 17+i, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage(spells[i].Description); });
+                        }
                     }
                 } else if (SidebarMenu == "Log") {
                     mini.Con.Print(1, 15, "Clue Collection Logs");
@@ -1236,6 +1381,67 @@ namespace WorldtreeNexus.Managers {
                                 GameLoop.SoundManager.PickMusic(songs[i].Key);
                             }
                         });
+                    }
+                } else if (SidebarMenu == "Prayer") {
+                    mini.Con.Print(7, 15, "Prayer Name", Color.White);
+                    mini.Con.Print(1, 15, "Lvl", Color.White);
+
+                    mini.Con.PrintClickable(47, 15, new ColoredString("ALL OFF", Color.Crimson, Color.Black), () => {
+                        player.ActivePrayers.Clear();
+                    }); 
+                     
+                    mini.Con.DrawLine(new Point(0, 16), new Point(54, 16), 196); 
+
+                    int qty = 1;
+                    if (Helper.EitherShift()) { qty *= 5; }
+                    if (Helper.EitherControl()) { qty *= 10; }
+
+                    int prayerLength = 18;
+
+                    List<Prayer> prayers = GameLoop.WTN.PrayerLibrary.Values.ToList();
+                    
+                    if (prayers.Count > prayerLength) {
+                        if (Helper.ScrolledUp()) { SidebarScrollTop = Math.Clamp(SidebarScrollTop - qty, 0, prayers.Count - prayerLength); }
+                        if (Helper.ScrolledDown()) { SidebarScrollTop = Math.Clamp(SidebarScrollTop + qty, 0, prayers.Count - prayerLength); }
+                    } else {
+                        SidebarScrollTop = 0;
+                    }
+
+
+                    for (int i = SidebarScrollTop; i < prayers.Count && i < SidebarScrollTop + prayerLength; i++) {
+                        bool alreadyOn = player.ActivePrayers.Contains(prayers[i].Name);
+                        int pLevel = player.GetEffectiveSkillLevel("Prayer");
+                        bool hasLevel = pLevel >= prayers[i].Level;
+                        
+                        mini.Con.Print(1, 17 + (i - SidebarScrollTop), prayers[i].Level.ToString().Align(HorizontalAlignment.Right, 3), Color.White);
+
+                        mini.Con.PrintClickable(5, 17 + (i - SidebarScrollTop), new ColoredString("?", Color.MediumPurple, Color.Black), () => {
+                            GameLoop.WTN.Log.AddMessage(prayers[i].Description + " (Level " + prayers[i].Level + ")", Color.Yellow);
+                        });
+
+                        mini.Con.PrintClickable(7, 17 + (i - SidebarScrollTop), new ColoredString(prayers[i].Name, alreadyOn ? Color.Lime : hasLevel ? Color.White : Color.DarkSlateGray, Color.Black), () => {
+                            if (hasLevel) {
+                                if (player.CurrentPrayer > 0) {
+                                    if (player.ActivePrayers.Contains(prayers[i].Name)) { 
+                                        player.ActivePrayers.Remove(prayers[i].Name);
+                                    } else {
+                                        if (prayers[i].ConflictsWith.Count > 0) {
+                                            foreach (var str in prayers[i].ConflictsWith) {
+                                                player.ActivePrayers.Remove(str);
+                                            }
+                                        }
+
+                                        player.ActivePrayers.Add(prayers[i].Name);
+                                    }
+                                } else {
+                                    GameLoop.WTN.Log.AddMessage("No prayer points remaining. Refill by praying at an altar or by using potions.", Color.Crimson);
+                                }
+                            } else { 
+                                GameLoop.WTN.Log.AddMessage("Need level " + prayers[i].Level + " Prayer to use that. (Have " + pLevel + ")", Color.Crimson);
+                            }
+                        }); 
+                        
+                        //mini.Con.DrawLine(new(3, 17 + (i - SidebarScrollTop)), new(54, 17 + (i - SidebarScrollTop)), '-', Color.DarkSlateGray);
                     }
                 }
             } 

@@ -15,7 +15,7 @@ namespace WorldtreeNexus.UI {
             if (curr.IsBank && player.CanUseBanks) {
                 mini.Con.Print(resourceX + 2, resourceY, "Items in Bank"); 
 
-                mini.Con.PrintClickable(resourceX + 23, resourceY, "(sort)", () => { player.BankedItems = player.BankedItems.OrderBy(o => GameLoop.ZPO.ResolveItemName(o.ID)).ToList(); });
+                mini.Con.PrintClickable(resourceX + 23, resourceY, "(sort)", () => { player.BankedItems = player.BankedItems.OrderBy(o => GameLoop.WTN.ResolveItemName(o.ID)).ToList(); });
                          
                 mini.Con.PrintClickable(resourceX + 30, resourceY++, new ColoredString("(noted)", WithdrawingNotes ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { WithdrawingNotes = !WithdrawingNotes; }); 
 
@@ -144,7 +144,7 @@ namespace WorldtreeNexus.UI {
                                  
                         mini.Con.Print(resourceX + 2, resourceY, (item.Inaccessible ? "X" : "|"));
 
-                        if (GameLoop.ZPO.SpellLibrary.TryGetValue("utilTelegrab", out Spell? telegrab) && telegrab != null) { 
+                        if (GameLoop.WTN.SpellLibrary.TryGetValue("utilTelegrab", out Spell? telegrab) && telegrab != null) { 
                             if (player.CanCast(telegrab) == "") {
                                 mini.Con.PrintClickable(resourceX + 2, resourceY, new ColoredString("~", Color.MediumPurple, Color.Black), () => { 
                                     int qty = 1;

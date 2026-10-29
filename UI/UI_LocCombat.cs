@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using WorldtreeNexus.DataTypes;
+using WorldtreeNexus.HardcodedData;
 using WorldtreeNexus.Managers;
 
 namespace WorldtreeNexus.UI {
@@ -19,12 +20,12 @@ namespace WorldtreeNexus.UI {
                 AttackingBoss = false;
                 AttackingMonster = null; 
 
-                GameLoop.ZPO.Log.AddMessage("You feel your arms get tired of this repetitive motion. To prove your determination and continue attacking, click to attack an enemy again.");
+                GameLoop.WTN.Log.AddMessage("You feel your arms get tired of this repetitive motion. To prove your determination and continue attacking, click to attack an enemy again.");
             }
 
 
 
-            if (curr.BossHere != "" && GameLoop.ZPO.BossLibrary.TryGetValue(curr.BossHere, out BossFight? boss) && boss != null && boss.Phases.Count > boss.CurrentPhase) {  
+            if (curr.BossHere != "" && GameLoop.WTN.BossLibrary.TryGetValue(curr.BossHere, out BossFight? boss) && boss != null && boss.Phases.Count > boss.CurrentPhase) {  
                 mini.Con.DrawLine(new Point(56, printY), new Point(109, printY++), 196);
                 mini.Con.Print(57, printY, "Boss Here: ");
 
@@ -147,7 +148,7 @@ namespace WorldtreeNexus.UI {
                         }
 
                         if (boss.UsingMove != -1 && boss.Phases[boss.CurrentPhase].Specials.Count > boss.UsingMove && boss.Phases[boss.CurrentPhase].Specials[boss.UsingMove].SummonID != "") {
-                            if (GameLoop.ZPO.MonsterLibrary.TryGetValue(boss.Phases[boss.CurrentPhase].Specials[boss.UsingMove].SummonID, out AreaMonster? summon) && summon != null) {
+                            if (GameLoop.WTN.MonsterLibrary.TryGetValue(boss.Phases[boss.CurrentPhase].Specials[boss.UsingMove].SummonID, out AreaMonster? summon) && summon != null) {
                                 int amount = GoRogue.DiceNotation.Dice.Roll(boss.Phases[boss.CurrentPhase].Specials[boss.UsingMove].SummonDice);
 
                                 for (int i = 0; i < amount; i++) {
@@ -168,11 +169,7 @@ namespace WorldtreeNexus.UI {
                             if (hitChance < 25 + (player.GetEffectiveSkillLevel("Defense") / 4.0)) {
                                 Log.AddMessage(new ColoredString(boss.Phases[boss.CurrentPhase].Name + " tried to hit you but missed!", Color.Yellow, Color.Black));
                             } else {
-                                modified -= player.TotalArmorValue(bossType);
-
-                                if ((player.PrayerActive("Protect from Magic") && bossType == "Magic") || (player.PrayerActive("Protect from Melee") && bossType == "Melee") || (player.PrayerActive("Protect from Range") && bossType == "Ranged")) {
-                                    modified /= 2;
-                                } 
+                                modified -= player.TotalArmorValue(bossType); 
                                          
                                 if (dmg != modified) {
                                     if (modified <= 0) {
@@ -249,8 +246,7 @@ namespace WorldtreeNexus.UI {
                     attackSpeed = wep.AttackSpeed;
                 }
 
-                bool hasAmmo = true;
-                bool usedAmmo = false;
+                int ammo = 0;
 
                 if (LastHitTime + (1000 * attackSpeed) < Helper.Time() && boss.Phases[boss.CurrentPhase].CurrentHP > 0 && AttackingBoss) {
                     LastHitTime = Helper.Time();
@@ -259,52 +255,14 @@ namespace WorldtreeNexus.UI {
                     int hitChance = GameLoop.rand.Next(100); 
                              
                     // Remove a unit of ammo if this is a ranged weapon
-                    if (!player.IsMaging()) {
-                        if (wepWrap != null && wepWrap.GetRef() is Item weapon) {
-                            if (weapon.EquipAmmo == "Self") {
-                                wepWrap.Quantity -= 1;
-                                Item droppedAmmo = new(weapon);
-                                droppedAmmo.Quantity = 1;
-                                if (GameLoop.rand.Next(4) != 0)
-                                    GameLoop.ZPO.TryPlaceItem(player.NavLoc, new(droppedAmmo));
-                                usedAmmo = true;
-                            } else if (weapon.EquipAmmo == "RangedStandard") {
-                                if (player.Equipment.TryGetValue("Ammo", out ItemWrapper? arrowWrap) && arrowWrap.GetRef() is Item arrow && arrow.EquipDamageType == "RangedStandard") {
-                                    arrowWrap.Quantity -= 1;
-                                    Item droppedAmmo = new(arrow);
-                                    droppedAmmo.Quantity = 1;
-                                    if (GameLoop.rand.Next(4) != 0)
-                                        GameLoop.ZPO.TryPlaceItem(player.NavLoc, new(droppedAmmo));
-                                    usedAmmo = true;
-                                } else {
-                                    hasAmmo = false;
-                                }
-                            } else if (weapon.EquipAmmo == "RangedHeavy") {
-                                if (player.Equipment.TryGetValue("Ammo", out ItemWrapper? boltWrap) && boltWrap.GetRef() is Item bolt && bolt.EquipDamageType == "RangedHeavy") {
-                                    boltWrap.Quantity -= 1;
-                                    Item droppedAmmo = new(bolt);
-                                    droppedAmmo.Quantity = 1;
-                                    if (GameLoop.rand.Next(4) != 0)
-                                        GameLoop.ZPO.TryPlaceItem(player.NavLoc, new(droppedAmmo));
-                                    usedAmmo = true;
-                                } else {
-                                    hasAmmo = false;
-                                }
-                            }
-                        } 
-                    }
+                    ammo = player.UseRangedAmmo(false); 
 
-                    if (hasAmmo) {
-                        string whichSkill = player.IsMaging() ? "Magic" : usedAmmo ? "Ranged" : "Attack";
+                    if (ammo >= 0) {
+                        string whichSkill = player.IsMaging() ? "Magic" : ammo == 1 ? "Ranged" : "Attack";
 
-                        if (player.IsMaging()) {
-                            if (player.HasAllItems(["tab" + player.CastingSpell])) { 
-                                player.ConsumeItems(["tab" + player.CastingSpell]);
-                            } else {
-                                player.ConsumeItems(GameLoop.ZPO.SpellLibrary[player.CastingSpell].Runes, false, true);
-                            }
-                            int spellExp = GameLoop.ZPO.SpellLibrary[player.CastingSpell].ExpOnCast;
-                            player.TryGrantExp("Magic", spellExp, Log, SidebarManager.RecentlyTrainedSkills);
+                        if (player.IsMaging()) {  
+                            player.ConsumeItems(player.CombatCasting.Talismans(), false, true);  
+                            player.TryGrantExp("Magic", player.CombatCasting.CastExp(), Log, SidebarManager.RecentlyTrainedSkills);
                         }
 
                         double eqpAccuracy = 0; 
@@ -316,19 +274,6 @@ namespace WorldtreeNexus.UI {
                             }
                         }
 
-                        bool efaritay = false;
-
-                        if (player.Equipment.TryGetValue("Ring", out ItemWrapper? ring) && ring != null && ring.ID == "ringEfaritay" && boss.SpecialCategory == "Vampiric") { 
-                            ring.Charges -= 1; 
-                            efaritay = true;
-                            eqpAccuracy += 10;
-
-                            if (ring.Charges <= 0) { 
-                                Log.AddMessage(new ColoredString("Your Efaritay's aid runs out of charge and shatters.", Color.Crimson, Color.Black));
-                                player.Equipment.Remove("Ring");
-                            }
-                        }
-
                         if (curr.Dark && !player.HasLightSource()) { 
                             Log.AddMessage(new ColoredString("You can't see well enough to land an attack!", Color.Crimson, Color.Black));
                             hitChance = 999;
@@ -337,124 +282,65 @@ namespace WorldtreeNexus.UI {
                         if (hitChance > 25 + (player.GetEffectiveSkillLevel(whichSkill) / 2.0) + eqpAccuracy) {
                             Log.AddMessage(new ColoredString("You tried to hit the " + boss.Phases[boss.CurrentPhase].Name + " but missed!", Color.Crimson, Color.Black));
                         } else {
-                            int pdmg = GoRogue.DiceNotation.Dice.Roll(player.GetDamageDice());
-                            bool crit = false;
+                            int pdmg = GameLoop.rand.Next(player.MaxDamage()); 
 
-                            if (player.GetDamageType() == boss.Phases[boss.CurrentPhase].WeakType) {
-                                pdmg = (int)Math.Ceiling(pdmg * 1.5f);
-                            }
+                            if (player.GetDamageType() == boss.Phases[boss.CurrentPhase].WeakType) { pdmg = (int)Math.Ceiling(pdmg * 1.5f); }
+                            if (Materials.ElementalWeaknesses.TryGetValue(boss.Phases[boss.CurrentPhase].Element, out string? weak) && weak != null && weak == player.GetDamageElement()) { pdmg = (int) Math.Ceiling(pdmg * 1.5); }
+                            if (Materials.ElementalStrengths.TryGetValue(boss.Phases[boss.CurrentPhase].Element, out string? strong) && strong != null && strong == player.GetDamageElement()) { pdmg = (int) Math.Floor(pdmg * 0.5); }
+                                     
 
-                            if (boss.Phases[boss.CurrentPhase].ImmuneTypes.Contains(player.GetDamageType())) {
-                                pdmg = 0;
-                            }
-                                         
-                            bool eitherDamageSpecial = boss.SpecialCategory != "" && (player.GetDamageType() == boss.SpecialCategory || player.GetSecondaryDamageType() == boss.SpecialCategory);
+                            if (boss.Phases[boss.CurrentPhase].ImmuneTypes.Contains(player.GetDamageType())) { pdmg = 0; } 
 
-                            if (eitherDamageSpecial) { // Mostly for Crumble Undead, but open to similar spells for Demons, Vamps, etc
+                            if (boss.SpecialCategory != "" && (player.GetDamageType() == boss.SpecialCategory || player.GetSecondaryDamageType() == boss.SpecialCategory)) { // Mostly for Crumble Undead, but open to similar spells for Demons, Vamps, etc
                                 pdmg = (int)Math.Ceiling(pdmg * 2f);
                             }
+                            
+                            bool crit = false;
+                            int critTarget = 20;
+                            int critRoll = GameLoop.rand.Next(20) + 1; 
+                            if (critRoll >= critTarget) { crit = true; pdmg *= 2; } 
 
-                            if (efaritay) {
-                                pdmg = (int) Math.Ceiling(pdmg * 1.2f);
+
+                            if (pdmg > boss.Phases[boss.CurrentPhase].CurrentHP)
+                                pdmg = boss.Phases[boss.CurrentPhase].CurrentHP;
+
+                            bool bossImmune = false;
+                            if (boss.Phases[boss.CurrentPhase].InvincibleIfAll.Count > 0) {
+                                bossImmune = true;
+                                foreach (var req in boss.Phases[boss.CurrentPhase].InvincibleIfAll) {
+                                    if (!req.CheckRequirement(player, false, false)) {
+                                        bossImmune = false;
+                                        Log.AddMessage(req.GetSummary(), Color.Crimson);
+                                    }
+                                }
                             }
 
-                            if (boss.SpecialCategory == "Leaf" && !eitherDamageSpecial) {
-                                pdmg = 0;    
-                                Log.AddMessage(new ColoredString("You need a special kind of weapon to damage this enemy!", Color.Crimson, Color.Black));
-                            }
-
-                            if (efaritay) {
-                                pdmg = (int) Math.Ceiling(pdmg * 1.2f);
-                            }
-
-                            if ((player.GetDamageType() == "Undead" && boss.SpecialCategory != "Undead") || (player.GetDamageType() == "Ratlike" && boss.SpecialCategory != "Ratlike")) {
-                                pdmg = 0;    
-                                Log.AddMessage(new ColoredString("That kind of attack only works against the " + player.GetDamageType().ToLower() + "!", Color.Crimson, Color.Black));
-                            } else { 
-                                int critTarget = 20;
-
-                                if (player.PrayerActive("Improved Critical I"))
-                                    critTarget -= 1;
-                                if (player.PrayerActive("Improved Critical II"))
-                                    critTarget -= 2;
-                                if (player.PrayerActive("Improved Critical III"))
-                                    critTarget -= 3;
-
-                                int critRoll = GameLoop.rand.Next(20) + 1;
-
-                                if (critRoll >= critTarget) {
-                                    crit = true;
-                                    pdmg *= 2;
-                                } 
-
-
-                                if (pdmg > boss.Phases[boss.CurrentPhase].CurrentHP)
-                                    pdmg = boss.Phases[boss.CurrentPhase].CurrentHP;
-
-                                bool bossImmune = false;
-                                if (boss.Phases[boss.CurrentPhase].InvincibleIfAll.Count > 0) {
-                                    bossImmune = true;
-                                    foreach (var req in boss.Phases[boss.CurrentPhase].InvincibleIfAll) {
-                                        if (!req.CheckRequirement(player, false, false)) {
-                                            bossImmune = false;
-                                            Log.AddMessage(req.GetSummary(), Color.Crimson);
-                                        }
+                            if (!bossImmune) {
+                                boss.Phases[boss.CurrentPhase].CurrentHP -= pdmg;
+                                     
+                                Log.AddMessage(new ColoredString("You hit " + (boss.Phases[boss.CurrentPhase].ProperName ? "" : "the ") + boss.Phases[boss.CurrentPhase].Name + " for " + pdmg + "." + (crit ? " Critical Hit!" : ""), crit ? Color.Lime : Color.Green, Color.Black));
+                                
+                                if (boss.Phases[boss.CurrentPhase].HitActionOdds > 0 && GameLoop.rand.Next(boss.Phases[boss.CurrentPhase].HitActionOdds) == 0) {
+                                    foreach (var act in boss.Phases[boss.CurrentPhase].HitActions) {
+                                        act.Execute();
                                     }
                                 }
 
-                                if (!bossImmune) {
-                                    boss.Phases[boss.CurrentPhase].CurrentHP -= pdmg;
-                                     
-                                    Log.AddMessage(new ColoredString("You hit " + (boss.Phases[boss.CurrentPhase].ProperName ? "" : "the ") + boss.Phases[boss.CurrentPhase].Name + " for " + pdmg + "." + (crit ? " Critical Hit!" : ""), crit ? Color.Lime : Color.Green, Color.Black));
-                                
-                                    if (boss.Phases[boss.CurrentPhase].HitActionOdds > 0 && GameLoop.rand.Next(boss.Phases[boss.CurrentPhase].HitActionOdds) == 0) {
-                                        foreach (var act in boss.Phases[boss.CurrentPhase].HitActions) {
-                                            act.Execute();
-                                        }
-                                    }
-
-                                    foreach (var con in boss.Phases[boss.CurrentPhase].PhaseConditions) {
-                                        if (boss.Phases.Count > con.NewPhase) {
-                                            if (con.When == "Hit") {
-                                                if (GameLoop.rand.Next(con.TriggerNum) == 0) {
-                                                    int currHP = boss.Phases[boss.CurrentPhase].CurrentHP;
-                                                    boss.CurrentPhase = con.NewPhase;
-                                                    boss.Phases[boss.CurrentPhase].CurrentHP = Math.Clamp(currHP + con.HealOnTransition, currHP, boss.Phases[boss.CurrentPhase].MaxHP);
-                                                    GameLoop.ZPO.Log.AddMessage(con.GetMessage());
-                                                }
+                                foreach (var con in boss.Phases[boss.CurrentPhase].PhaseConditions) {
+                                    if (boss.Phases.Count > con.NewPhase) {
+                                        if (con.When == "Hit") {
+                                            if (GameLoop.rand.Next(con.TriggerNum) == 0) {
+                                                int currHP = boss.Phases[boss.CurrentPhase].CurrentHP;
+                                                boss.CurrentPhase = con.NewPhase;
+                                                boss.Phases[boss.CurrentPhase].CurrentHP = Math.Clamp(currHP + con.HealOnTransition, currHP, boss.Phases[boss.CurrentPhase].MaxHP);
+                                                GameLoop.WTN.Log.AddMessage(con.GetMessage());
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            if (player.IsMaging()) {  
-                                player.TryGrantExp("Magic", (int) (pdmg * 4 * boss.ExpMultiplier), Log, SidebarManager.RecentlyTrainedSkills);
-
-                                string cast = player.CanCast(GameLoop.ZPO.SpellLibrary[player.CastingSpell]);
-                                if (cast != "") { 
-                                    Log.AddMessage(new ColoredString("Cannot cast spell anymore: " + cast, Color.Crimson, Color.Black)); 
-                                    player.CastingSpell = "";
-                                }
-                            } else if (usedAmmo) { 
-                                player.TryGrantExp("Ranged", (int) (pdmg * 4 * boss.ExpMultiplier), Log, SidebarManager.RecentlyTrainedSkills);
-                            } else {
-                                if (player.OffenseExpSplit > 0 && !reachedKillLimit)
-                                    player.TryGrantExp("Attack", (int) (pdmg * player.OffenseExpSplit * boss.ExpMultiplier), Log, SidebarManager.RecentlyTrainedSkills);
-
-                                if (player.OffenseExpSplit < 4 && !reachedKillLimit)
-                                    player.TryGrantExp("Strength", (int) (pdmg * (4 - player.OffenseExpSplit) * boss.ExpMultiplier), Log, SidebarManager.RecentlyTrainedSkills);
-                            }
-
-                            if (player.DefenseExpSplit > 0 && !reachedKillLimit)
-                                player.TryGrantExp("Defense", (int) (pdmg * player.DefenseExpSplit * boss.ExpMultiplier), Log, SidebarManager.RecentlyTrainedSkills);
-
-                            if (player.DefenseExpSplit < 4 && !reachedKillLimit)
-                                player.TryGrantExp("Constitution", (int) (pdmg * (4 - player.DefenseExpSplit) * boss.ExpMultiplier), Log, SidebarManager.RecentlyTrainedSkills);
-
-                            if (boss.ID == player.SlayerTask|| boss.CountsAsSlayer.Contains(player.SlayerTask)) {
-                                player.TryGrantExp("Slayer", (int) (pdmg * 4 * boss.ExpMultiplier), Log, SidebarManager.RecentlyTrainedSkills);
-                            } 
+                            player.GainCombatExp((int) (pdmg * boss.ExpMultiplier), reachedKillLimit, ammo == 1);
 
                             if (boss.Phases[boss.CurrentPhase].CurrentHP <= 0) {
                                 bool canKill = true;
@@ -464,7 +350,7 @@ namespace WorldtreeNexus.UI {
                                     } else {
                                         canKill = false;
                                         boss.Phases[boss.CurrentPhase].CurrentHP = 0;
-                                        Log.AddMessage(new ColoredString("You need " + GameLoop.ZPO.ResolveItemName(boss.KillItem) + " to finish this enemy off.", Color.Crimson, Color.Black)); 
+                                        Log.AddMessage(new ColoredString("You need " + GameLoop.WTN.ResolveItemName(boss.KillItem) + " to finish this enemy off.", Color.Crimson, Color.Black)); 
                                     }
                                 }
 
@@ -472,32 +358,12 @@ namespace WorldtreeNexus.UI {
                                     boss.TimeLastKilled = Helper.Time();
                                     boss.AttackingPlayer = false;
 
-                                    foreach (var quest in GameLoop.ZPO.QuestLibrary) {
-                                        if (player.QuestLog.TryGetValue(quest.Key, out QuestStatus? status)) {
-                                            if (status.CurrentStage != quest.Value.CompleteStage && quest.Value.Stages.ContainsKey(status.CurrentStage)) {
-                                                if (quest.Value.Stages[status.CurrentStage].ProgressType == "Kill" && quest.Value.Stages[status.CurrentStage].MiscString == boss.ID) {
-                                                    status.KillTracker++;
-
-                                                    if (status.KillTracker >= quest.Value.Stages[status.CurrentStage].MiscInt) {
-                                                        status.CurrentStage = quest.Value.Stages[status.CurrentStage].LeadsToStage;
-                                                        status.KillTracker = 0;
-
-                                                        if (status.CurrentStage == quest.Value.CompleteStage) {
-                                                            Log.AddMessage(new ColoredString("You have completed " + quest.Value.Name + "!", Color.Lime, Color.Black));
-                                                            quest.Value.ProcessRewards(player);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                    player.TryProgressQuest("Kill", boss.ID); 
 
                                     if (!player.CollectionLogBoss.ContainsKey(boss.ID))
                                         player.CollectionLogBoss.Add(boss.ID, new(boss.ID));
 
-                                    player.CollectionLogBoss[boss.ID].KillCount += 1;
-                                     
-                                    player.ProgressSlayerTask(boss);
+                                    player.CollectionLogBoss[boss.ID].KillCount += 1; 
 
                                     if (player.KillLimit != -1 && player.CollectionLogBoss[boss.ID].KillCount == player.KillLimit) {
                                         Log.AddMessage(new ColoredString("You've killed " + player.KillLimit + " " + boss.Phases[boss.CurrentPhase].Name + "s and will no longer receive drops or exp from them."));
@@ -525,7 +391,7 @@ namespace WorldtreeNexus.UI {
                     boss.AttackingPlayer = false;
                 }  
 
-                if (usedAmmo) {
+                if (ammo == 1) {
                     List<string> empties = new();
                     foreach (var kv in player.Equipment) {
                         if (kv.Value.Quantity <= 0) {
@@ -600,50 +466,31 @@ namespace WorldtreeNexus.UI {
                         continue;
                     }
 
-                    if (GraceTimeStart + 5000 < Helper.Time() && thisOne.TimeLastAttacked + (1000 * thisOne.AttackSpeedSeconds) < Helper.Time() && thisOne.CurrentHP > 0) {
+                    if (GraceTimeStart + 5000 < Helper.Time() && thisOne.TimeLastAttacked + (2000 * thisOne.AttackSpeedSeconds) < Helper.Time() && thisOne.CurrentHP > 0) {
                         if ((thisOne.AggroLevel > player.GetCombatLevel() && thisOne.AlwaysAggro) || thisOne.AttackingPlayer) {
                             thisOne.TimeLastAttacked = Helper.Time();
 
-                            int dmg = GoRogue.DiceNotation.Dice.Roll(thisOne.DamageDice);
+                            int dmg = GameLoop.rand.Next(thisOne.MaxHit + 1);
                             if (dmg < 0)
                                 dmg = 0;
                             int modified = dmg;
-
-                            int hitChance = GameLoop.rand.Next(100);
-
-                            bool safespotting = false;
-
-                            if (player.Equipment.TryGetValue("Weapon", out ItemWrapper? weaponWrap) && weaponWrap.GetRef() is Item wep2) {
-                                if (wep2.EquipSkill == "Ranged") {
-                                    if (thisOne.DamageType == "Melee") {
-                                        safespotting = true;
-                                    }
-                                }
-                            }
-
-                            if (player.IsMaging() && thisOne.DamageType == "Melee") {
-                                safespotting = true;
-                            }
-
-                            if (thisOne.Inaccessible && thisOne.DamageType == "Melee") {
-                                safespotting = true;
-                            }
-
-                            if (!safespotting) {
-                                if (hitChance < 25 + (player.GetEffectiveSkillLevel("Defense") / 4.0)) {
+                              
+                            if (!player.Safespotting(thisOne.DamageType, thisOne.Inaccessible)) {
+                                if (GameLoop.rand.Next(100) + (thisOne.AttackLv / 4) < 25 + (player.GetEffectiveSkillLevel("Defense") / 4.0)) {
                                     Log.AddMessage(new ColoredString(thisOne.Name + " tried to hit you but missed!", Color.Yellow, Color.Black));
                                 } else {
-                                    modified -= player.TotalArmorValue(thisOne.DamageType);
+                                    modified -= player.TotalArmorValue(thisOne.DamageType); 
 
-                                    if ((player.PrayerActive("Protect from Magic") && thisOne.DamageType == "Magic") || (player.PrayerActive("Protect from Melee") && thisOne.DamageType == "Melee") || (player.PrayerActive("Protect from Range") && thisOne.DamageType == "Ranged")) {
-                                        modified /= 2;
-                                    } 
-                                         
+                                    if (Materials.ElementalWeaknesses.TryGetValue(player.ElementalAttunement, out string? weak) && weak != null && weak == thisOne.Element) { modified = (int) Math.Ceiling(modified * 1.5); }
+                                    if (Materials.ElementalStrengths.TryGetValue(player.ElementalAttunement, out string? strong) && strong != null && strong == thisOne.Element) { modified = (int) Math.Floor(modified * 0.5); }
+                                          
                                     if (dmg != modified) {
                                         if (modified <= 0) {
-                                            Log.AddMessage(new ColoredString(thisOne.Name + " hit you for " + dmg + ", but you took no damage!", Color.Crimson, Color.Black));
-                                        } else {
-                                            Log.AddMessage(new ColoredString(thisOne.Name + " hit you for " + dmg + ", reduced to " + modified + "!", Color.Crimson, Color.Black));
+                                            Log.AddMessage(new ColoredString(thisOne.Name + " hit you for " + dmg + ", but you took no damage!", Color.DarkRed, Color.Black));
+                                        } else if (modified < dmg) {
+                                            Log.AddMessage(new ColoredString(thisOne.Name + " hit you for " + dmg + ", reduced to " + modified + "!", Color.Crimson.GetDarker(), Color.Black));
+                                        } else if (modified >= dmg) {
+                                            Log.AddMessage(new ColoredString(thisOne.Name + " hit you for " + dmg + ", but did " + modified + " because of elemental weakness!", Color.Red, Color.Black));
                                         }
                                     } else {
                                         Log.AddMessage(new ColoredString(thisOne.Name + " hit you for " + dmg + "!", Color.Crimson, Color.Black));
@@ -654,31 +501,10 @@ namespace WorldtreeNexus.UI {
                                             int odds = thisOne.DamageType == "Melee" ? 4 : thisOne.DamageType == "Ranged" ? 8 : 1;
 
                                             if (GameLoop.rand.Next(odds) == 0 && player.PoisonStatus < thisOne.PoisonSeverity) {
-                                                bool antipoison = false;
-                                                foreach (var pcheck in player.ActivePotions) {
-                                                    if (pcheck.Stat == "Antipoison" && pcheck.Change > 0) {
-                                                        antipoison = true;
-                                                    }
-                                                }
-                                                if (!antipoison) {
+                                                if (player.PotionStatus("Antipoison") <= 0) {
                                                     player.PoisonStatus = thisOne.PoisonSeverity;
                                                     Log.AddMessage("You have been poisoned!", Color.Lime);
                                                 }
-                                            }
-                                        }
-
-                                        if (player.Equipment.TryGetValue("Ring", out ItemWrapper? ring) && ring != null && ring.ID == "ringRecoil") {
-                                            int reflect = (modified / 10) + 1;
-
-                                            if (reflect > ring.Charges)
-                                                reflect = ring.Charges;
-
-                                            ring.Charges -= reflect; 
-                                            Log.AddMessage(new ColoredString("Your ring of recoil reflected " + reflect + " damage back!", Color.DeepSkyBlue, Color.Black));
-
-                                            if (ring.Charges <= 0) { 
-                                                Log.AddMessage(new ColoredString("Your ring of recoil runs out of charge and shatters.", Color.Crimson, Color.Black));
-                                                player.Equipment.Remove("Ring");
                                             }
                                         }
                                     }
@@ -696,19 +522,11 @@ namespace WorldtreeNexus.UI {
 
                     double attackSpeed = 1.0;
 
-                    if (player.Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrap) && wepWrap.GetRef() is Item wep) { 
-                        attackSpeed = wep.AttackSpeed;
-                    } 
+                    if (player.Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrap) && wepWrap.GetRef() is Item wep) { attackSpeed = wep.AttackSpeed; }
 
-                    bool hasAmmo = true;
-                    bool usedAmmo = false;
+                    int ammo = 0;
 
-                    if (LastHitTime + (1000 * attackSpeed) < Helper.Time() && AttackingMonster != null && player.GetEffectiveSkillLevel("Slayer") < AttackingMonster.SlayerReq) { 
-                        Log.AddMessage(new ColoredString("You need " + AttackingMonster.SlayerReq + " Slayer to damage this enemy.", Color.Crimson, Color.Black)); 
-                        LastHitTime = Helper.Time();
-                    }
-
-                    if (AttackingMonster != null && LastHitTime + (1000 * attackSpeed) < Helper.Time() && AttackingMonster.CurrentHP > 0 && player.GetEffectiveSkillLevel("Slayer") >= AttackingMonster.SlayerReq) {
+                    if (AttackingMonster != null && LastHitTime + (2000 * attackSpeed) < Helper.Time() && AttackingMonster.CurrentHP > 0) {
                         LastHitTime = Helper.Time();
                         AttackingMonster.AttackingPlayer = true;
 
@@ -720,55 +538,14 @@ namespace WorldtreeNexus.UI {
                         int hitChance = GameLoop.rand.Next(100); 
                              
                         // Remove a unit of ammo if this is a ranged weapon
-                        if (!player.IsMaging()) {
-                            if (wepWrap != null && wepWrap.GetRef() is Item weapon) {
-                                if (weapon.EquipAmmo == "Self") {
-                                    wepWrap.Quantity -= 1;
-                                    Item droppedAmmo = new(weapon);
-                                    droppedAmmo.Quantity = 1;
-                                    if (GameLoop.rand.Next(4) != 0)
-                                        GameLoop.ZPO.TryPlaceItem(player.NavLoc, new(droppedAmmo, AttackingMonster.Inaccessible));
-                                    usedAmmo = true;
-                                } else if (weapon.EquipAmmo == "Chargebow") {
-                                    usedAmmo = true;
-                                } else if (weapon.EquipAmmo == "RangedStandard") {
-                                    if (player.Equipment.TryGetValue("Ammo", out ItemWrapper? arrowWrap) && arrowWrap.GetRef() is Item arrow && arrow.EquipDamageType == "RangedStandard") {
-                                        arrowWrap.Quantity -= 1;
-                                        Item droppedAmmo = new(arrow);
-                                        droppedAmmo.Quantity = 1;
-                                        if (GameLoop.rand.Next(4) != 0)
-                                            GameLoop.ZPO.TryPlaceItem(player.NavLoc, new(droppedAmmo, AttackingMonster.Inaccessible));
-                                        usedAmmo = true;
-                                    } else {
-                                        hasAmmo = false;
-                                    }
-                                } else if (weapon.EquipAmmo == "RangedHeavy") {
-                                    if (player.Equipment.TryGetValue("Ammo", out ItemWrapper? boltWrap) && boltWrap.GetRef() is Item bolt && bolt.EquipDamageType == "RangedHeavy") {
-                                        boltWrap.Quantity -= 1;
-                                        Item droppedAmmo = new(bolt);
-                                        droppedAmmo.Quantity = 1;
-                                        if (GameLoop.rand.Next(4) != 0)
-                                            GameLoop.ZPO.TryPlaceItem(player.NavLoc, new(droppedAmmo, AttackingMonster.Inaccessible));
-                                        usedAmmo = true;
-                                    } else {
-                                        hasAmmo = false;
-                                    }
-                                }
-                            } 
-                        }
+                        ammo = player.UseRangedAmmo(AttackingMonster.Inaccessible);
 
-                        if (hasAmmo) {
-                            string whichSkill = player.IsMaging() ? "Magic" : usedAmmo ? "Ranged" : "Attack";
+                        if (ammo >= 0) {
+                            string whichSkill = player.IsMaging() ? "Magic" : ammo == 1 ? "Ranged" : "Attack";
 
-                            if (player.IsMaging()) {
-                                if (player.HasAllItems(["tab" + player.CastingSpell])) { 
-                                    player.ConsumeItems(["tab" + player.CastingSpell]);
-                                } else {
-                                    player.ConsumeItems(GameLoop.ZPO.SpellLibrary[player.CastingSpell].Runes, false, true);
-                                }
-                                    
-                                int spellExp = GameLoop.ZPO.SpellLibrary[player.CastingSpell].ExpOnCast;
-                                player.TryGrantExp("Magic", spellExp, Log, SidebarManager.RecentlyTrainedSkills);
+                            if (player.IsMaging() && player.CombatCasting != null) { 
+                                player.ConsumeItems(player.CombatCasting.Talismans(), false, true);  
+                                player.TryGrantExp("Magic", player.CombatCasting.CastExp(), Log, SidebarManager.RecentlyTrainedSkills); 
                             }
 
                             double eqpAccuracy = 0; 
@@ -780,20 +557,8 @@ namespace WorldtreeNexus.UI {
                                 }
                             }
 
-                            bool efaritay = false;
-
-                            if (player.Equipment.TryGetValue("Ring", out ItemWrapper? ring) && ring != null && ring.ID == "ringEfaritay" && AttackingMonster.SpecialCategory == "Vampiric") { 
-                                ring.Charges -= 1; 
-                                efaritay = true;
-                                eqpAccuracy += 10;
-
-                                if (ring.Charges <= 0) { 
-                                    Log.AddMessage(new ColoredString("Your Efaritay's aid runs out of charge and shatters.", Color.Crimson, Color.Black));
-                                    player.Equipment.Remove("Ring");
-                                }
-                            }
-
-                            if (AttackingMonster.Inaccessible && (player.GetDamageType() == "Crush" || player.GetDamageType() == "Stab" || player.GetDamageType() == "Slash")) {
+                            string dmgType = player.GetDamageType();
+                            if (AttackingMonster.Inaccessible && (dmgType == "Crush" || dmgType == "Stab" || dmgType == "Slash")) {
                                 Log.AddMessage(new ColoredString("You can't reach this enemy with melee attacks. Try ranged or magic instead.", Color.Crimson, Color.Black));
                             } else {
                                 if (curr.Dark && !player.HasLightSource()) { 
@@ -801,88 +566,36 @@ namespace WorldtreeNexus.UI {
                                     hitChance = 999;
                                 }
 
-                                if (hitChance > 25 + (player.GetEffectiveSkillLevel(whichSkill) / 2.0) + eqpAccuracy) {
+                                if (hitChance + (player.GetEffectiveSkillLevel(whichSkill) / 4.0) + eqpAccuracy < 25 + (AttackingMonster.DefenseLv / 4)) {
                                     Log.AddMessage(new ColoredString("You tried to hit " + (AttackingMonster.ProperName ? "" : "the ") + AttackingMonster.Name + " but missed!", Color.Crimson, Color.Black));
                                 } else {
-                                    int pdmg = GoRogue.DiceNotation.Dice.Roll(player.GetDamageDice());
-                                    bool crit = false;
+                                    int pdmg = GameLoop.rand.Next(player.MaxDamage() + 1);
 
-                                    if (player.GetDamageType() == AttackingMonster.WeakType) {
-                                        pdmg = (int)Math.Ceiling(pdmg * 1.5f);
-                                    }
+                                    if (player.GetDamageType() == AttackingMonster.WeakType) { pdmg = (int)Math.Ceiling(pdmg * 1.5f); }
+                                    Materials.ElementalWeaknesses.TryGetValue(AttackingMonster.Element, out string? weak);
+                                    if (weak != null && weak != "" && player.GetDamageElement() == weak) { pdmg = (int)Math.Ceiling(pdmg * 1.5f); }
+                                    Materials.ElementalStrengths.TryGetValue(AttackingMonster.Element, out string? strong);
+                                    if (strong != null && strong != "" && player.GetDamageElement() == strong) { pdmg = (int)Math.Ceiling(pdmg * 0.5f); }
+
                                          
                                     bool eitherDamageSpecial = AttackingMonster.SpecialCategory != "" && (player.GetDamageType() == AttackingMonster.SpecialCategory || player.GetSecondaryDamageType() == AttackingMonster.SpecialCategory);
 
                                     if (eitherDamageSpecial) { // Mostly for Crumble Undead, but open to similar spells for Demons, Vamps, etc
                                         pdmg = (int)Math.Ceiling(pdmg * 2f);
                                     }
+                                    
+                                    bool crit = false; int critTarget = 20; int critRoll = GameLoop.rand.Next(20) + 1; 
+                                    if (critRoll >= critTarget) { crit = true; pdmg *= 2; } 
 
-                                    if (efaritay) {
-                                        pdmg = (int) Math.Ceiling(pdmg * 1.2f);
-                                    }
+                                    if (pdmg > AttackingMonster.CurrentHP)
+                                        pdmg = AttackingMonster.CurrentHP;
 
-                                    if (AttackingMonster.SpecialCategory == "Leaf" && !eitherDamageSpecial) {
-                                        pdmg = 0;    
-                                        Log.AddMessage(new ColoredString("You need a special kind of weapon to damage this enemy!", Color.Crimson, Color.Black));
-                                    }
-
-                                    if (player.GetDamageType() == "Undead" && AttackingMonster.SpecialCategory != "Undead") {
-                                        pdmg = 0;
-                                        Log.AddMessage(new ColoredString("That kind of attack only works against the " + player.GetDamageType().ToLower() + "!", Color.Crimson, Color.Black));
-                                    } else { 
-                                        int critTarget = 20;
-
-                                        if (player.PrayerActive("Improved Critical I"))
-                                            critTarget -= 1;
-                                        if (player.PrayerActive("Improved Critical II"))
-                                            critTarget -= 2;
-                                        if (player.PrayerActive("Improved Critical III"))
-                                            critTarget -= 3;
-
-                                        int critRoll = GameLoop.rand.Next(20) + 1;
-
-                                        if (critRoll >= critTarget) {
-                                            crit = true;
-                                            pdmg *= 2;
-                                        } 
-
-
-                                        if (pdmg > AttackingMonster.CurrentHP)
-                                            pdmg = AttackingMonster.CurrentHP;
-
-                                        AttackingMonster.CurrentHP -= pdmg;
+                                    AttackingMonster.CurrentHP -= pdmg;
                                      
-                                        Log.AddMessage(new ColoredString("You hit " + (AttackingMonster.ProperName ? "" : "the ") + AttackingMonster.Name + " for " + pdmg + "." + (crit ? " Critical Hit!" : ""), crit ? Color.Lime : Color.Green, Color.Black));
-                                    }
-
-                                    if (player.IsMaging()) {  
-                                        player.TryGrantExp("Magic", (pdmg * 4), Log, SidebarManager.RecentlyTrainedSkills);
-
-                                        string cast = player.CanCast(GameLoop.ZPO.SpellLibrary[player.CastingSpell]);
-                                        if (cast != "") { 
-                                            Log.AddMessage(new ColoredString("Cannot cast spell anymore: " + cast, Color.Crimson, Color.Black)); 
-                                            player.CastingSpell = "";
-                                        }
-                                    } else if (usedAmmo) { 
-                                        player.TryGrantExp("Ranged", pdmg * 4, Log, SidebarManager.RecentlyTrainedSkills);
-                                    } else {
-                                        if (player.OffenseExpSplit > 0 && !reachedKillLimit)
-                                            player.TryGrantExp("Attack", pdmg * player.OffenseExpSplit, Log, SidebarManager.RecentlyTrainedSkills);
-
-                                        if (player.OffenseExpSplit < 4 && !reachedKillLimit)
-                                            player.TryGrantExp("Strength", pdmg * (4 - player.OffenseExpSplit), Log, SidebarManager.RecentlyTrainedSkills);
-                                    }
-
-                                    if (player.DefenseExpSplit > 0 && !reachedKillLimit)
-                                        player.TryGrantExp("Defense", pdmg * player.DefenseExpSplit, Log, SidebarManager.RecentlyTrainedSkills);
-
-                                    if (player.DefenseExpSplit < 4 && !reachedKillLimit)
-                                        player.TryGrantExp("Constitution", pdmg * (4 - player.DefenseExpSplit), Log, SidebarManager.RecentlyTrainedSkills);
-
-                                    if (AttackingMonster.ID == player.SlayerTask|| AttackingMonster.CountsAsSlayer.Contains(player.SlayerTask)) {
-                                        player.TryGrantExp("Slayer", pdmg * 4, Log, SidebarManager.RecentlyTrainedSkills);
-                                    }  
-
+                                    Log.AddMessage(new ColoredString("You hit " + (AttackingMonster.ProperName ? "" : "the ") + AttackingMonster.Name + " for " + pdmg + "." + (crit ? " Critical Hit!" : ""), crit ? Color.Lime : Color.Green, Color.Black));
+                                    
+                                    player.GainCombatExp(pdmg, reachedKillLimit, ammo == 1);
+                                     
                                     if (AttackingMonster.CurrentHP <= 0) {
                                         bool canKill = true;
                                         if (AttackingMonster.KillItem != "") {
@@ -891,7 +604,7 @@ namespace WorldtreeNexus.UI {
                                             } else {
                                                 canKill = false;
                                                 AttackingMonster.CurrentHP = 0;
-                                                Log.AddMessage(new ColoredString("You need " + GameLoop.ZPO.ResolveItemName(AttackingMonster.KillItem) + " to finish this enemy off.", Color.Crimson, Color.Black)); 
+                                                Log.AddMessage(new ColoredString("You need " + GameLoop.WTN.ResolveItemName(AttackingMonster.KillItem) + " to finish this enemy off.", Color.Crimson, Color.Black)); 
                                             }
                                         }
 
@@ -899,27 +612,7 @@ namespace WorldtreeNexus.UI {
                                             AttackingMonster.TimeLastKilled = Helper.Time();
                                             AttackingMonster.AttackingPlayer = false;
 
-                                            foreach (var quest in GameLoop.ZPO.QuestLibrary) {
-                                                if (player.QuestLog.TryGetValue(quest.Key, out QuestStatus? status)) {
-                                                    if (status.CurrentStage != quest.Value.CompleteStage && quest.Value.Stages.ContainsKey(status.CurrentStage)) {
-                                                        if (quest.Value.Stages[status.CurrentStage].ProgressType == "Kill" && quest.Value.Stages[status.CurrentStage].MiscString == AttackingMonster.ID) {
-                                                            status.KillTracker++;
-
-                                                            if (status.KillTracker >= quest.Value.Stages[status.CurrentStage].MiscInt) {
-                                                                status.CurrentStage = quest.Value.Stages[status.CurrentStage].LeadsToStage;
-                                                                status.KillTracker = 0; 
-
-                                                                if (status.CurrentStage == quest.Value.CompleteStage) {
-                                                                    Log.AddMessage(new ColoredString("You have completed " + quest.Value.Name + "!", Color.Lime, Color.Black));
-                                                                    quest.Value.ProcessRewards(player);
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            player.ProgressSlayerTask(AttackingMonster);
+                                            player.TryProgressQuest("Kill", AttackingMonster.ID);
 
                                             if (!player.CollectionLog.ContainsKey(AttackingMonster.ID))
                                                 player.CollectionLog.Add(AttackingMonster.ID, new(AttackingMonster.ID));
@@ -953,9 +646,22 @@ namespace WorldtreeNexus.UI {
                     } 
                     
                     if (printY < 35) {
+                        mini.Con.PrintClickable(56, printY, new ColoredString(20.AsString(), Color.Crimson, Color.Black), () => {
+                            int wins = Helper.CombatSimulator(player.GetSimBlock(curr.MonstersHere[i].DamageType), curr.MonstersHere[i].GetSimBlock(), 100);
+
+                            Color col = Color.White;
+
+                            if (wins > 80) { col = Color.Lime; }
+                            else if (wins > 60) { col = Color.ForestGreen; }
+                            else if (wins < 20) { col = Color.Crimson; }
+                            else if (wins < 40) { col = Color.Yellow; }
+
+                            Log.AddMessage("Approximate odds of success against " + curr.MonstersHere[i].Name + " (with no food or prayer): " + wins + "%", col);  
+                        });
+
                         mini.Con.Print(57, printY, "|");
 
-                        if (GameLoop.ZPO.SpellLibrary.TryGetValue("utilMonsterInspect", out Spell? inspect) && inspect != null) { 
+                        if (GameLoop.WTN.SpellLibrary.TryGetValue("utilMonsterInspect", out Spell? inspect) && inspect != null) { 
                             if (player.CanCast(inspect) == "") {
                                 mini.Con.PrintClickable(57, printY, new ColoredString("?", Color.MediumPurple, Color.Black), () => {
                                     Log.AddMessage("You cast monster inspect on the " + curr.MonstersHere[i].Name + ".", Color.MediumPurple);
@@ -974,7 +680,7 @@ namespace WorldtreeNexus.UI {
                             }
                         }); 
                         mini.Con.Print(90, printY, ("(" + curr.MonstersHere[i].CurrentHP + "/" + curr.MonstersHere[i].MaxHP + " hp)").Align(HorizontalAlignment.Right, 15));
-                        mini.Con.Print(80, printY, ("[Lv " + curr.MonstersHere[i].Level.ToString().Align(HorizontalAlignment.Right, 4) + "]"));
+                        mini.Con.Print(86, printY, ("[" + curr.MonstersHere[i].Level.ToString().Align(HorizontalAlignment.Right, 3) + "]"));
 
                         mini.Con.PrintClickable(106, printY++, "Log", () => {
                             ExtraWindows.CollectionLog.IsVisible = true;
@@ -984,7 +690,7 @@ namespace WorldtreeNexus.UI {
                         });
                     }
 
-                    if (usedAmmo) {
+                    if (ammo == 1) {
                         List<string> empties = new();
                         foreach (var kv in player.Equipment) {
                             if (kv.Value.Quantity <= 0) {

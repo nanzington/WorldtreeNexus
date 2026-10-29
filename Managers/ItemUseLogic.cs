@@ -1,4 +1,5 @@
-﻿using WorldtreeNexus.DataTypes;
+﻿using Troschuetz.Random;
+using WorldtreeNexus.DataTypes;
 using Key = SadConsole.Input.Keys;
 
 namespace WorldtreeNexus.Managers {
@@ -9,16 +10,10 @@ namespace WorldtreeNexus.Managers {
             if (itemWrap.GetRef() is Item item) { 
                 if (item.UseString == "GetGold") {
                     player.GiveGold(item.UseInt); 
-                    GameLoop.ZPO.Log.AddMessage("You open the " + item.Name + " and find " + item.UseInt + " gold pieces.");
-                } else if (item.UseString == "Bones") {
-                    GameLoop.ZPO.Log.AddMessage("You bury the " + item.Name.ToLowerInvariant() + " and get " + item.UseInt + " prayer experience.");
-                    player.TryGrantExp("Prayer", item.UseInt, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
-                } else if (item.UseString == "Ashes") {
-                    GameLoop.ZPO.Log.AddMessage("You scatter the " + item.Name.ToLowerInvariant() + " and get " + item.UseInt + " prayer experience.");
-                    player.TryGrantExp("Prayer", item.UseInt, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
+                    GameLoop.WTN.Log.AddMessage("You open the " + item.Name + " and find " + item.UseInt + " gold pieces.");
                 } else if (item.UseString == "Heal") {
-                    player.CurrentHP = Math.Clamp(player.CurrentHP + item.UseInt, player.CurrentHP, player.Skills["Constitution"].Level);
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("You eat the " + item.Name.ToLowerInvariant() + " and recover some hitpoints.", Color.Goldenrod, Color.Black));
+                    player.CurrentHP = Math.Clamp(player.CurrentHP + item.UseInt, player.CurrentHP, player.Skills["Hitpoints"].Level);
+                    GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the " + item.Name.ToLowerInvariant() + " and recover some Hitpoints.", Color.Goldenrod, Color.Black));
 
                     if (item.Potion != null) {
                         for (int i = 0; i < item.Potion.Count; i++) {
@@ -27,7 +22,7 @@ namespace WorldtreeNexus.Managers {
                     }
                 }  else if (item.UseString == "Hurt") {
                     player.CurrentHP = Math.Clamp(player.CurrentHP - item.UseInt, 0, player.CurrentHP);
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("You eat the " + item.Name.ToLowerInvariant() + ". It tastes... painful. You lose " + item.UseInt + " health.", Color.Goldenrod, Color.Black));
+                    GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the " + item.Name.ToLowerInvariant() + ". It tastes... painful. You lose " + item.UseInt + " health.", Color.Goldenrod, Color.Black));
 
                     if (item.Potion != null) {
                         for (int i = 0; i < item.Potion.Count; i++) {
@@ -37,41 +32,41 @@ namespace WorldtreeNexus.Managers {
                 } else if (item.UseString == "Kebab") {
                     int num = GameLoop.rand.Next(32) + 1;
                     if (num == 1) { 
-                        player.CurrentHP = Math.Clamp(player.CurrentHP + 7, player.CurrentHP, player.Skills["Constitution"].Level);
+                        player.CurrentHP = Math.Clamp(player.CurrentHP + 7, player.CurrentHP, player.Skills["Hitpoints"].Level);
                         player.TryAddPotionEffect("Attack", 2);
                         player.TryAddPotionEffect("Strength", 2);
                         player.TryAddPotionEffect("Defense", 2);
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You eat the kebab. Wow, that was an amazing kebab! You feel really invigorated.", Color.Lime, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. Wow, that was an amazing kebab! You feel really invigorated.", Color.Lime, Color.Black));
                     } else if (num <= 9) {
-                        player.CurrentHP = Math.Clamp(player.CurrentHP + 6, player.CurrentHP, player.Skills["Constitution"].Level);
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You eat the kebab. That was a good kebab. You feel a lot better.", Color.Green, Color.Black));
+                        player.CurrentHP = Math.Clamp(player.CurrentHP + 6, player.CurrentHP, player.Skills["Hitpoints"].Level);
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. That was a good kebab. You feel a lot better.", Color.Green, Color.Black));
                     } else if (num <= 29) {
-                        player.CurrentHP = Math.Clamp(player.CurrentHP + 3, player.CurrentHP, player.Skills["Constitution"].Level);
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You eat the kebab. It heals some health.", Color.Green, Color.Black));
+                        player.CurrentHP = Math.Clamp(player.CurrentHP + 3, player.CurrentHP, player.Skills["Hitpoints"].Level);
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. It heals some health.", Color.Green, Color.Black));
                     } else if (num <= 30) {
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You eat the kebab. That kebab didn't seem to do a lot.", Color.Yellow, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. That kebab didn't seem to do a lot.", Color.Yellow, Color.Black));
                     } else if (num <= 31) { 
                         string randSkill = player.Skills.Keys.ToList()[GameLoop.rand.Next(player.Skills.Count)];
-                        while (randSkill == "Constitution") { 
+                        while (randSkill == "Hitpoints") { 
                             randSkill = player.Skills.Keys.ToList()[GameLoop.rand.Next(player.Skills.Count)];
                         }
                         player.TryAddPotionEffect(randSkill, -3);
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You eat the kebab. That tasted a bit dodgy. You feel a bit ill.", Color.Crimson, Color.Black));
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Eating the kebab has damaged your " + randSkill + " stat.", Color.Crimson, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. That tasted a bit dodgy. You feel a bit ill.", Color.Crimson, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("Eating the kebab has damaged your " + randSkill + " stat.", Color.Crimson, Color.Black));
                     } else if (num <= 32) {
                         string randSkill = player.Skills.Keys.ToList()[GameLoop.rand.Next(player.Skills.Count)];
-                        while (randSkill == "Constitution") { 
+                        while (randSkill == "Hitpoints") { 
                             randSkill = player.Skills.Keys.ToList()[GameLoop.rand.Next(player.Skills.Count)];
                         }
                         player.TryAddPotionEffect(randSkill, -4);
                         player.TryAddPotionEffect("Attack", -3);
                         player.TryAddPotionEffect("Strength", -3);
                         player.TryAddPotionEffect("Defense", -3);
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You eat the kebab. That tasted very dodgy. You feel very ill.", Color.Crimson, Color.Black));
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Eating the kebab has done damage to some of your stats.", Color.Crimson, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. That tasted very dodgy. You feel very ill.", Color.Crimson, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("Eating the kebab has done damage to some of your stats.", Color.Crimson, Color.Black));
                     }
                 } else if (item.UseString == "FillPot") {
-                    if (GameLoop.ZPO.ItemLibrary.TryGetValue("plantPot", out Item? filledPot) && filledPot != null) {
+                    if (GameLoop.WTN.ItemLibrary.TryGetValue("plantPot", out Item? filledPot) && filledPot != null) {
                         player.TryPickup(filledPot, 1);
                     } else {
                         return false;
@@ -81,7 +76,7 @@ namespace WorldtreeNexus.Managers {
                     itemWrap.Charges -= 1;
 
                     if (itemWrap.Charges <= 0) { 
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Your ring of returning runs out of charge and shatters.", Color.Crimson, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("Your ring of returning runs out of charge and shatters.", Color.Crimson, Color.Black));
                         return true;
                     } else {
                         return false;
@@ -94,8 +89,8 @@ namespace WorldtreeNexus.Managers {
                     ExtraWindows.TeleportDests = item.TeleportLocations;
                     return false;
                 } else if (item.UseString == "Compost") {
-                    if (GameLoop.ZPO.Atlas.ContainsKey(player.NavLoc)) {
-                        Location curr = GameLoop.ZPO.Atlas[player.NavLoc];
+                    if (GameLoop.WTN.Atlas.ContainsKey(player.NavLoc)) {
+                        Location curr = GameLoop.WTN.Atlas[player.NavLoc];
 
                         bool foundPlantSpot = false;
 
@@ -106,20 +101,20 @@ namespace WorldtreeNexus.Managers {
                                 if (patch.SeedPlanted != "" && patch.Compost < item.UseInt) {
                                     patch.Compost = item.UseInt;
                                     foundPlantSpot = true;
-                                    GameLoop.ZPO.Log.AddMessage(new ColoredString("Applied compost to a patch growing " + GameLoop.ZPO.ResolveItemName(patch.SeedPlanted) + ".", Color.Crimson, Color.Black));
+                                    GameLoop.WTN.Log.AddMessage(new ColoredString("Applied compost to a patch growing " + GameLoop.WTN.ResolveItemName(patch.SeedPlanted) + ".", Color.Crimson, Color.Black));
                                     break;
                                 }
                             }
                         }
 
                         if (!foundPlantSpot) {
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("No patches here that need compost.", Color.Crimson, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("No patches here that need compost.", Color.Crimson, Color.Black));
                             return false;
                         }
                     }
                 } else if (item.UseString == "PlantSeed") {
-                    if (GameLoop.ZPO.Atlas.ContainsKey(player.NavLoc)) {
-                        Location curr = GameLoop.ZPO.Atlas[player.NavLoc];
+                    if (GameLoop.WTN.Atlas.ContainsKey(player.NavLoc)) {
+                        Location curr = GameLoop.WTN.Atlas[player.NavLoc];
 
                         bool foundPlantSpot = false;
 
@@ -133,26 +128,26 @@ namespace WorldtreeNexus.Managers {
                                         patch.TimeLeft = item.UseInt3;
                                         patch.RegrowTime = item.UseInt4;
                                         foundPlantSpot = true;
-                                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You plant the " + item.Name.ToLowerInvariant() + ".", Color.Goldenrod, Color.Black));
+                                        GameLoop.WTN.Log.AddMessage(new ColoredString("You plant the " + item.Name.ToLowerInvariant() + ".", Color.Goldenrod, Color.Black));
 
                                         if (player.Equipment.TryGetValue("Amulet", out ItemWrapper? eqp) && eqp != null && eqp.ID == "amuletBounty" && GameLoop.rand.Next(4) == 0) {
                                             eqp.Charges -= 1; 
-                                            GameLoop.ZPO.Log.AddMessage(new ColoredString("Your amulet of bounty saves you a seed!", Color.AntiqueWhite, Color.Black));
+                                            GameLoop.WTN.Log.AddMessage(new ColoredString("Your amulet of bounty saves you a seed!", Color.AntiqueWhite, Color.Black));
 
                                             if (eqp.Charges <= 0) { 
-                                                GameLoop.ZPO.Log.AddMessage(new ColoredString("Your amulet of bounty runs out of charge and shatters.", Color.Crimson, Color.Black));
+                                                GameLoop.WTN.Log.AddMessage(new ColoredString("Your amulet of bounty runs out of charge and shatters.", Color.Crimson, Color.Black));
                                                 player.Equipment.Remove("Amulet");
                                             }
                                             return false;
                                         }
 
                                         if (item.Name.Contains("Plant pot")) {
-                                            if (GameLoop.ZPO.ItemLibrary.TryGetValue("plantPotEmpty", out Item? newPot) && newPot != null) {
+                                            if (GameLoop.WTN.ItemLibrary.TryGetValue("plantPotEmpty", out Item? newPot) && newPot != null) {
                                                 player.TryPickup(newPot, 1);
                                             }
                                         }
                                     } else {
-                                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You need " + item.UseInt + " Farming to plant that.", Color.Crimson, Color.Black));
+                                        GameLoop.WTN.Log.AddMessage(new ColoredString("You need " + item.UseInt + " Farming to plant that.", Color.Crimson, Color.Black));
                                         return false;
                                     }
                                     break;
@@ -161,43 +156,42 @@ namespace WorldtreeNexus.Managers {
                         }
                     
                         if (!foundPlantSpot) {
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("No " + item.UseString2.ToLowerInvariant() + " patches here to plant that.", Color.Crimson, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("No " + item.UseString2.ToLowerInvariant() + " patches here to plant that.", Color.Crimson, Color.Black));
                             return false;
                         }
                     } else {
                         return false;
                     }
                 } else if (item.UseString == "Dig") {
-                    ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Dig");
-                    ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "Map");
-                    ClueLogic.GenericStep(player, GameLoop.ZPO.Log, "HotCold");
+                    ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Dig");
+                    ClueLogic.GenericStep(player, GameLoop.WTN.Log, "Map");
+                    ClueLogic.GenericStep(player, GameLoop.WTN.Log, "HotCold");
 
-                    if (GameLoop.ZPO.Atlas.TryGetValue(player.NavLoc, out Location? curr)) {
-                        if (curr != null) {
-                            if (curr.DigItem != "") {
-                                if (GameLoop.ZPO.ItemLibrary.TryGetValue(curr.DigItem, out Item? dug)) {
-                                    if (dug != null) {
-                                        player.TryPickup(new Item(dug), dug.Quantity);
-                                        if (!player.ItemsEverObtained.Contains(dug.ID)) { player.ItemsEverObtained.Add(dug.ID); }
-                                    }
-                                }
+                    if (GameLoop.WTN.Atlas.TryGetValue(player.NavLoc, out Location? curr) && curr != null && curr.DigItem != "") { 
+                        if (curr.LastDigTime + (curr.DigCooldown * 1000) < Helper.Time() || curr.LastDigTime == 0) { 
+                            if (GameLoop.WTN.ResolveItem(curr.DigItem) is Item dug) { 
+                                curr.LastDigTime = Helper.Time();
+                                player.TryPickup(dug, dug.Quantity);
+                                if (!player.ItemsEverObtained.Contains(dug.ID)) { player.ItemsEverObtained.Add(dug.ID); } 
                             }
+                        } else {
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("You already dug up an item here recently. (" + curr.DigCooldown + " second cooldown)", Color.Crimson, Color.Black));
                         }
                     }
                 } else if (item.UseString == "ClueTutorial") {
-                    ClueLogic.SetOrShowStep("Tutorial", player, GameLoop.ZPO.Log);
+                    ClueLogic.SetOrShowStep("Tutorial", player, GameLoop.WTN.Log);
                 } else if (item.UseString == "ClueBeginner") {
-                    ClueLogic.SetOrShowStep("Beginner", player, GameLoop.ZPO.Log);
+                    ClueLogic.SetOrShowStep("Beginner", player, GameLoop.WTN.Log);
                 } else if (item.UseString == "ClueEasy") {
-                    ClueLogic.SetOrShowStep("Easy", player, GameLoop.ZPO.Log);
+                    ClueLogic.SetOrShowStep("Easy", player, GameLoop.WTN.Log);
                 } else if (item.UseString == "ClueMedium") {
-                    ClueLogic.SetOrShowStep("Medium", player, GameLoop.ZPO.Log);
+                    ClueLogic.SetOrShowStep("Medium", player, GameLoop.WTN.Log);
                 } else if (item.UseString == "ClueHard") {
-                    ClueLogic.SetOrShowStep("Hard", player, GameLoop.ZPO.Log);
+                    ClueLogic.SetOrShowStep("Hard", player, GameLoop.WTN.Log);
                 } else if (item.UseString == "ClueElite") {
-                    ClueLogic.SetOrShowStep("Elite", player, GameLoop.ZPO.Log);
+                    ClueLogic.SetOrShowStep("Elite", player, GameLoop.WTN.Log);
                 } else if (item.UseString == "ClueMaster") {
-                    ClueLogic.SetOrShowStep("Master", player, GameLoop.ZPO.Log);
+                    ClueLogic.SetOrShowStep("Master", player, GameLoop.WTN.Log);
                 } else if (item.UseString == "Casket") {
                     List<ItemDrop> rolledItems = new();
                     List<ItemDrop> guaranteedItems = new();
@@ -232,11 +226,11 @@ namespace WorldtreeNexus.Managers {
                     rolledItems.Shuffle();
                  
                 
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("You open the casket...", Color.Green, Color.Black));
+                    GameLoop.WTN.Log.AddMessage(new ColoredString("You open the casket...", Color.Green, Color.Black));
                     for (int i = 0; i < 5; i++) {
                         if (i < rolledItems.Count) {
                             guaranteedItems.Remove(rolledItems[i]);
-                            if (GameLoop.ZPO.ItemLibrary.TryGetValue(rolledItems[i].ItemID, out Item? rolled) && rolled != null) {
+                            if (GameLoop.WTN.ItemLibrary.TryGetValue(rolledItems[i].ItemID, out Item? rolled) && rolled != null) {
                                 Item spawn = new(rolled);
 
                                 if (rolledItems[i].QuantityMin == rolledItems[i].QuantityMax) { spawn.Quantity = rolledItems[i].QuantityMin; } 
@@ -258,22 +252,22 @@ namespace WorldtreeNexus.Managers {
                                 
                                 string name = (spawn.Quantity > 1 ? spawn.Quantity + "x " : "") + spawn.Name + (spawn.Quantity > 1 && spawn.Name[^1] != 's' ? "s" : "");
 
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString("The casket had " + name + " in it!" + (newToLog ? " (new!)" : ""), excitement, Color.Black));
+                                GameLoop.WTN.Log.AddMessage(new ColoredString("The casket had " + name + " in it!" + (newToLog ? " (new!)" : ""), excitement, Color.Black));
                                 player.TryPickup(spawn, spawn.Quantity); 
                                 if (!player.ItemsEverObtained.Contains(spawn.ID)) { player.ItemsEverObtained.Add(spawn.ID); }
                             }
                         } else { 
                             player.GiveGold(item.UseInt);
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("The casket had " + item.UseInt + " gold pieces in it.", Color.DarkGoldenrod, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("The casket had " + item.UseInt + " gold pieces in it.", Color.DarkGoldenrod, Color.Black));
                         }
                     }
 
                     
                     
                     if (guaranteedItems.Count > 0) {
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Due to Dry Protection it also has:", Color.Green, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("Due to Dry Protection it also has:", Color.Green, Color.Black));
                         for (int i = 0; i < guaranteedItems.Count; i++) { 
-                           if (GameLoop.ZPO.ItemLibrary.TryGetValue(guaranteedItems[i].ItemID, out Item? rolled) && rolled != null) {
+                           if (GameLoop.WTN.ItemLibrary.TryGetValue(guaranteedItems[i].ItemID, out Item? rolled) && rolled != null) {
                                 Item spawn = new(rolled);
 
                                 if (guaranteedItems[i].QuantityMin == guaranteedItems[i].QuantityMax) { spawn.Quantity = guaranteedItems[i].QuantityMin; } 
@@ -295,7 +289,7 @@ namespace WorldtreeNexus.Managers {
 
                                 string name = (spawn.Quantity > 1 ? spawn.Quantity + "x " : "") + spawn.Name + (spawn.Quantity > 1 && spawn.Name[^1] != 's' ? "s" : "");
 
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString("The casket had " + name + " in it!" + (newToLog ? " (new!)" : ""), excitement, Color.Black));
+                                GameLoop.WTN.Log.AddMessage(new ColoredString("The casket had " + name + " in it!" + (newToLog ? " (new!)" : ""), excitement, Color.Black));
                                 player.TryPickup(spawn, spawn.Quantity);
                                 if (!player.ItemsEverObtained.Contains(spawn.ID)) { player.ItemsEverObtained.Add(spawn.ID); } 
                             }
@@ -322,57 +316,40 @@ namespace WorldtreeNexus.Managers {
                     ExtraWindows.MapViewing = item.UseString2;
                     ExtraWindows.MapW = item.UseInt;
                     ExtraWindows.MapH = item.UseInt2;
-                } else if (item.UseString == "RedeemRunePouch") {
-                    Requirement lazy = new("ItemNotOwned", 1, "pouchRune");
-
-                    if (GameLoop.ZPO.Atlas.TryGetValue(player.NavLoc, out Location? isBank) && isBank.IsBank) {
-                        if (lazy.CheckRequirement(player, false, true)) {
-                            if (GameLoop.ZPO.ResolveItem("pouchRune") is Item pouch) {
-                                player.TryPickup(pouch, 1);
-                                return true;
-                            }
-                        } else {
-                            GameLoop.ZPO.Log.AddMessage("You already own a rune pouch, so you should hold onto this voucher in case you lose yours.", Color.Crimson);
-                        }
-                    } else {
-                        GameLoop.ZPO.Log.AddMessage("This can only be redeemed for a rune pouch at a bank.", Color.Crimson);
-                    }
-
-                    return false;
                 } else if (item.UseString == "Book") {
                     ExtraWindows.Book.IsVisible = true;
                     ExtraWindows.BookID = item.UseString2;
                     ExtraWindows.LeftPage = 0;
                 } else if (item.UseString == "SecondExamine") {
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString(item.MiscString, Color.SandyBrown, Color.Black));
+                    GameLoop.WTN.Log.AddMessage(new ColoredString(item.MiscString, Color.SandyBrown, Color.Black));
 
-                    foreach (var kv in GameLoop.ZPO.QuestLibrary) {
+                    foreach (var kv in GameLoop.WTN.QuestLibrary) {
                         kv.Value.CheckProgress(player, "ExamineItem", item.ID, 0);
                     }
                 } else if (item.UseString == "CleanHerb") {
-                    if (player.Skills.TryGetValue("Herblore", out Skill? herb) && herb != null) {
+                    if (player.Skills.TryGetValue("Alchemy", out Skill? herb) && herb != null) {
                         if (herb.Level >= item.UseInt) {
-                            if (GameLoop.ZPO.ItemLibrary.TryGetValue(item.ItemReturned, out Item? spawn) && spawn != null) { 
-                                player.TryGrantExp("Herblore", item.UseInt2, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
+                            if (GameLoop.WTN.ItemLibrary.TryGetValue(item.ItemReturned, out Item? spawn) && spawn != null) { 
+                                player.TryGrantExp("Alchemy", item.UseInt2, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
                                 return true;
                             } else {
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString(item.ItemReturned + " does not currently exist, herb preserved.", Color.Crimson, Color.Black));
+                                GameLoop.WTN.Log.AddMessage(new ColoredString(item.ItemReturned + " does not currently exist, herb preserved.", Color.Crimson, Color.Black));
                                 return false;
                             }
                         } else { 
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You need " + item.UseInt + " Herblore to clean that. (Have " + herb.Level + ")", Color.Crimson, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("You need " + item.UseInt + " Alchemy to clean that. (Have " + herb.Level + ")", Color.Crimson, Color.Black));
                             return false;
                         }
                     } else {
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Malformed skill list, could not find Herblore entry.", Color.Crimson, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("Malformed skill list, could not find Alchemy entry.", Color.Crimson, Color.Black));
                         return false;
                     }
                 } else if (item.UseString == "Potion") {
                     if (item.Potion != null) {
                         for (int i = 0; i < item.Potion.Count; i++) {
                             if (item.Potion[i].Stat == "Heal") { 
-                                player.CurrentHP = Math.Clamp(player.CurrentHP + item.Potion[i].Change, player.CurrentHP, player.Skills["Constitution"].Level);
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString("The " + item.Name.ToLowerInvariant() + " restores some hitpoints.", Color.Goldenrod, Color.Black)); 
+                                player.CurrentHP = Math.Clamp(player.CurrentHP + item.Potion[i].Change, player.CurrentHP, player.Skills["Hitpoints"].Level);
+                                GameLoop.WTN.Log.AddMessage(new ColoredString("The " + item.Name.ToLowerInvariant() + " restores some Hitpoints.", Color.Goldenrod, Color.Black)); 
                             } else if (item.Potion[i].Stat == "Restore") {  
                                 foreach (var pot in player.ActivePotions) {
                                     if (pot.Change < 0) {
@@ -399,51 +376,28 @@ namespace WorldtreeNexus.Managers {
 
                                 if (item.Potion[i].Stat == "Antipoison" && player.PoisonStatus > 0) {
                                     player.PoisonStatus = 0;
-                                    GameLoop.ZPO.Log.AddMessage("The antipoison cures your poison.", Color.Lime);
+                                    GameLoop.WTN.Log.AddMessage("The antipoison cures your poison.", Color.Lime);
                                 }
                             } 
                         }
 
                         return true;
                     }
-                } else if (item.UseString == "SlayerGem") {
-                    if (player.SlayerTask != "") {
-                        GameLoop.ZPO.Log.AddMessage("You task is to kill " + player.SlayerKillsRemaining + " more " + GameLoop.ZPO.ResolveMonsterName(player.SlayerTask) + (player.SlayerKillsRemaining > 1 ? "s" : "") + ". (" + player.SlayerPoints + " pts, " + player.SlayerTaskStreak + " streak)", Color.MediumPurple);
-                    } else {
-                        GameLoop.ZPO.Log.AddMessage("You have no active task. (" + player.SlayerPoints + " pts, " + player.SlayerTaskStreak + " streak)", Color.MediumPurple);
-                    }
-                    return false;
-                } else if (item.UseString == "ChargeDragonstone") {
-                    foreach (var kv in player.Inventory) {
-                        if (kv.ID == "amuletGlory") { kv.Charges = 4; }
-                        if (kv.ID == "ringWealth") { kv.Charges = 4; }
-                        if (kv.ID == "braceletCombat") { kv.Charges = 4; }
-                        if (kv.ID == "necklaceSkills") { kv.Charges = 4; } 
-                    }
-
-                    foreach (var kv in player.Equipment) {
-                        if (kv.Value.ID == "amuletGlory") { kv.Value.Charges = 4; }
-                        if (kv.Value.ID == "ringWealth") { kv.Value.Charges = 4; }
-                        if (kv.Value.ID == "braceletCombat") { kv.Value.Charges = 4; }
-                        if (kv.Value.ID == "necklaceSkills") { kv.Value.Charges = 4; } 
-                    }
-                    return true;
                 } else if (item.UseString == "Light") {
                     if (player.HasAllItems(["tinderbox,1"])) {
                         itemWrap.ID = item.UseString2;
-                        GameLoop.ZPO.Log.AddMessage("You light the " + item.Name + ".", Color.Yellow);
+                        GameLoop.WTN.Log.AddMessage("You light the " + item.Name + ".", Color.Yellow);
                     } else { 
-                        GameLoop.ZPO.Log.AddMessage("You need something to actually light that with, to light it.", Color.Crimson);
+                        GameLoop.WTN.Log.AddMessage("You need something to actually light that with, to light it.", Color.Crimson);
                     }
                     return false;
                 } else if (item.UseString == "Extinguish") {
                     itemWrap.ID = item.UseString2;
-                    GameLoop.ZPO.Log.AddMessage("You extinguish the " + item.Name + ".", Color.Yellow);
+                    GameLoop.WTN.Log.AddMessage("You extinguish the " + item.Name + ".", Color.Yellow);
                     if (!player.ItemsEverObtained.Contains(itemWrap.ID)) { player.ItemsEverObtained.Add(itemWrap.ID); }
                     return false;
                 } else if (item.UseString == "Bell") { 
-                    GameLoop.ZPO.Log.AddMessage("You jangle the bell about for a bit.", Color.Yellow);
-                    // TODO: when molanisks are reachable somewhere, make this summon one if you have 39 slayer
+                    GameLoop.WTN.Log.AddMessage("You jangle the bell about for a bit.", Color.Yellow);
                     return false;
                 } else if (item.UseString == "ViewInventory") {
                     ExtraWindows.ConWrap = itemWrap;
@@ -453,19 +407,9 @@ namespace WorldtreeNexus.Managers {
                     string[] split = item.UseString2.Split(",");
 
                     foreach (var skill in split) {
-                        player.TryGrantExp(skill, item.UseInt, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
+                        player.TryGrantExp(skill, item.UseInt, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
                     } 
                     return true;
-                } else if (item.UseString == "DragithNurn") {
-                    if (GameLoop.ZPO.ResolveItem("maskDragith") is Item mask) {
-                        if (player.HasAllItems(["maskDragith1", "maskDragith2", "maskDragith3", "maskDragith4", "maskDragith5"])) {
-                            player.ConsumeItems(["maskDragith1", "maskDragith2", "maskDragith3", "maskDragith4", "maskDragith5"], false, false);
-                            player.TryPickup(mask, 1);
-                        } else {
-                            GameLoop.ZPO.Log.AddMessage("You need all five parts of the mask to combine them.", Color.Crimson);
-                        }
-                    }
-                    return false;
                 } else if (item.UseString == "Gold") {
                     if (player.CoinPouch) {
                         int qty = 1;
@@ -477,7 +421,7 @@ namespace WorldtreeNexus.Managers {
                         itemWrap.Quantity -= qty;
                         player.GiveGold(qty); 
                     } else { 
-                        GameLoop.ZPO.Log.AddMessage("You can't use the coin pouch to put these away, so you just fiddle with them a bit.", Color.Crimson);
+                        GameLoop.WTN.Log.AddMessage("You can't use the coin pouch to put these away, so you just fiddle with them a bit.", Color.Crimson);
                     }
                     return false;
                 } else if (item.UseString == "Transform") {
@@ -485,19 +429,19 @@ namespace WorldtreeNexus.Managers {
                     if (!player.ItemsEverObtained.Contains(itemWrap.ID)) { player.ItemsEverObtained.Add(itemWrap.ID); }
                     return false;
                 } else if (item.UseString == "Teleport") {
-                    if (GameLoop.ZPO.Atlas.ContainsKey(item.UseString2)) {
+                    if (GameLoop.WTN.Atlas.ContainsKey(item.UseString2)) {
                         if (item.UsesCharges) {
                             if (itemWrap.Charges > 0) { 
-                                GameLoop.ZPO.Log.AddMessage("You teleport to " + GameLoop.ZPO.Atlas[item.UseString2].DisplayName + ".", Color.MediumPurple);
+                                GameLoop.WTN.Log.AddMessage("You teleport to " + GameLoop.WTN.Atlas[item.UseString2].DisplayName + ".", Color.MediumPurple);
                                 player.NavLoc = item.UseString2;
                                 return true;
                             } else if (itemWrap.Charges < 0) { 
-                                GameLoop.ZPO.Log.AddMessage("You teleport to " + GameLoop.ZPO.Atlas[item.UseString2].DisplayName + ".", Color.MediumPurple);
+                                GameLoop.WTN.Log.AddMessage("You teleport to " + GameLoop.WTN.Atlas[item.UseString2].DisplayName + ".", Color.MediumPurple);
                                 player.NavLoc = item.UseString2;
                                 return true;
                             }
                         } else { 
-                            GameLoop.ZPO.Log.AddMessage("You teleport to " + GameLoop.ZPO.Atlas[item.UseString2].DisplayName + ".", Color.MediumPurple);
+                            GameLoop.WTN.Log.AddMessage("You teleport to " + GameLoop.WTN.Atlas[item.UseString2].DisplayName + ".", Color.MediumPurple);
                             player.NavLoc = item.UseString2;
                             return true;
                         } 
@@ -505,37 +449,13 @@ namespace WorldtreeNexus.Managers {
 
                     return false;
                 } else if (item.UseString == "ItemPack") {
-                    if (GameLoop.ZPO.ResolveItem(item.UseString2) is Item unpacked) {
+                    if (GameLoop.WTN.ResolveItem(item.UseString2) is Item unpacked) {
                         unpacked.Quantity = item.UseInt;
                         
                         player.TryPickup(unpacked, unpacked.Quantity, true);
                     } else {
-                        GameLoop.ZPO.Log.AddMessage("It doesn't seem like there's anything in the pack just yet, so you decide to hold on to it.", Color.Crimson);
+                        GameLoop.WTN.Log.AddMessage("It doesn't seem like there's anything in the pack just yet, so you decide to hold on to it.", Color.Crimson);
                         return false;
-                    }
-                } else if (item.UseString == "MilkSample") {  
-                    if (item.UseInt == 1) {
-                        GameLoop.ZPO.Log.AddMessage("You drink the milk. It tastes bad.", Color.Crimson);
-                        GameLoop.ZPO.Log.AddMessage("You cough and take 1 poison damage.", Color.Crimson);
-                        GameLoop.ZPO.Log.AddMessage("Okay, it tastes *really* bad.", Color.Crimson);
-                        player.TryProgressQuest("MI_IdesOfMilk", 30);
-                    } else { 
-                        if (player.QuestLog.TryGetValue("MI_IdesOfMilk", out QuestStatus? milk)) {
-                            if (milk.CurrentStage == 60) {
-                                GameLoop.ZPO.Log.AddMessage("You drink the milk. It somehow tastes even worse, but at least doesn't hurt you this time.", Color.Crimson);
-                                player.TryProgressQuest("MI_IdesOfMilk", 70);
-                            } else { 
-                                GameLoop.ZPO.Log.AddMessage(player.Name + ": I don't think I'm ready to drink another vial of this stuff.", Color.Crimson);
-                                GameLoop.ZPO.Log.AddMessage(player.Name + ": I should find someone else to give it to.", Color.Crimson);
-                                return false;
-                            }
-                        }
-                    }
-                } else if (item.UseString == "BeefEmote") {
-                    if (GameLoop.rand.Next(100) == 0) {
-                        GameLoop.ZPO.Log.AddMessage("A whirlwind appears that picks up and swirls Beef around for a bit, before setting him back down and disappearing.", Color.Lime);
-                    } else {
-                        GameLoop.ZPO.Log.AddMessage("Beef sniffs at the air.", Color.Yellow);
                     }
                 } else if (item.UseString == "LampChoice") {
                     ExtraWindows.LampAmount = item.UseInt;
@@ -549,11 +469,16 @@ namespace WorldtreeNexus.Managers {
                     return false;
                 } else if (item.UseString == "CatMenu") {
                     ExtraWindows.CatMenu.IsVisible = true;
-                } else if (item.UseString == "MahoganyHomes") {
-                    if (player.MahoganyDestID != "") {
-                        if (GameLoop.ZPO.Atlas.TryGetValue(player.MahoganyDestID, out Location? mhDest) && mhDest != null) {
+                } else if (item.UseString == "TalismanMenu") {
+                    ExtraWindows.Talisman.IsVisible = true;
+                    ExtraWindows.TalismanInk = itemWrap;
+                    ExtraWindows.TalismanPaper = null;
+                    ExtraWindows.TalismanDrawing = ""; 
+                } else if (item.UseString == "CozyCottages") {
+                    if (player.CozyDestID != "") {
+                        if (GameLoop.WTN.Atlas.TryGetValue(player.CozyDestID, out Location? ccDest) && ccDest != null) {
                             string build = "";
-                            foreach (var kv in player.MahoganyContractSpots) {
+                            foreach (var kv in player.CozyContractSpots) {
                                 if (!kv.Repaired) {
                                     if (build != "") {
                                         build += ", ";
@@ -565,14 +490,14 @@ namespace WorldtreeNexus.Managers {
 
                             build += ".";
 
-                            GameLoop.ZPO.Log.AddMessage("Your current contract is " + mhDest.DisplayName + " in " + mhDest.MahoganyTown + ". Remaining: " + build, Color.SandyBrown);
+                            GameLoop.WTN.Log.AddMessage("Your current contract is " + ccDest.DisplayName + " in " + ccDest.CozyTown + ". Remaining: " + build, Color.SandyBrown);
                         } else { 
-                            GameLoop.ZPO.Log.AddMessage("Malformed Mahogany Homes destination ID: " + player.MahoganyDestID + ". Report this, contract cleared for now.", Color.Crimson);
-                            GameLoop.ZPO.player.MahoganyDestID = "";
-                            GameLoop.ZPO.player.MahoganyContractSpots.Clear();
+                            GameLoop.WTN.Log.AddMessage("Malformed Cozy Cottages destination ID: " + player.CozyDestID + ". Report this, contract cleared for now.", Color.Crimson);
+                            GameLoop.WTN.player.CozyDestID = "";
+                            GameLoop.WTN.player.CozyContractSpots.Clear();
                         }
                     } else {
-                        GameLoop.ZPO.Log.AddMessage("You do not currently have a Mahogany Homes contract. Get one at an Estate Agent if desired.", Color.Crimson);
+                        GameLoop.WTN.Log.AddMessage("You do not currently have a Cozy Cottages contract. Get one at an Estate Agent if desired.", Color.Crimson);
                     }
                     return false;
                 } else if (item.UseString == "Teapot") {
@@ -582,116 +507,40 @@ namespace WorldtreeNexus.Managers {
                         if (kv.ID == "cupAntiqueEmpty" && !kv.Noted) { kv.ID = "cupAntiqueTea"; kv.Charges = 1; return true; }
                     }
                     
-                    GameLoop.ZPO.Log.AddMessage("You don't have a cup to pour the tea out into.", Color.Crimson);
+                    GameLoop.WTN.Log.AddMessage("You don't have a cup to pour the tea out into.", Color.Crimson);
                     return false;
                 } else if (item.UseString == "CompassMenu") {
                     ExtraWindows.Compass.IsVisible = true;
                     return false;
-                } else if (item.UseString == "SpellTab") {
-                    if (item.UseString2 == "Enchant") {
-                        if (GameLoop.ZPO.ProcessingStations.TryGetValue("Level " + item.UseString3 + " Enchanter", out ProcessingStation? enchant) && enchant != null) {
-                            enchant.LastWorked = "";
-                            if (enchant.TryProcessItem(player, GameLoop.ZPO.Log, GameLoop.ZPO.ItemLibrary, SidebarManager.RecentlyTrainedSkills)) {
-                                GameLoop.ZPO.Log.AddMessage("You break a spell tablet and enchant a piece of jewellery.", Color.MediumPurple);
-                            } else {
-                                GameLoop.ZPO.Log.AddMessage("You have no unenchanted jewellery to enchant.", Color.Crimson);
-                                return false;
-                            }
-                        }
-                    } else if (item.UseString2 == "Tele") {
-                        if (GameLoop.ZPO.Atlas.TryGetValue(item.UseString2, out Location? dest) & dest != null) { 
-                            GameLoop.ZPO.Log.AddMessage("You break a spell tablet and teleport to " + dest.DisplayName + ".", Color.MediumPurple);
-                        } else {
-                            GameLoop.ZPO.Log.AddMessage("Teleport destination does not exist.", Color.Crimson);
-                            return false;
-                        } 
-                    } else if (item.UseString2 == "BonesBananas") {
-                        bool anyBones = false;
-                        int extras = 0;
-                        foreach (var kv in player.Inventory) {
-                            if (new List<string>() { "bonesRegular", "bonesWolf", "bonesBat", "bonesBig", "bonesBleached", "bonesBurnt", "bonesJogre", "bonesMonkey", "mtaBone1", "mtaBone2", "mtaBone3", "mtaBone4", "bonesAlan" }.Contains(kv.ID) && !kv.Noted) {
-                                if (kv.ID.Contains("mtaBone")) {
-                                    int qty = 0;
-                                    if (MinigameManager.MTA_Bones[1] == kv.ID) { qty = 1; }
-                                    if (MinigameManager.MTA_Bones[2] == kv.ID) { qty = 2; }
-                                    if (MinigameManager.MTA_Bones[3] == kv.ID) { qty = 3; }
-                                                    
-                                    extras += qty;
-                                }
-                                kv.ID = "fruitBanana";
-                                anyBones = true; 
-                            }
-                        }
-
-                        if (extras > 0) {
-                            if (GameLoop.ZPO.ItemLibrary.TryGetValue("fruitBanana", out Item? banan) && banan != null) {
-                                player.TryPickup(new Item(banan), extras);
-                            }
-                        }
-
-                        if (anyBones) { 
-                            GameLoop.ZPO.Log.AddMessage("You break a Bones to Bananas tablet and all your bones become bananas.", Color.MediumPurple);
-                        } else {
-                            GameLoop.ZPO.Log.AddMessage("You have no applicable bones to transmute.", Color.Crimson);
-                            return false;
-                        }
-                    } else if (item.UseString2 == "BonesPeaches") {
-                        bool anyBones = false;
-                        int extras = 0;
-                        foreach (var kv in player.Inventory) {
-                            if (new List<string>() { "bonesRegular", "bonesWolf", "bonesBat", "bonesBig", "bonesBleached", "bonesBurnt", "bonesJogre", "bonesMonkey", "mtaBone1", "mtaBone2", "mtaBone3", "mtaBone4", "bonesAlan" }.Contains(kv.ID) && !kv.Noted) {
-                                if (kv.ID.Contains("mtaBone")) {
-                                    int qty = 0;
-                                    if (MinigameManager.MTA_Bones[1] == kv.ID) { qty = 1; }
-                                    if (MinigameManager.MTA_Bones[2] == kv.ID) { qty = 2; }
-                                    if (MinigameManager.MTA_Bones[3] == kv.ID) { qty = 3; }
-                                                     
-                                    extras += qty;
-                                }
-
-                                kv.ID = "fruitPeach";
-                                anyBones = true;
-                            }
-                        }
-
-                        if (extras > 0) {
-                            if (GameLoop.ZPO.ItemLibrary.TryGetValue("fruitPeach", out Item? peach) && peach != null) {
-                                player.TryPickup(new Item(peach), extras);
-                            }
-                        }
-
-                        if (anyBones) { 
-                            GameLoop.ZPO.Log.AddMessage("You break a Bones to Peaches tablet and all your bones become peaches.", Color.MediumPurple);
-                        } else {
-                            GameLoop.ZPO.Log.AddMessage("You have no applicable bones to transmute.", Color.Crimson);
-                            return false;
-                        }
-                    } else if (item.UseString2 == "Superheat") {
-                        if (GameLoop.ZPO.ProcessingStations.TryGetValue("Furnace", out ProcessingStation? furnace) && furnace != null) {
-                            furnace.LastWorked = "";
-                            if (furnace.TryProcessItem(player, GameLoop.ZPO.Log, GameLoop.ZPO.ItemLibrary, SidebarManager.RecentlyTrainedSkills)) { 
-                                GameLoop.ZPO.Log.AddMessage("You break a Superheat Item tablet and smelt an ore mix into a bar.", Color.MediumPurple);
-                            } else {
-                                GameLoop.ZPO.Log.AddMessage("You have no ore mixes you have the smithing level to be able to smelt.", Color.Crimson);
-                                return false;
-                            }
-                        }
-                    }
                 } else if (item.UseString == "HouseTele") { 
                     ExtraWindows.HouseMenu.IsVisible = true;
                     ExtraWindows.HouseTeleport = true;
                     ExtraWindows.HouseTablet = true;
-                } else if (item.UseString == "CadavaPotion") {
-                    if (player.HasAllItems(["potionCadavaUnf,1", "potionCadavaWing,1", "potionCadavaTail,1", "potionCadavaEar,1", "potionCadavaHorn,1"])) {
-                        if (GameLoop.ZPO.ResolveItem("potionCadava") is Item cadavaPotion) {
-                            player.ConsumeItems(["potionCadavaUnf,1", "potionCadavaWing,1", "potionCadavaTail,1", "potionCadavaEar,1", "potionCadavaHorn,1"]);
-                            player.TryPickup(cadavaPotion, 1);
-                            GameLoop.ZPO.Log.AddMessage("You successfully mix a Cadava potion. Now you just have to get it to Juliet without her family seeing you.", Color.Turquoise);
+                } else if (item.UseString == "SleepingPotion") {
+                    if (player.HasAllItems(["potionSleepingUnf,1", "potionSleepingWing,1", "potionSleepingTail,1", "potionSleepingEar,1", "potionSleepingHorn,1"])) {
+                        if (GameLoop.WTN.ResolveItem("potionSleeping") is Item sleepingPotion) {
+                            player.ConsumeItems(["potionSleepingUnf,1", "potionSleepingWing,1", "potionSleepingTail,1", "potionSleepingEar,1", "potionSleepingHorn,1"]);
+                            player.TryPickup(sleepingPotion, 1);
+                            GameLoop.WTN.Log.AddMessage("You successfully mix a Sleeping potion. Now you just have to get it to Juliet without her family seeing you.", Color.Turquoise);
                             return true;
                         }
                     } else { 
-                        GameLoop.ZPO.Log.AddMessage("Hmm, missing some ingredients. Better check the recipe list again.", Color.Crimson);
+                        GameLoop.WTN.Log.AddMessage("Hmm, missing some ingredients. Better check the recipe list again.", Color.Crimson);
                     }
+                } else if (item.UseString == "ManualPaper") { 
+                    if (GameLoop.WTN.ResolveItem(item.ID.Replace("pulp", "paper")) is Item paper) {
+                        int qty = 1;
+                        if (Helper.EitherShift()) { qty *= 5; }
+                        if (Helper.EitherControl()) { qty *= 10; }
+                        if (qty > itemWrap.Quantity || Helper.EitherAlt()) { qty = itemWrap.Quantity; }
+
+                        itemWrap.Quantity -= qty;
+                        player.TryPickup(paper, qty);  
+                    }
+                    return false;
+                } else if (item.UseString == "Bones") { 
+                    GameLoop.WTN.Log.AddMessage("You lay the " + item.Name.ToLower() + " to rest, gaining " + item.UseInt + " Prayer experience.", Color.Yellow);
+                    player.TryGrantExp("Prayer", item.UseInt, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
                 }
 
                 return true;
@@ -734,16 +583,16 @@ namespace WorldtreeNexus.Managers {
                     if (player.Inventory[i].Charges + player.Inventory[UsingSlot].Charges <= 4) {
                         player.Inventory[i].Charges += player.Inventory[UsingSlot].Charges;
                         player.Inventory.RemoveAt(UsingSlot);
-                        player.TryPickup(new Item(GameLoop.ZPO.ItemLibrary["vialEmpty"]), 1);
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You combine the potions into one vial.", Color.Turquoise, Color.Black));
+                        player.TryPickup(new Item(GameLoop.WTN.ItemLibrary["vialEmpty"]), 1);
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("You combine the potions into one vial.", Color.Turquoise, Color.Black));
                     } else {
                         int diff = 4 - player.Inventory[i].Charges;
                         if (diff > 0) {
                             player.Inventory[i].Charges = 4;
                             player.Inventory[UsingSlot].Charges -= diff;
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You fill up one of the vials to the brim.", Color.Turquoise, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("You fill up one of the vials to the brim.", Color.Turquoise, Color.Black));
                         } else { 
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("That vial is already as full as possible.", Color.Crimson, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("That vial is already as full as possible.", Color.Crimson, Color.Black));
                         }
                     }
 
@@ -751,7 +600,7 @@ namespace WorldtreeNexus.Managers {
                     return true;
                 }
                 
-                if (GameLoop.ZPO.ResolveItem(first) is Item firstCharge && GameLoop.ZPO.ResolveItem(second) is Item secondCharge) {   
+                if (GameLoop.WTN.ResolveItem(first) is Item firstCharge && GameLoop.WTN.ResolveItem(second) is Item secondCharge) {   
                     ItemWrapper firstChargeWrap = player.Inventory[firstSlot];
                     ItemWrapper secondChargeWrap = player.Inventory[secondSlot];
 
@@ -788,7 +637,8 @@ namespace WorldtreeNexus.Managers {
                     } 
                 }
 
-                if (GameLoop.ZPO.ResolveItem(first) is Item firstPouch && GameLoop.ZPO.ResolveItem(second) is Item secondPouch) {  
+                // Check to see if there's some container stuff that could happen
+                if (GameLoop.WTN.ResolveItem(first) is Item firstPouch && GameLoop.WTN.ResolveItem(second) is Item secondPouch) {  
                     if (secondPouch.ContainableIDs.Contains(first)) { 
                         Item swapPouch = new(firstPouch);
                         firstPouch = secondPouch;
@@ -818,7 +668,7 @@ namespace WorldtreeNexus.Managers {
                                         conWrap.Quantity += placed;
                                         secondPouchWrap.Quantity -= placed;
                                         
-                                        GameLoop.ZPO.Log.AddMessage("Container can't hold anymore of that item.");
+                                        GameLoop.WTN.Log.AddMessage("Container can't hold anymore of that item.");
 
                                         if (secondPouchWrap.Quantity <= 0) {
                                             player.Inventory.RemoveAt(secondSlot);
@@ -834,16 +684,16 @@ namespace WorldtreeNexus.Managers {
                             player.Inventory.RemoveAt(secondSlot);
                             return true;
                         } else { 
-                            GameLoop.ZPO.Log.AddMessage("Container is too full to hold any more items.");
+                            GameLoop.WTN.Log.AddMessage("Container is too full to hold any more items.");
                         }
                     } 
                 }
                 
                  
                 TwoWayString two = new TwoWayString(first, second);
-                if (GameLoop.ZPO.UseRecipes.ContainsKey(two)) {
+                if (GameLoop.WTN.UseRecipes.ContainsKey(two)) {
                     SidebarManager.LastPerformedRecipe = two;
-                    Recipe rec = GameLoop.ZPO.UseRecipes[two];
+                    Recipe rec = GameLoop.WTN.UseRecipes[two];
 
                     if (rec.FirstItem == second) {
                         firstSlot = i;
@@ -862,14 +712,14 @@ namespace WorldtreeNexus.Managers {
                     UsingSlot = -1; 
 
                     if (rec.NeededTool != "" && !player.HasAllItems([rec.NeededTool + ",1"], false, true)) {
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("You need a " + GameLoop.ZPO.ResolveItemName(rec.NeededTool) + " to do that.", Color.Crimson, Color.Black));
+                        GameLoop.WTN.Log.AddMessage(new ColoredString("You need a " + GameLoop.WTN.ResolveItemName(rec.NeededTool) + " to do that.", Color.Crimson, Color.Black));
                         return false;
                     }
 
                     if (rec.ExtraReqs.Count > 0) {
                         foreach (var req in rec.ExtraReqs) {
                             if (!req.CheckRequirement(player, false, true)) { 
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString("Missing requirement to combine those: " + req.GetSummary(), Color.Crimson, Color.Black));
+                                GameLoop.WTN.Log.AddMessage(new ColoredString("Missing requirement to combine those: " + req.GetSummary(), Color.Crimson, Color.Black));
                                 return false;
                             }
                         }
@@ -877,12 +727,12 @@ namespace WorldtreeNexus.Managers {
 
                     if (!firstWrap.Noted && !secondWrap.Noted) { 
                         if (firstWrap.Quantity < rec.FirstQty) {
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You need " + rec.FirstQty + " " + firstItem.Name + " to do that.", Color.Crimson, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("You need " + rec.FirstQty + " " + firstItem.Name + " to do that.", Color.Crimson, Color.Black));
                             return false;
                         }
 
                         if (secondWrap.Quantity < rec.SecondQty) {
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You need " + rec.SecondQty + " " + secondItem.Name + " to do that.", Color.Crimson, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("You need " + rec.SecondQty + " " + secondItem.Name + " to do that.", Color.Crimson, Color.Black));
                             return false;
                         }
 
@@ -908,47 +758,19 @@ namespace WorldtreeNexus.Managers {
                                 id = rec.FailID;
                             }
 
-                            if (GameLoop.ZPO.ItemLibrary.ContainsKey(id)) {
-                                Item made = new(GameLoop.ZPO.ItemLibrary[id]);
+                            if (GameLoop.WTN.ItemLibrary.ContainsKey(id)) {
+                                Item made = new(GameLoop.WTN.ItemLibrary[id]);
                                 made.Quantity = rec.OutputQty;
-
-                                if (rec.SkillUsed == "Herblore" && made.UseInt4 > 0) {
-                                    foreach (var invWrap in player.Inventory) {
-                                        if (invWrap.GetRef() is Item inv) {
-                                            if (inv.ID == "spiritHerb") {   
-                                                GameLoop.ZPO.Log.AddMessage(new ColoredString("An herb spirit is released, and your vial fills with an extra dose of " + made.Name.ToLower() + ".", Color.Goldenrod, Color.Black));
-                                                made.UseInt4 = 4;
-                                                invWrap.Quantity -= 1;
-
-                                                if (invWrap.Quantity <= 0) {
-                                                    player.Inventory.Remove(invWrap);
-                                                }
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    if (player.Equipment.TryGetValue("Amulet", out ItemWrapper? eqp) && eqp != null && eqp.ID == "amuletChemistry" && GameLoop.rand.Next(20) == 0) { 
-                                        made.UseInt4++;
-                                        eqp.Charges -= 1; 
-                                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Your amulet of chemistry allows you to get an extra dose out of your ingredients.", Color.PaleGreen, Color.Black));
-                                        if (eqp.Charges <= 0) {
-                                            GameLoop.ZPO.Log.AddMessage(new ColoredString("Your amulet of chemistry runs out of charge and shatters.", Color.Crimson, Color.Black));
-                                            player.Equipment.Remove("Amulet");
-                                        } 
-                                    }
-                                }
-
                                 player.TryPickup(made, made.Quantity);
                             } else {
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString("You get the feeling that should've resulted in " + id + ", but that item doesn't exist.", Color.Crimson, Color.Black));
+                                GameLoop.WTN.Log.AddMessage(new ColoredString("You get the feeling that should've resulted in " + id + ", but that item doesn't exist.", Color.Crimson, Color.Black));
                             }
                         } else {
                             if (rec.OutputItem == "_fire") {
-                                if (GameLoop.ZPO.Atlas.ContainsKey(player.NavLoc) && GameLoop.ZPO.ProcessingStations.ContainsKey("Range")) {
-                                    Location curr = GameLoop.ZPO.Atlas[player.NavLoc];
+                                if (GameLoop.WTN.Atlas.ContainsKey(player.NavLoc) && GameLoop.WTN.ProcessingStations.ContainsKey("Range")) {
+                                    Location curr = GameLoop.WTN.Atlas[player.NavLoc];
                                                      
-                                    ProcessingStation fire = Helper.Clone(GameLoop.ZPO.ProcessingStations["Range"]);
+                                    ProcessingStation fire = Helper.Clone(GameLoop.WTN.ProcessingStations["Range"]);
                                     fire.Name = "Fire";
                                     fire.TimeLeft = rec.OutputQty;
                                     fire.TimeMade = Helper.Time();
@@ -957,32 +779,353 @@ namespace WorldtreeNexus.Managers {
                                     curr.TempStations.Add(fire);
                                 }
                                                 
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString("You start a fire with the " + secondItem.Name + ".", Color.OrangeRed, Color.Black));
+                                GameLoop.WTN.Log.AddMessage(new ColoredString("You start a fire with the " + secondItem.Name + ".", Color.OrangeRed, Color.Black));
                             }
                         }
 
                         if (rec.ReturnIDs.Count > 0) {
                             for (int ret = 0; ret < rec.ReturnIDs.Count; ret++) {
-                                if (GameLoop.ZPO.ItemLibrary.ContainsKey(rec.ReturnIDs[ret])) {
-                                    Item made = new(GameLoop.ZPO.ItemLibrary[rec.ReturnIDs[ret]]);
+                                if (GameLoop.WTN.ItemLibrary.ContainsKey(rec.ReturnIDs[ret])) {
+                                    Item made = new(GameLoop.WTN.ItemLibrary[rec.ReturnIDs[ret]]);
                                     made.Quantity = 1;
 
                                     player.TryPickup(made, made.Quantity);
                                 } else {
-                                    GameLoop.ZPO.Log.AddMessage(new ColoredString("You get the feeling that should've resulted in " + GameLoop.ZPO.ResolveItemName(rec.ReturnIDs[ret]) + ", but that item doesn't exist.", Color.Crimson, Color.Black));
+                                    GameLoop.WTN.Log.AddMessage(new ColoredString("You get the feeling that should've resulted in " + GameLoop.WTN.ResolveItemName(rec.ReturnIDs[ret]) + ", but that item doesn't exist.", Color.Crimson, Color.Black));
                                 }
                             }
                         }
 
-                        player.TryGrantExp(rec.SkillUsed, rec.ExpGranted, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
+                        player.TryGrantExp(rec.SkillUsed, rec.ExpGranted, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
 
                         return true;
                     }
                 }
-                else {
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("Those two items don't combine like that.", Color.Crimson, Color.Black));
+
+                // Check to see if it's alchemy related
+                if (GameLoop.WTN.ResolveItem(first) is Item firstAlch && GameLoop.WTN.ResolveItem(second) is Item secondAlch && !firstAlch.Noted && !secondAlch.Noted) {   
+                    ItemWrapper firstAlchWrap = player.Inventory[firstSlot];
+                    ItemWrapper secondAlchWrap = player.Inventory[secondSlot];
+
+                    if ((firstAlchWrap.Alchemy != null && secondAlchWrap.Alchemy == null) || first == "alchemyMixture") { // For standardization try to make the item with alchemy stats the second item 
+                        ItemWrapper swap = firstAlchWrap;
+                        firstAlchWrap = secondAlchWrap;
+                        secondAlchWrap = swap;
+
+                        Item swapItem = new(firstAlch);
+                        firstAlch = secondAlch;
+                        secondAlch = swapItem;
+                        
+                        int swapSlot = firstSlot;
+                        firstSlot = secondSlot;
+                        secondSlot = swapSlot;
+
+                        string swapStr = first;
+                        first = second;
+                        second = swapStr;
+                    }
+                    
                     UsingSlot = -1;
+
+                    // At this point if both have alch stats they shouldn't switch, if they both do but the first is a mixture they switch, and if only the first has stats they switch.
+
+                    int tier = player.GetSkillTier("Alchemy");
+
+                    if (firstAlchWrap.Alchemy != null && secondAlchWrap.Alchemy != null) { // if both have stats then both are either ingredients or mixtures
+                        if (first == "alchemyMixture" && second == "alchemyMixture") { // if they're both mixtures, average their stats if actions are left
+                            if (firstAlchWrap.Alchemy.ActionsTaken.Count + secondAlchWrap.Alchemy.ActionsTaken.Count < tier) { // Averaging takes up an action though
+                                int red = firstAlchWrap.Alchemy.Red + secondAlchWrap.Alchemy.Red;
+                                int black = firstAlchWrap.Alchemy.Black + secondAlchWrap.Alchemy.Black;
+                                int yellow = firstAlchWrap.Alchemy.Yellow + secondAlchWrap.Alchemy.Yellow;
+                                int white = firstAlchWrap.Alchemy.White = secondAlchWrap.Alchemy.White;
+
+                                firstAlchWrap.Alchemy.Red = (int) Math.Round(red / 2.0, MidpointRounding.ToZero);
+                                firstAlchWrap.Alchemy.Black = (int) Math.Round(black / 2.0, MidpointRounding.ToZero);
+                                firstAlchWrap.Alchemy.Yellow = (int) Math.Round(yellow / 2.0, MidpointRounding.ToZero);
+                                firstAlchWrap.Alchemy.White = (int) Math.Round(white / 2.0, MidpointRounding.ToZero);
+                                firstAlchWrap.Alchemy.ActionsTaken.Add("Mixed");
+                                firstAlchWrap.Alchemy.Ingredients.AddRange(secondAlchWrap.Alchemy.Ingredients);
+                                
+                                secondAlchWrap.Alchemy.Red = (int) Math.Round(red / 2.0, MidpointRounding.ToZero);
+                                secondAlchWrap.Alchemy.Black = (int) Math.Round(black / 2.0, MidpointRounding.ToZero);
+                                secondAlchWrap.Alchemy.Yellow = (int) Math.Round(yellow / 2.0, MidpointRounding.ToZero);
+                                secondAlchWrap.Alchemy.White = (int) Math.Round(white / 2.0, MidpointRounding.ToZero);
+                                secondAlchWrap.Alchemy.ActionsTaken.Add("Mixed");
+                                secondAlchWrap.Alchemy.Ingredients = new(firstAlchWrap.Alchemy.Ingredients);
+                                
+                                GameLoop.WTN.Log.AddMessage("You combine the mixtures and then split the resulting liquid between the vials.", Color.Turquoise);
+                                return true;
+                            } else {
+                                GameLoop.WTN.Log.AddMessage("One or both mixtures are already at the limit for how many times you can modify them.", Color.Crimson);
+                            }
+                        } else if (second == "alchemyMixture") { // if only the second is a mixture (which should be the case if a mixture is involved but both aren't mixtures)
+                            if (secondAlchWrap.Alchemy.Ingredients.Count < tier + 1) {
+                                if (firstAlchWrap.Alchemy.Level <= player.GetEffectiveSkillLevel("Alchemy")) {
+                                    secondAlchWrap.Alchemy.Red += firstAlchWrap.Alchemy.Red;
+                                    secondAlchWrap.Alchemy.Black += firstAlchWrap.Alchemy.Black;
+                                    secondAlchWrap.Alchemy.Yellow += firstAlchWrap.Alchemy.Yellow;
+                                    secondAlchWrap.Alchemy.White += firstAlchWrap.Alchemy.White;
+                                    secondAlchWrap.Alchemy.Ingredients.Add(first);
+                                
+                                    GameLoop.WTN.Log.AddMessage("You add " + firstAlch.Name.ToLower() + " to the mixture.", Color.Turquoise);
+                                    player.ConsumeItems([first + ",1"]);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("Your alchemy level is too low to use " + firstAlch.Name.ToLower() + ", need level " + firstAlchWrap.Alchemy.Level + ".", Color.Crimson);
+                                }
+                            } else {
+                                GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many ingredients you can currently add.", Color.Crimson);
+                            }
+                        } else { // at this point theoretically you shouldn't be able to have anything but two ingredients 
+                            GameLoop.WTN.Log.AddMessage("Can't combine those ingredients that way.", Color.Crimson);
+                        }
+
+                        return false;
+                    } else if ((firstAlchWrap.Alchemy == null && secondAlchWrap.Alchemy != null) || first == "alchemyLoupe") { // only the second should have alchemy stats here
+                        if (first == "alchemyLoupe") {
+                            if (secondAlchWrap.Alchemy != null) {
+                                string vals = secondAlchWrap.Alchemy.Red.ToString().Align(HorizontalAlignment.Right, 3) + "R / " +
+                                              secondAlchWrap.Alchemy.Black.ToString().Align(HorizontalAlignment.Right, 3) + "B / " +
+                                              secondAlchWrap.Alchemy.Yellow.ToString().Align(HorizontalAlignment.Right, 3) + "Y / " +
+                                              secondAlchWrap.Alchemy.White.ToString().Align(HorizontalAlignment.Right, 3) + "W";
+                                if (second == "alchemyMixture") { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is currently: " +  vals + " (" + secondAlchWrap.Alchemy.Ingredients.Count + " ingredients, " + secondAlchWrap.Alchemy.ActionsTaken.Count + " actions)", Color.Yellow);
+                                } else {
+                                    GameLoop.WTN.Log.AddMessage("You analyze the " + secondAlch.Name.ToLower() + ": " + vals, Color.Yellow);
+                                }
+                            } else {
+                                GameLoop.WTN.Log.AddMessage("You analyze the " + secondAlch.Name.ToLower() + ", but it has no alchemical potential.", Color.Yellow);
+                            }
+                            return true;
+                        }
+
+                        if (secondAlchWrap.Alchemy != null) {
+                            if (first == "vialWater") {
+                                if (second == "alchemyMixture") {
+                                    if (GameLoop.WTN.ResolveItem("alchemyMixture") is Item mix) {
+                                        player.ConsumeItems([first + ",1"]);
+
+                                        int red = mix.Alchemy.Red + secondAlchWrap.Alchemy.Red;
+                                        int black = mix.Alchemy.Black + secondAlchWrap.Alchemy.Black;
+                                        int yellow = mix.Alchemy.Yellow + secondAlchWrap.Alchemy.Yellow;
+                                        int white = mix.Alchemy.White = secondAlchWrap.Alchemy.White;
+
+                                        mix.Alchemy.Red = (int) Math.Round(red / 2.0, MidpointRounding.ToZero);
+                                        mix.Alchemy.Black = (int) Math.Round(black / 2.0, MidpointRounding.ToZero);
+                                        mix.Alchemy.Yellow = (int) Math.Round(yellow / 2.0, MidpointRounding.ToZero);
+                                        mix.Alchemy.White = (int) Math.Round(white / 2.0, MidpointRounding.ToZero);
+                                        mix.Alchemy.Ingredients = new(secondAlchWrap.Alchemy.Ingredients);
+                                        mix.Alchemy.ActionsTaken.Add("Diluted");
+                                
+                                        secondAlchWrap.Alchemy.Red = (int) Math.Round(red / 2.0, MidpointRounding.ToZero);
+                                        secondAlchWrap.Alchemy.Black = (int) Math.Round(black / 2.0, MidpointRounding.ToZero);
+                                        secondAlchWrap.Alchemy.Yellow = (int) Math.Round(yellow / 2.0, MidpointRounding.ToZero);
+                                        secondAlchWrap.Alchemy.White = (int) Math.Round(white / 2.0, MidpointRounding.ToZero);
+                                        secondAlchWrap.Alchemy.ActionsTaken.Add("Diluted");
+
+                                        player.TryPickup(mix, 1);
+                                 
+                                        GameLoop.WTN.Log.AddMessage(new ColoredString("You dilute the mixture with water, splitting the liquid between both vials.", Color.Turquoise, Color.Black));
+                                        return true;
+                                    }
+                                } else {
+                                    if (secondAlchWrap.Alchemy.Level <= player.GetEffectiveSkillLevel("Alchemy")) {
+                                        if (GameLoop.WTN.ResolveItem("alchemyMixture") is Item mix) {
+                                            player.ConsumeItems([first + ",1", second + ",1"]);
+                                            mix.Alchemy = new(secondAlchWrap.Alchemy);
+                                            mix.Alchemy.Ingredients.Add(second);
+
+                                            player.TryPickup(mix, 1);
+                                 
+                                            GameLoop.WTN.Log.AddMessage(new ColoredString("You start a new alchemical mixture.", Color.Turquoise, Color.Black));
+                                            return true;
+                                        } 
+                                    } else { 
+                                        GameLoop.WTN.Log.AddMessage("Your alchemy level is too low to use " + secondAlch.Name.ToLower() + ", need level " + secondAlchWrap.Alchemy.Level + ".", Color.Crimson);
+                                        return false;
+                                    }
+                                }
+                            }
+
+                            if (first == "alchemyBrazier" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.Ingredients.Count + secondAlchWrap.Alchemy.ActionsTaken.Count >= 2) {
+                                    bool foundMatching = false;
+                                    foreach (var kv in GameLoop.WTN.PotionRecipeLibrary) {
+                                        if (kv.Value.ReqsMet(secondAlchWrap.Alchemy)) {
+                                            if (GameLoop.WTN.ResolveItem(kv.Value.PotionID) is Item potion) {
+                                                foundMatching = true;
+                                            
+                                                player.Inventory.RemoveAt(secondSlot);
+
+                                                int qty = potion.ID.Substring(0, 3) == "ink" ? 50 : potion.ID.Substring(0, 3) == "oil" ? 10 : 1;
+
+                                                player.TryPickup(potion, qty);
+                                            
+                                                GameLoop.WTN.Log.AddMessage(new ColoredString("You heat the mixture and it turns into a" + (Helper.VowelStart(potion.Name.ToLower()) ? "n " : " ") + potion.Name.ToLower() + ".", Color.Lime, Color.Black));
+                                                player.TryGrantExp("Alchemy", kv.Value.ExpGranted, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (!foundMatching) { 
+                                        if (GameLoop.WTN.ResolveItem("alchemyFailure") is Item potion) {
+                                            foundMatching = true;
+                                            
+                                            player.Inventory.RemoveAt(secondSlot);
+                                            player.TryPickup(potion, 1);
+                                            
+                                            GameLoop.WTN.Log.AddMessage(new ColoredString("You heat the mixture, but the recipe was wrong in some way so it turns into useless goop.", Color.Crimson, Color.Black));
+                                        } 
+                                    }
+
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage(new ColoredString("You decide not to heat the mixture just yet, as a single ingredient in some water does not a potion make.", Color.Crimson, Color.Black));
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemyRetort" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) {
+                                    secondAlchWrap.Alchemy.Red++;
+                                    secondAlchWrap.Alchemy.Black--;
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Retort");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your retort. (+1 Red, -1 Black)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemyAlembic" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) {
+                                    secondAlchWrap.Alchemy.Black++;
+                                    secondAlchWrap.Alchemy.Yellow--;
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Alembic");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your alembic. (+1 Black, -1 Yellow)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemyCrucible" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) {
+                                    secondAlchWrap.Alchemy.Yellow++;
+                                    secondAlchWrap.Alchemy.White--;
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Crucible");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your crucible. (+1 Yellow, -1 White)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemyAludel" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) {
+                                    secondAlchWrap.Alchemy.White++;
+                                    secondAlchWrap.Alchemy.Red--;
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Aludel");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your aludel. (+1 White, -1 Red)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemyCalcinator" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) {
+                                    secondAlchWrap.Alchemy.Red += (secondAlchWrap.Alchemy.Red > 0 ? -1 : secondAlchWrap.Alchemy.Red < 0 ? 1 : 0);
+                                    secondAlchWrap.Alchemy.Black += (secondAlchWrap.Alchemy.Black > 0 ? -1 : secondAlchWrap.Alchemy.Black < 0 ? 1 : 0); 
+                                    secondAlchWrap.Alchemy.Yellow += (secondAlchWrap.Alchemy.Yellow > 0 ? -1 : secondAlchWrap.Alchemy.Yellow < 0 ? 1 : 0); 
+                                    secondAlchWrap.Alchemy.White += (secondAlchWrap.Alchemy.White > 0 ? -1 : secondAlchWrap.Alchemy.White < 0 ? 1 : 0); 
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Calcinator");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your calcinator. (All 1 towards Zero)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemySwizzler" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) {
+                                    int total = Math.Abs(secondAlchWrap.Alchemy.Red) + Math.Abs(secondAlchWrap.Alchemy.Black) + Math.Abs(secondAlchWrap.Alchemy.Yellow) + Math.Abs(secondAlchWrap.Alchemy.White);
+                                    int avg = (int) Math.Round(total / 4.0, MidpointRounding.ToZero);
+
+                                    secondAlchWrap.Alchemy.Red = (secondAlchWrap.Alchemy.Red < 0 ? avg * -1 : avg);
+                                    secondAlchWrap.Alchemy.Black = (secondAlchWrap.Alchemy.Black < 0 ? avg * -1 : avg);
+                                    secondAlchWrap.Alchemy.Yellow = (secondAlchWrap.Alchemy.Yellow < 0 ? avg * -1 : avg);
+                                    secondAlchWrap.Alchemy.White = (secondAlchWrap.Alchemy.White < 0 ? avg * -1 : avg);
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Swizzler");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your swizzler. (Average all, round toward zero, maintain polarity)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemyAgitator" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) {
+                                    int white = secondAlchWrap.Alchemy.White;
+                                    secondAlchWrap.Alchemy.White = secondAlchWrap.Alchemy.Yellow;
+                                    secondAlchWrap.Alchemy.Yellow = secondAlchWrap.Alchemy.Black;
+                                    secondAlchWrap.Alchemy.Black = secondAlchWrap.Alchemy.Red;
+                                    secondAlchWrap.Alchemy.Red = white;
+
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Agitator");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your agitator. (Red -> Black -> Yellow -> White -> Red)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemyDeagitator" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) {
+                                    int red = secondAlchWrap.Alchemy.Red;
+                                    secondAlchWrap.Alchemy.Red = secondAlchWrap.Alchemy.Black;
+                                    secondAlchWrap.Alchemy.Black = secondAlchWrap.Alchemy.Yellow;
+                                    secondAlchWrap.Alchemy.Yellow = secondAlchWrap.Alchemy.White;
+                                    secondAlchWrap.Alchemy.White = red;
+
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Deagitator");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your agitator. (Red <- Black <- Yellow <- White <- Red)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+
+                            if (first == "alchemyInverter" && second == "alchemyMixture") {
+                                if (secondAlchWrap.Alchemy.ActionsTaken.Count < tier) { 
+                                    secondAlchWrap.Alchemy.Red *= -1;
+                                    secondAlchWrap.Alchemy.Black *= -1;
+                                    secondAlchWrap.Alchemy.Yellow *= -1;
+                                    secondAlchWrap.Alchemy.White *= -1;
+
+                                    secondAlchWrap.Alchemy.ActionsTaken.Add("Inverter");
+                                    GameLoop.WTN.Log.AddMessage("You adjust the mixture using your agitator. (All flip polarity)", Color.Turquoise);
+                                    return true;
+                                } else { 
+                                    GameLoop.WTN.Log.AddMessage("That mixture is already at the limit for how many times you may adjust it.", Color.Crimson);
+                                    return false;
+                                }
+                            }
+                        }
+                    }
                 }
+
+                GameLoop.WTN.Log.AddMessage(new ColoredString("Those two items don't combine like that.", Color.Crimson, Color.Black));
+                UsingSlot = -1;
                 
             }
 
@@ -996,7 +1139,7 @@ namespace WorldtreeNexus.Managers {
                 if (eqp.EquipSkill != "") {
                     if (player.Skills.ContainsKey(eqp.EquipSkill)) {
                         if (player.Skills[eqp.EquipSkill].Level < eqp.EquipLevel) {
-                            GameLoop.ZPO.Log.AddMessage("You need at least " + eqp.EquipLevel + " " + eqp.EquipSkill + " to equip that.", Color.Crimson);
+                            GameLoop.WTN.Log.AddMessage("You need at least " + eqp.EquipLevel + " " + eqp.EquipSkill + " to equip that.", Color.Crimson);
                             canEquip = false;
                         }
                     }
@@ -1004,7 +1147,7 @@ namespace WorldtreeNexus.Managers {
 
                 if (eqp.EquipReq != null) {
                     if (!eqp.EquipReq.CheckRequirement(player, false, true)) { 
-                        GameLoop.ZPO.Log.AddMessage("Missing equip requirement: " + eqp.EquipReq.GetSummary(), Color.Crimson);
+                        GameLoop.WTN.Log.AddMessage("Missing equip requirement: " + eqp.EquipReq.GetSummary(), Color.Crimson);
                         canEquip = false;
                     }
                 }

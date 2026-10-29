@@ -10,15 +10,6 @@ namespace WorldtreeNexus.Hardcodes {
             toAdd.Add(new FarmingPatch("TI_allotment2", "Allotment"));
             toAdd.Add(new FarmingPatch("TI_allotment3", "Allotment"));
 
-            // Misthalin
-            toAdd.Add(new FarmingPatch("MIST_LumbTree", "Tree"));
-            toAdd.Add(new FarmingPatch("MIST_LumbHops", "Hops"));
-            toAdd.Add(new FarmingPatch("MIST_VarBush", "Bush"));
-            toAdd.Add(new FarmingPatch("MIST_VarTree", "Tree"));
-
-            // Desert 
-            toAdd.Add(new FarmingPatch("DES_AlKharidCactus", "Cactus"));
-
 
             for (int i = 0; i < toAdd.Count; i++) {
                 playerPatchData.TryAdd(toAdd[i].ID, toAdd[i]);

@@ -33,8 +33,8 @@ namespace WorldtreeNexus.UI {
             }
 
             for (int i = ActivityItemTop; i < curr.ShopItemsHere.Count && resourceY < 35; i++) {
-                if (GameLoop.ZPO.ItemLibrary.ContainsKey(curr.ShopItemsHere[i])) {
-                    Item shop = new(GameLoop.ZPO.ItemLibrary[curr.ShopItemsHere[i]]); 
+                if (GameLoop.WTN.ItemLibrary.ContainsKey(curr.ShopItemsHere[i])) {
+                    Item shop = new(GameLoop.WTN.ItemLibrary[curr.ShopItemsHere[i]]); 
                     mini.Con.Print(resourceX + 2, resourceY, "|");
                     int spaceAfterName = 33 - shop.GetName(1, 0, shop.UseInt4).Length;
 
@@ -78,10 +78,10 @@ namespace WorldtreeNexus.UI {
                 POH_Room room = home.Rooms[MinigameManager.POH_ViewingRoom];
 
                 foreach (var obj in room.BuiltObjects) {
-                    if (GameLoop.ZPO.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
+                    if (GameLoop.WTN.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
                         for (int i = ActivityItemTop; i < actual.ShopItems.Count && resourceY < 35; i++) {
-                            if (GameLoop.ZPO.ItemLibrary.ContainsKey(actual.ShopItems[i])) {
-                                Item shop = new(GameLoop.ZPO.ItemLibrary[actual.ShopItems[i]]); 
+                            if (GameLoop.WTN.ItemLibrary.ContainsKey(actual.ShopItems[i])) {
+                                Item shop = new(GameLoop.WTN.ItemLibrary[actual.ShopItems[i]]); 
                                 mini.Con.Print(resourceX + 2, resourceY, "|"); 
 
                                 int qty = 1;

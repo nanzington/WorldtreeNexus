@@ -22,7 +22,7 @@
 
         public void Reached() {
             foreach (var req in Requirements) {
-                if (!req.CheckRequirement(GameLoop.ZPO.player, false, true)) {
+                if (!req.CheckRequirement(GameLoop.WTN.player, false, true)) {
                     return;
                 }
             }

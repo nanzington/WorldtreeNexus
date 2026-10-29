@@ -6,11 +6,15 @@ namespace WorldtreeNexus.DataTypes {
         public string ID = "";
         public string Region = ""; 
 
-        public string Description = "";
+        public List<DescriptionBlock> DescriptionBlocks = new();
         public bool IsBank = false;
 
         public string DigItem = "";
-        public int DungeoneeringLevel = 0; // If above 0, you have to have at least this level of Dungeoneering to skill or combat here, but gain exp for doing so.
+        public int DigCooldown = 5;
+        
+        [JsonIgnore]
+        public double LastDigTime = 0;
+
         public bool Dark = false;
         public string Hazard = "";
 
@@ -41,17 +45,13 @@ namespace WorldtreeNexus.DataTypes {
         public List<string> ShopItemsHere = new();
         public double ShopPriceMultiplier = 1.0;
 
-        public List<string> FarmingPatchesHere = new();
-         
-        public List<string> HunterSpots = new();
-        public List<HunterCreature> CreaturesHere = new();
+        public List<string> FarmingPatchesHere = new(); 
 
-        public string MahoganyTown = "";
-        public List<string> MahoganyHomesHotspots = new();
+        public string CozyTown = "";
+        public List<string> CCHotspots = new();
         public string PlayerHomeHere = "";
 
-        public string UPCsong = "";
-        public string JGXsong = "";
+        public string SongHere = "";
 
         [JsonIgnore]
         public Dictionary<int, string> TrapsDown = new();
@@ -75,8 +75,8 @@ namespace WorldtreeNexus.DataTypes {
 
             if (depth < 10 && ID != target) {
                 foreach (var kv in ConnectedLocations) {
-                    if (GameLoop.ZPO.Atlas.TryGetValue(kv.Destination, out Location? dest)) { dest.HotColdSearch(results, depth + 1, target); }
-                    if (kv.CheckFailDest != "" && GameLoop.ZPO.Atlas.TryGetValue(kv.CheckFailDest, out Location? failDest)) { failDest.HotColdSearch(results, depth + 1, target); }
+                    if (GameLoop.WTN.Atlas.TryGetValue(kv.Destination, out Location? dest)) { dest.HotColdSearch(results, depth + 1, target); }
+                    if (kv.CheckFailDest != "" && GameLoop.WTN.Atlas.TryGetValue(kv.CheckFailDest, out Location? failDest)) { failDest.HotColdSearch(results, depth + 1, target); }
                 }
             }
         }

@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace WorldtreeNexus.DataTypes {
     public class ItemWrapper {
@@ -16,6 +13,9 @@ namespace WorldtreeNexus.DataTypes {
 
         public List<ItemWrapper> Containing = new();
         public bool AutoAddingContainer = false;
+        public AlchemyStats Alchemy = null;
+
+        public string MiscString = "";
 
         [JsonIgnore]
         public Item? Library = null; 
@@ -38,6 +38,11 @@ namespace WorldtreeNexus.DataTypes {
             MiscInt = wrap.UseInt;
             MiscInt2 = wrap.UseInt2;
             MiscInt3 = wrap.UseInt3;
+            MiscString = wrap.MiscString;
+
+            if (wrap.Alchemy != null) {
+                Alchemy = new(wrap.Alchemy);
+            }
 
             if (wrap.Containing.Count > 0) {
                 foreach (var con in wrap.Containing) {
@@ -64,6 +69,11 @@ namespace WorldtreeNexus.DataTypes {
             MiscInt = other.MiscInt;
             MiscInt2 = other.MiscInt2;
             MiscInt3 = other.MiscInt3;
+            MiscString = other.MiscString;
+
+            if (other.Alchemy != null) {
+                Alchemy = new(other.Alchemy);
+            }
 
             for (int i = 0; i < other.Containing.Count; i++) {
                 Containing.Add(other.Containing[i]);
@@ -73,10 +83,14 @@ namespace WorldtreeNexus.DataTypes {
 
         public Item? GetRef() {
             if (Library == null) {
-                if (GameLoop.ZPO.ItemLibrary.TryGetValue(ID, out Item? lib) && lib != null) {
+                if (GameLoop.WTN.ItemLibrary.TryGetValue(ID, out Item? lib) && lib != null) {
                     Item clone = new(lib);
                     clone.Quantity = Quantity;
                     clone.UseInt4 = Charges;
+
+                    clone.Alchemy = Alchemy;
+
+
                     return clone;
                 }
             }
@@ -86,15 +100,7 @@ namespace WorldtreeNexus.DataTypes {
         }
 
         public void TryConsume() {
-            if (GameLoop.ZPO.player.PrayerActive("Cornucopia")) {
-                if (GameLoop.rand.Next(5) != 0) { 
-                    Quantity -= 1;
-                } else { 
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("The blessing of the cornucopia preserves your item.", Color.Goldenrod, Color.Black));
-                }
-            } else {
-                Quantity -= 1;
-            }
+            Quantity -= 1;
         }
     }
 }

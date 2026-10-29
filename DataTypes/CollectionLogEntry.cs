@@ -28,20 +28,20 @@
 
 
         public int TryFindTotal() {
-            if (GameLoop.ZPO.MonsterLibrary.TryGetValue(MonsterID, out AreaMonster? mon) && mon != null) {
+            if (GameLoop.WTN.MonsterLibrary.TryGetValue(MonsterID, out AreaMonster? mon) && mon != null) {
                 return mon.DropTable.Count;
             }
 
-            if (GameLoop.ZPO.BossLibrary.TryGetValue(MonsterID, out BossFight? boss) && boss != null) {
+            if (GameLoop.WTN.BossLibrary.TryGetValue(MonsterID, out BossFight? boss) && boss != null) {
                 return boss.DropTable.Count;
             }
 
-            if (GameLoop.ZPO.ItemLibrary.TryGetValue(MonsterID, out Item? cask) && cask != null) {
+            if (GameLoop.WTN.ItemLibrary.TryGetValue(MonsterID, out Item? cask) && cask != null) {
                 return cask.DropTable.Where(o => o.AltLog == "").ToList().Count;
             }
 
             if (MonsterID == "General") {
-                if (GameLoop.ZPO.ItemLibrary.TryGetValue("casketEasy", out Item? gen) && gen != null) {
+                if (GameLoop.WTN.ItemLibrary.TryGetValue("casketEasy", out Item? gen) && gen != null) {
                     return gen.DropTable.Where(o => o.AltLog == "General").ToList().Count;
                 }
             }

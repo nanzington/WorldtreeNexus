@@ -50,7 +50,7 @@ namespace WorldtreeNexus.DataTypes {
 
         public bool AnyStations() { 
             foreach (var obj in BuiltObjects) {
-                if (GameLoop.ZPO.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
+                if (GameLoop.WTN.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
                     if (actual.AddsStation != "") {
                         return true;
                     }
@@ -62,7 +62,7 @@ namespace WorldtreeNexus.DataTypes {
 
         public bool AnyGathers() { 
             foreach (var obj in BuiltObjects) {
-                if (GameLoop.ZPO.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
+                if (GameLoop.WTN.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
                     if (actual.AddsGather != "") {
                         return true;
                     }
@@ -74,7 +74,7 @@ namespace WorldtreeNexus.DataTypes {
 
         public bool AnyShops() { 
             foreach (var obj in BuiltObjects) {
-                if (GameLoop.ZPO.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
+                if (GameLoop.WTN.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
                     if (actual.ShopItems.Count > 0) {
                         return true;
                     }

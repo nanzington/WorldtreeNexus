@@ -20,7 +20,7 @@ namespace WorldtreeNexus {
         public static SoundManager SoundManager; 
         public static SaveFile GlobalOptions;
 
-        public static WorldtreeNexus ZPO;
+        public static WorldtreeNexus WTN;
 #pragma warning restore CS8618  
 
         static void Main(string[] args) { 
@@ -49,7 +49,7 @@ namespace WorldtreeNexus {
 
             if (!BuildingWithoutMusic) {
                 SoundManager.LoadMusic(); 
-                SoundManager.PickMusic("Lux Aeterna");
+                SoundManager.PickMusic("Gymnopedie 1", true);
             }
         }
 

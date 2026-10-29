@@ -2,15 +2,17 @@
     public class Requirement {
         public string RequirementType = "";
         public int MiscInt = 0;
+        public int MiscInt2 = 0;
         public string MiscString = "";
         public string MiscString2 = "";
         public bool ConsumeItem = false;
 
         public string CustomSummary = "";
 
-        public Requirement(string ty, int misc1 = 0, string misc2 = "", bool consume = false, string misc3 = "", string summ = "") {
+        public Requirement(string ty, int misc1 = 0, string misc2 = "", bool consume = false, string misc3 = "", string summ = "", int miscint2 = 0) {
             RequirementType = ty;
             MiscInt = misc1;
+            MiscInt2 = miscint2;
             MiscString = misc2;
             MiscString2 = misc3;
             ConsumeItem = consume;
@@ -37,7 +39,7 @@
             }
 
             if (RequirementType == "QuestAt") {
-                if (GameLoop.ZPO.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
+                if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
                     if (req != null) {
                         if (req.CompleteStage == MiscInt)
                             return "Completed Quest: " + req.Name;
@@ -50,7 +52,7 @@
             }
 
             if (RequirementType == "QuestNot") {
-                if (GameLoop.ZPO.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
+                if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
                     if (req != null) {
                         if (req.CompleteStage == MiscInt)
                             return "Not completed Quest: " + req.Name;
@@ -63,7 +65,7 @@
             }
 
             if (RequirementType == "QuestBelow") {
-                if (GameLoop.ZPO.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
+                if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
                     if (req != null) {
                         return "Quest: " + req.Name + " [Below Stage " + MiscInt + "]";
                     }
@@ -73,7 +75,7 @@
             }
 
             if (RequirementType == "QuestPast") {
-                if (GameLoop.ZPO.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
+                if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
                     if (req != null) {
                         return "Quest: " + req.Name + " [At or Above Stage " + MiscInt + "]";
                     }
@@ -86,21 +88,21 @@
                 if (MiscString == "Gold") {
                     return "Need " + MiscInt + " gold";
                 }
-                return "Need " + MiscInt + "x " + GameLoop.ZPO.ResolveItemName(MiscString);
+                return "Need " + MiscInt + "x " + GameLoop.WTN.ResolveItemName(MiscString);
             }
 
             if (RequirementType == "NotItem") { 
-                return "Need to NOT have " + MiscInt + "x " + GameLoop.ZPO.ResolveItemName(MiscString);
+                return "Need to NOT have " + MiscInt + "x " + GameLoop.WTN.ResolveItemName(MiscString);
             }
 
             if (RequirementType == "CollectionLogComplete") {
                 if (MiscString.Contains("clue"))
                     return "Completed the " + MiscString + " collection log";
                 else if (MiscString.Contains("boss")) {
-                    return "Completed the " + GameLoop.ZPO.ResolveBossName(MiscString) + " collection log";
+                    return "Completed the " + GameLoop.WTN.ResolveBossName(MiscString) + " collection log";
                 }
                 else {
-                    return "Completed the " + GameLoop.ZPO.ResolveMonsterName(MiscString) + " collection log";
+                    return "Completed the " + GameLoop.WTN.ResolveMonsterName(MiscString) + " collection log";
                 }
             }
 
@@ -108,38 +110,28 @@
                 if (MiscString.Contains("clue"))
                     return "Completed " + MiscInt + "x " + MiscString;
                 else {
-                    return "Killed " + MiscInt + "x " + GameLoop.ZPO.ResolveMonsterName(MiscString);
+                    return "Killed " + MiscInt + "x " + GameLoop.WTN.ResolveMonsterName(MiscString);
                 }
             } 
 
             if (RequirementType == "NotWearing") { 
-                return "Not wearing a " + GameLoop.ZPO.ResolveItemName(MiscString); 
+                return "Not wearing a " + GameLoop.WTN.ResolveItemName(MiscString); 
             }
             
             if (RequirementType == "Wearing") { 
-                return "Wearing a " + GameLoop.ZPO.ResolveItemName(MiscString); 
+                return "Wearing a " + GameLoop.WTN.ResolveItemName(MiscString); 
             } 
 
             if (RequirementType == "Data") {
                 return "WorldState: " + MiscString + " " + MiscString2 + " " + MiscInt;
             }
 
-            if (RequirementType == "Pizazz") {
-                int have = 0;
-                if (MiscString == "Telekinetic") { have = GameLoop.ZPO.player.PizazzTelekinetic; }
-                if (MiscString == "Enchantment") { have = GameLoop.ZPO.player.PizazzEnchantment; }
-                if (MiscString == "Alchemist") { have = GameLoop.ZPO.player.PizazzAlchemist; }
-                if (MiscString == "Graveyard") { have = GameLoop.ZPO.player.PizazzGraveyard; }
-
-                return "Need " + MiscInt + " " + MiscString + " Pizazz points (have " + have + ").";
-            }
-
             if (RequirementType == "ItemOwned") {
-                return GameLoop.ZPO.ResolveItemName(MiscString) + " in inventory, equipment, or bank.";
+                return GameLoop.WTN.ResolveItemName(MiscString) + " in inventory, equipment, or bank.";
             }
             
             if (RequirementType == "ItemNotOwned") {
-                return GameLoop.ZPO.ResolveItemName(MiscString) + " not in inventory, equipment, or bank.";
+                return GameLoop.WTN.ResolveItemName(MiscString) + " not in inventory, equipment, or bank.";
             }
 
             if (RequirementType == "DiaryComplete") {
@@ -162,43 +154,26 @@
                 return "Must have Combat level " + MiscInt + " or lower.";
             }
 
-            if (RequirementType == "SlayerTask") {
-                if (MiscString == "Any") {
-                    return "Must have a slayer task active.";
-                } else {
-                    return "Must have an active " + GameLoop.ZPO.ResolveMonsterName(GameLoop.ZPO.player.SlayerTask) + " task.";
-                }
-            }
-
-            if (RequirementType == "SlayerNotBlocked") { return "Must not have " + GameLoop.ZPO.ResolveMonsterName(GameLoop.ZPO.player.SlayerTask) + " tasks blocked already."; }
-            if (RequirementType == "SlayerBlocked") { return "Must have " + GameLoop.ZPO.ResolveMonsterName(GameLoop.ZPO.player.SlayerTask) + " tasks blocked."; }
-            
-            if (RequirementType == "SlayerNotPreferred") { return "Must not have " + GameLoop.ZPO.ResolveMonsterName(GameLoop.ZPO.player.SlayerTask) + " tasks preferred already.";  }
-            if (RequirementType == "SlayerPreferred") { return "Must have " + GameLoop.ZPO.ResolveMonsterName(GameLoop.ZPO.player.SlayerTask) + " tasks preferred.";  }
-
-            if (RequirementType == "SlayerBlockRoom") {
-                int max = GameLoop.ZPO.player.GetQuestPoints() / 50;
-                return "Must have fewer than " + max + " tasks blocked - blocking " + GameLoop.ZPO.player.SlayerBlocked.Count + "."; 
-            }
-
-            if (RequirementType == "SlayerPreferRoom") {
-                int max = GameLoop.ZPO.player.GetQuestPoints() / 50;
-                return "Must have fewer than " + max + " tasks preferred - preferring " + GameLoop.ZPO.player.SlayerPrefer.Count + "."; 
-            }
-
-            if (RequirementType == "SlayerNotExtended") { return "Current slayer task must not already be extended."; }
-            if (RequirementType == "SlayerExtended") { return "Current slayer task must already be extended."; }
-
             if (RequirementType == "Region") { return "Must be in " + MiscString + "."; }
 
-            if (RequirementType == "POHNotOwned") { return "Must not already own the house in " + GameLoop.ZPO.ResolveLocationName(MiscString) + "."; }
-            if (RequirementType == "POHOwned") { return "Must own the house in " + GameLoop.ZPO.ResolveLocationName(MiscString) + "."; }
+            if (RequirementType == "POHNotOwned") { return "Must not already own the house in " + GameLoop.WTN.ResolveLocationName(MiscString) + "."; }
+            if (RequirementType == "POHOwned") { return "Must own the house in " + GameLoop.WTN.ResolveLocationName(MiscString) + "."; }
             if (RequirementType == "AnyPOH") { return "Must own a home anywhere."; }
             if (RequirementType == "POHActive") { return "Must own this home, and have it currently active (set at any Estate Agent)."; }
 
             if (RequirementType == "CanSlash") { return "Must have any item that deals slashing damage, or a knife."; }
             
             if (RequirementType == "TempMonsterCount") { return "Must be fewer than " + MiscInt + " summoned monsters here."; }
+
+            if (RequirementType == "TimeBetween") { 
+                bool twelve = GameLoop.WTN.player.Clock != null ? GameLoop.WTN.player.Clock.TwelveHour : true; 
+                return "Must be between " + Helper.ConvertTime(MiscInt, twelve) + " and " + Helper.ConvertTime(MiscInt2, twelve);
+            }
+
+            if (RequirementType == "TimeOutside") { 
+                bool twelve = GameLoop.WTN.player.Clock != null ? GameLoop.WTN.player.Clock.TwelveHour : true; 
+                return "Must NOT be between " + Helper.ConvertTime(MiscInt, twelve) + " and " + Helper.ConvertTime(MiscInt2, twelve);
+            }
 
             return "";
         }
@@ -340,7 +315,7 @@
                     for (int i = 0; i < clueTypes.Count; i++) { 
                         if (MiscString == clueTypes[i] + " clue") {
                             if (p.CollectionLogClues.TryGetValue("casket" + clueTypes[i], out CollectionLogEntry? log) && log != null) {
-                                if (GameLoop.ZPO.ItemLibrary.TryGetValue("casket" + clueTypes[i], out Item? cask) && cask != null) {
+                                if (GameLoop.WTN.ItemLibrary.TryGetValue("casket" + clueTypes[i], out Item? cask) && cask != null) {
                                     if (cask.DropTable.Count == log.DropsObtained.Count) {
                                         return true;
                                     }
@@ -350,7 +325,7 @@
                     }
                 } else if (MiscString.Contains("boss")) {
                     if (p.CollectionLogBoss.TryGetValue(MiscString, out CollectionLogEntry? log) && log != null) {
-                        if (GameLoop.ZPO.BossLibrary.TryGetValue(MiscString, out BossFight? mon) && mon != null) {
+                        if (GameLoop.WTN.BossLibrary.TryGetValue(MiscString, out BossFight? mon) && mon != null) {
                             if (mon.DropTable.Count == log.DropsObtained.Count) {
                                 return true;
                             }
@@ -359,7 +334,7 @@
                     }
                 } else {
                     if (p.CollectionLog.TryGetValue(MiscString, out CollectionLogEntry? log) && log != null) {
-                        if (GameLoop.ZPO.MonsterLibrary.TryGetValue(MiscString, out AreaMonster? mon) && mon != null) {
+                        if (GameLoop.WTN.MonsterLibrary.TryGetValue(MiscString, out AreaMonster? mon) && mon != null) {
                             if (mon.DropTable.Count == log.DropsObtained.Count) {
                                 return true;
                             }
@@ -393,14 +368,7 @@
 
             if (RequirementType == "Data") {
                 return Helper.CompareWorldState(MiscString, MiscString2, MiscInt);
-            }
-
-            if (RequirementType == "Pizazz") {
-                if (MiscString == "Telekinetic") { if (p.PizazzTelekinetic >= MiscInt) { return true; } }
-                if (MiscString == "Enchantment") { if (p.PizazzEnchantment >= MiscInt) { return true; } }
-                if (MiscString == "Alchemist") { if (p.PizazzAlchemist >= MiscInt) { return true; } }
-                if (MiscString == "Graveyard") { if (p.PizazzGraveyard >= MiscInt) { return true; } }
-            }
+            } 
 
             if (RequirementType == "ItemOwned") { 
                 foreach (var kv in p.Inventory) { if (kv.ID == MiscString) { return true; } }
@@ -427,49 +395,18 @@
 
             if (RequirementType == "CombatAtLeast") { if (p.GetCombatLevel() >= MiscInt) { return true; } }
             if (RequirementType == "CombatAtMost") { if (p.GetCombatLevel() <= MiscInt) { return true; } }
-
-            if (RequirementType == "SlayerTask") {
-                if (MiscString == "Any") {
-                    if (p.SlayerTask != "") { return true; }
-                    else if (p.SlayerTask == MiscString) { return true; }
-                }
-            }
-
-            if (RequirementType == "SlayerNotBlocked") { if (!p.SlayerBlocked.Contains(p.SlayerTask)) { return true; } }
-            if (RequirementType == "SlayerBlocked") { if (p.SlayerBlocked.Contains(p.SlayerTask)) { return true; } }
-            
-            if (RequirementType == "SlayerNotPreferred") { if (!p.SlayerPrefer.Contains(p.SlayerTask)) { return true; } }
-            if (RequirementType == "SlayerPreferred") { if (p.SlayerPrefer.Contains(p.SlayerTask)) { return true; } }
-
-            if (RequirementType == "SlayerBlockRoom") {
-                int max = p.GetQuestPoints() / 50;
-                if (p.SlayerBlocked.Count < max) { 
-                    return true;
-                }
-            }
-
-            if (RequirementType == "SlayerPreferRoom") {
-                int max = p.GetQuestPoints() / 50;
-                if (p.SlayerPrefer.Count < max) { 
-                    return true;
-                }
-            }
-
-            if (RequirementType == "SlayerExtended") { if (p.SlayerTaskExtended) { return true; }}
-            if (RequirementType == "SlayerNotExtended") { if (!p.SlayerTaskExtended) { return true; }}
-
+              
             if (RequirementType == "Region") { if (p.GetRegion() == MiscString) { return true; }}
 
             if (RequirementType == "POHNotOwned") { if (!p.Homes.ContainsKey(MiscString)) { return true; }}
             if (RequirementType == "POHOwned") { if (p.Homes.ContainsKey(MiscString)) { return true; }}
             if (RequirementType == "AnyPOH") { if (p.Homes.Count > 0) { return true; }}
             if (RequirementType == "POHActive") { if (p.Homes.TryGetValue(MiscString, out PlayerOwnedHome? home) && home != null && home.Active) { return true; }}
-
-            if (RequirementType == "CanSlash") { if (p.HasSlashing()) { return true; }}
+             
 
             if (RequirementType == "TempMonsterCountAbove") {
                 int count = 0;
-                if (GameLoop.ZPO.Atlas.TryGetValue(p.NavLoc, out Location? curr) && curr != null) {
+                if (GameLoop.WTN.Atlas.TryGetValue(p.NavLoc, out Location? curr) && curr != null) {
                     foreach (var mon in curr.MonstersHere) {
                         if (mon.Temporary) { count++; }
                     }
@@ -477,6 +414,22 @@
 
                 if (count > MiscInt) {
                     return true;
+                }
+            }
+
+            if (RequirementType == "TimeBetween") {
+                if (GameLoop.WTN.player.Clock != null) {
+                    int currTime = (GameLoop.WTN.player.Clock.Hour * 60) + GameLoop.WTN.player.Clock.Minute;
+
+                    if (currTime >= MiscInt && currTime <= MiscInt2) { return true; }
+                }
+            }
+
+            if (RequirementType == "TimeOutside") {
+                if (GameLoop.WTN.player.Clock != null) {
+                    int currTime = (GameLoop.WTN.player.Clock.Hour * 60) + GameLoop.WTN.player.Clock.Minute;
+
+                    if (currTime < MiscInt || currTime > MiscInt2) { return true; }
                 }
             }
 

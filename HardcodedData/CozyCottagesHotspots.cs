@@ -1,9 +1,9 @@
 ﻿using WorldtreeNexus.DataTypes;
 
 namespace WorldtreeNexus.Hardcodes {
-    public static class HardcodedMahoganyHotspots {
-        public static void InitSpots(Dictionary<string, M_MahoganyHomesHotspot> hotspotLib) {
-            List<M_MahoganyHomesHotspot> toAdd = new();
+    public static class CozyCottagesHotspots {
+        public static void InitSpots(Dictionary<string, M_CozyCottagesHotspot> hotspotLib) {
+            List<M_CozyCottagesHotspot> toAdd = new();
 
             toAdd.Add(new("altar", "Altar", 5, 0, 1, 2));
             toAdd.Add(new("bedLarge", "Large bed", 5, 0, 2, 0));

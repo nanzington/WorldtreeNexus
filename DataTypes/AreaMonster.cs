@@ -15,13 +15,17 @@ namespace WorldtreeNexus.DataTypes {
         public int CurrentHP = 1;
         public int MaxHP = 1;
 
-        public int DamageReduction = 0; // Reduce damage by this as a percent unless using their weakness
+        public int AttackLv = 1;
+        public int DefenseLv = 1;
+
+        public int DamageReduction = 0;
 
         public int AggroLevel = 0; // If the players combat level is below this, the monster will automatically attack them 
         public bool AlwaysAggro = false;
 
-        public string DamageDice = "1d3"; 
+        public int MaxHit = 3; 
         public string WeakType = "Slash";
+        public string Element = "Earth";
         public string DamageType = "Typeless";
         public double AttackSpeedSeconds = 2.4;
         
@@ -37,8 +41,6 @@ namespace WorldtreeNexus.DataTypes {
 
         public bool Inaccessible = false;
         public string SpecialCategory = "";
-        public List<string> CountsAsSlayer = new();
-        public int SlayerReq = 0;
         public string KillItem = "";
         public int KillItemCount = 0;
 
@@ -52,7 +54,7 @@ namespace WorldtreeNexus.DataTypes {
         [JsonIgnore]
         public double TimeLastAttacked = 0;
 
-        public AreaMonster(string n, string id, int lv, int hp, int dr, bool aggro, string ddice, string weakness, int respawn, string dtype, double atkSpeed = 2.4, List<Requirement>? reqs = null, bool seeAnyways = true, bool inaccessible = false, string specialCat = "", bool proper = false, bool temp = false) {
+        public AreaMonster(string n, string id, int lv, int hp, int dr, int atk, int def, bool aggro, int maxhit, string weakness, string element, int respawn, string dtype, double atkSpeed = 2.4, List<Requirement>? reqs = null, bool seeAnyways = true, bool inaccessible = false, string specialCat = "", bool proper = false, bool temp = false) {
             Name = n;
             ID = id;
             Level = lv;
@@ -60,13 +62,17 @@ namespace WorldtreeNexus.DataTypes {
             CurrentHP = hp;
             DamageReduction = dr;
 
+            AttackLv = atk;
+            DefenseLv = def;
+
             AggroLevel = (lv * 2) + 1;
             AlwaysAggro = aggro;
 
-            DamageDice = ddice; 
+            MaxHit = maxhit; 
             WeakType = weakness;
             DamageType = dtype;
             AttackSpeedSeconds = atkSpeed;
+            Element = element;
 
             RespawnTime = respawn;
             Inaccessible = inaccessible;
@@ -97,25 +103,20 @@ namespace WorldtreeNexus.DataTypes {
         public string GetSummary() {
             string build = "";
 
-            build += Name + ": Deals " + DamageDice + " " + DamageType + " damage. Weak to " + WeakType + ".";
+            build += Name + ": Deals up to " + MaxHit + " " + DamageType + " damage. Weak to " + WeakType + ". " + Element + "-aligned.";
 
             if (DamageReduction > 0)
                 build += " " + DamageReduction + " DR.";
-
-            if (CountsAsSlayer.Count > 0) {
-                string slayerB = "";
-                for (int i = 0; i < CountsAsSlayer.Count; i++) {
-                    slayerB += (i == 0 ? ", " : "") + (i == CountsAsSlayer.Count - 1 ? "and " : "") + GameLoop.ZPO.ResolveMonsterName(CountsAsSlayer[i]);
-                }
-                
-                build += " Counts for " + slayerB + " Slayer tasks.";
-            }
 
             if (SpecialCategory != "") {
                 build += " Counts as " + SpecialCategory + ".";
             }
 
             return build;
+        }
+
+        public CombatSim GetSimBlock() {
+            return new CombatSim(MaxHP, AttackLv, DefenseLv, MaxHit, DamageType, Element, AttackSpeedSeconds * 2000, DamageReduction, WeakType, Element);
         }
     }
 }

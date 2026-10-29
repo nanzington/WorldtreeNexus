@@ -8,15 +8,9 @@
 - - - Various mythologies (Greek, Egyptian, Roman, Norse)
 - - - Maybe a general "fairy tale" inspired realm where a variety of classic fairy tales are scattered around? The Blue/Red Fairy Book, Grimm's Fairy Tales, Andersens, Aesops Fables
 - - - Arabian Nights, either standalone or lumped into the above
-- - - Frankenstein, Frankenstein, Dr Jekyll and Mr Hyde, Island of Dr Moreau, The King in Yellow, at least some works of Lovecraft, Edgar Allen Poe (general classic horror world?)
-- - - Picture of Dorian Gray
-- - - Treasure Island
-- - - The Time Machine 
-- - - Moby Dick
+- - - Frankenstein, Dr Jekyll and Mr Hyde, Island of Dr Moreau, The King in Yellow, at least some works of Lovecraft, Edgar Allen Poe (general classic horror world?)
 - - - Peter Pan
 - - - Gullivers Travels
-- - - Twenty Thousand Leagues Under the Sea, Journey to the Center of the Earth
-- - - Some of Sherlock Holmes counts
 - - - Jungle Book
 - - - Alice in Wonderland
 - - - First 13 Tarzan books (by Edgar Rice Burroughs), could be a long quest storyline
@@ -26,6 +20,33 @@
 - - Setting Switches: Tech level, Magic level, Control level, 
 
 Maybe work on a system for developing/sharing/loading world data as mods? Then people could create their own extra worlds based on anything they want, would be good with workshop support
+
+Main Story stuff?
+- Each skill comes from a specific world
+- Eventual story thing where some evil force is cutting off access to worlds to try to destroy the worldtree
+- As the quest(s) progress worlds become inaccessible and their related skills can't be used until the story is resolved
+
+
+General Ideas:
+- Pamphlets or strategy guides or whatever, sold in shop off Plaza, that give some details about each world. Tips, tricks, area breakdown by level, hints at how to find some quests there
+
+
+Worldtree Nexus
+- Plaza - Contains the Adventurer's Guild, possibly some basic shops, newspaper stand containing most recent update news in "book" form?, and the teleport matrix to get to adventure worlds
+- - Crossroads Inn: 
+- Residential District - Contains some resident homes and is where the POH for the nexus is
+- Commercial District - Casino for gambling, wider array of shops, grand exchange / trade hall, full bank (worlds may only allow limited bank withdrawals?)
+- - Casino: Gambling games (blackjack, poker, possibly also offering scratch tickets for lottery here or in some other shop)
+- - Arcade: More video-gamey things like stack'em or whatever. Maybe physical ones like skee ball if they can be adapted. Doing well gives tickets, exchange tickets for prizes 
+- - The Wayward Palate: Restaurant the player can work at (requires impressing the head chef with a cuy burger as part of a quest) and then buy (higher cooking + a bunch of gold). Kinda like a PlateUp minigame
+
+
+Fairytale World - Called Everafter?
+- Initial region is Fableford. Main town is Oncebridge. Includes Jack's farm (beanstalk, leads to giants realm), enchanted forest (candy witch house) 
+- Frostglass region to the north, all snowy/wintry/christmas-y. Main town Snowbell
+- Grimbriar region in south, main town Hagstone. Home to spookier/darker fairy tales 
+- Desert region (needs a name) in east, for Arabian Nights stuff (and possibly Egyptian mythology)
+- Elfame kinda to the west deep in the enchanted forest if you find the right entrance
 
 
 Pirate World
@@ -41,3 +62,33 @@ Pirate World
 - - In all cases of NPC ships you can try to mutiny by killing the captain and loyal crew, but may get stranded if not enough crew left to man ship. Causes reputation hit with NPC faction, possibly gain with their enemies
 - Each map tile of movement takes some amount of real time (like 30 seconds or a minute) to move and translates to some time in game (hours or days depending on how far routes end up being)
 - While on a ship, allow navigating around the different parts of the ship
+- Sinbads Seven Voyages as quests? Maybe try to set it up so you can only do one quest per game day (set SinbadQuest data to current day, check to see if day is not that to allow starting a quest)
+
+Victorian London
+- Works: Sherlock Holmes, Picture of Dorian Grey, Journey to the Center of the Earth?, The Time Machine / Connecticut Yankee in King Arthurs Court -> Arthurian legends and Robin Hood
+
+Cyberspace?
+- Explore a sort of virtual world area
+- Arcade: maybe access workshop-uploaded minigames made via some kind of scripting setup
+- MyPlace: access houses you've subscribed to from the steam workshop (any house can be uploaded but they all end up here, if you upload and subscribe to your own house you can't build in it here)
+- Somehow generate a list of resources and stations from either URLS or webpages dynamically so you can go to any website and it'll display something
+- - Also find a way to attach specific things to specific URLS in case i get an idea for something involving going to specific websites
+
+Delving Worlds (Can't take items in, random layouts each game day
+- Backrooms 
+- Daily Grind office? See about permission for that
+- BOTW Eventide Island (also temporarily reset skill levels)
+- One based on the depiction of Hell in Dante's Inferno?
+
+Zombie Apocalypse World
+- Starts out regular modern city, after entering a series of events starts that leads to apocalypse happening and then it's zombies forever on that save
+
+Hunger games type survival / battle royale thing?
+- Maybe preset arenas, or just random layouts entirely
+- A bunch of other pseudo-players also spawn in and can fight eachother
+
+Xianxia World
+- No idea what you'd do here unless actually adding a Cultivation skill, maybe you can join a sect or something
+
+Time Travel-y thing
+- Set of worlds that are connected and things in the past-world affect the future-worlds

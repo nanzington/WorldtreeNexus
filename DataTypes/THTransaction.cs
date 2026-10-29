@@ -1,12 +1,12 @@
 ﻿namespace WorldtreeNexus.DataTypes {
-    public class GETransaction {
+    public class THTransaction {
         public ItemWrapper Wrap;
         public bool Buying = false;
         public int ListPrice = 0;
 
         public bool Resolved = false;
 
-        public GETransaction(ItemWrapper wrap, bool buy, int price) {
+        public THTransaction(ItemWrapper wrap, bool buy, int price) {
             Wrap = wrap;
             Buying = buy;
             ListPrice = price;

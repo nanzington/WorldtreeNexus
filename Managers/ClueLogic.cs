@@ -16,7 +16,7 @@ namespace WorldtreeNexus.Managers {
                 if (diff == "Master") { clueID = ref player.CurrentClueMaster; }
 
                 if (clueID != "") {
-                    if (GameLoop.ZPO.ClueStepLibrary.TryGetValue(clueID, out ClueStep? clueTut)) {
+                    if (GameLoop.WTN.ClueStepLibrary.TryGetValue(clueID, out ClueStep? clueTut)) {
                         if (clueTut != null) {
                             if (clueTut.ClueType == clueType && player.NavLoc == clueTut.SolveLoc && interacted == clueTut.EmoteOrNpc) {
                                 if (clueTut.ClueType != "Emote") {
@@ -26,7 +26,7 @@ namespace WorldtreeNexus.Managers {
                                             ProgressStep(diff, player, Log);
                                             return true;
                                         } else {
-                                            GameLoop.ZPO.Log.AddMessage("Charlie wants you to bring him a " + GameLoop.ZPO.ResolveItemName(clueTut.Equip1).ToLower() + ".", Color.SandyBrown);
+                                            GameLoop.WTN.Log.AddMessage("Charlie wants you to bring him a " + GameLoop.WTN.ResolveItemName(clueTut.Equip1).ToLower() + ".", Color.SandyBrown);
                                             return true;
                                         }
                                     } else {
@@ -38,7 +38,7 @@ namespace WorldtreeNexus.Managers {
                                     bool second = false;
                                     bool third = false;
 
-                                    foreach (var kv in GameLoop.ZPO.player.Equipment) {
+                                    foreach (var kv in GameLoop.WTN.player.Equipment) {
                                         if (kv.Value.ID == clueTut.Equip1)
                                             first = true;
                                         if (kv.Value.ID == clueTut.Equip2)
@@ -90,7 +90,7 @@ namespace WorldtreeNexus.Managers {
                         toReset = "";
 
                         if (toIncrement >= stepsNeeded) {
-                            if (GameLoop.ZPO.ItemLibrary.TryGetValue("casket" + tier, out Item? caskTut)) {
+                            if (GameLoop.WTN.ItemLibrary.TryGetValue("casket" + tier, out Item? caskTut)) {
                                 if (caskTut != null) {
                                     player.TryPickup(new Item(caskTut), 1);
                                 }
@@ -98,7 +98,7 @@ namespace WorldtreeNexus.Managers {
                             toIncrement = 0;
                             Log.AddMessage(new ColoredString("You finished the treasure hunt and found a casket!", Color.Turquoise, Color.Black));
                         } else {
-                            if (GameLoop.ZPO.ItemLibrary.TryGetValue("clueScroll" + tier, out Item? scrollTut)) {
+                            if (GameLoop.WTN.ItemLibrary.TryGetValue("clueScroll" + tier, out Item? scrollTut)) {
                                 if (scrollTut != null) {
                                     player.TryPickup(new Item(scrollTut), 1);
                                 }
@@ -125,7 +125,7 @@ namespace WorldtreeNexus.Managers {
              if (clueID == "") {
                 List<string> allClueSteps = new();
 
-                foreach (var kv in GameLoop.ZPO.ClueStepLibrary) {
+                foreach (var kv in GameLoop.WTN.ClueStepLibrary) {
                     if (kv.Value.Difficulty == tier) {
                         allClueSteps.Add(kv.Key);
                     }
@@ -134,14 +134,14 @@ namespace WorldtreeNexus.Managers {
                 clueID = allClueSteps[GameLoop.rand.Next(allClueSteps.Count)];
             }
 
-            if (GameLoop.ZPO.ClueStepLibrary.TryGetValue(clueID, out ClueStep? clue) && clue != null) { 
+            if (GameLoop.WTN.ClueStepLibrary.TryGetValue(clueID, out ClueStep? clue) && clue != null) { 
                 if (clue.ClueType != "Map") { 
                     Log.AddMessage(new ColoredString("Clue: " + clue.HintText, Color.SandyBrown, Color.Black));
 
                     if (clue.ClueType == "HotCold") {
                         List<HotColdResult> maps = new();
                         
-                        if (GameLoop.ZPO.Atlas.TryGetValue(player.NavLoc, out Location? curr)) {
+                        if (GameLoop.WTN.Atlas.TryGetValue(player.NavLoc, out Location? curr)) {
                             curr.HotColdSearch(maps, 0, clue.SolveLoc);
                         }
 
@@ -183,12 +183,12 @@ namespace WorldtreeNexus.Managers {
             else if (which == "Elite") { clueID = p.CurrentClueElite; } 
             else if (which == "Master") { clueID = p.CurrentClueMaster; } 
 
-            if (GameLoop.ZPO.ClueStepLibrary.TryGetValue(clueID, out ClueStep? clue) && clue != null) {
-                location = GameLoop.ZPO.ResolveLocationName(clue.SolveLoc);
+            if (GameLoop.WTN.ClueStepLibrary.TryGetValue(clueID, out ClueStep? clue) && clue != null) {
+                location = GameLoop.WTN.ResolveLocationName(clue.SolveLoc);
                     
                 if (clue.ClueType == "Speak" || clue.ClueType == "Anagram") {
                     interact = "speak to ";
-                    target = GameLoop.ZPO.ResolveNPCName(clue.EmoteOrNpc);
+                    target = GameLoop.WTN.ResolveNPCName(clue.EmoteOrNpc);
                 }
 
                 if (clue.ClueType == "Dig") {
@@ -201,7 +201,7 @@ namespace WorldtreeNexus.Managers {
 
                 if (clue.ClueType == "Gather") {
                     interact = "interact with a ";
-                    target = GameLoop.ZPO.ResolveGatherName(clue.EmoteOrNpc);
+                    target = GameLoop.WTN.ResolveGatherName(clue.EmoteOrNpc);
                 }
             }
 

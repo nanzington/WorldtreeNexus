@@ -104,7 +104,7 @@ namespace WorldtreeNexus.DataTypes {
         }
 
         public bool CanBuild() {
-            Player p = GameLoop.ZPO.player;
+            Player p = GameLoop.WTN.player;
 
             if (!p.HasAllItems(MaterialsNeeded)) { return false; }
             if (!p.HasAllItems(ToolsNeeded)) { return false; }

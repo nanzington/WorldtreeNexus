@@ -63,7 +63,7 @@ namespace WorldtreeNexus.DataTypes {
                         }
 
                         if (status.CurrentStage == CompleteStage) {
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You have completed " + Name + "!", Color.Lime, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("You have completed " + Name + "!", Color.Lime, Color.Black));
                             ProcessRewards(p);
                         }
                     }
@@ -75,20 +75,20 @@ namespace WorldtreeNexus.DataTypes {
         public void ProcessRewards(Player p) {
             foreach (var kv in Rewards) {
                 if (kv.RewardType == "Experience") {
-                    GameLoop.ZPO.Log.AddMessage("You gain " + kv.MiscInt + " " + kv.MiscString + " experience.", Color.Yellow);
-                    p.TryGrantExp(kv.MiscString, kv.MiscInt, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
+                    GameLoop.WTN.Log.AddMessage("You gain " + kv.MiscInt + " " + kv.MiscString + " experience.", Color.Yellow);
+                    p.TryGrantExp(kv.MiscString, kv.MiscInt, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
                 }
 
                 if (kv.RewardType == "Item") {
                     if (kv.MiscString == "Gold") {
-                        GameLoop.ZPO.Log.AddMessage("You receive " + kv.MiscInt + " gold.", Color.Yellow);
+                        GameLoop.WTN.Log.AddMessage("You receive " + kv.MiscInt + " gold.", Color.Yellow);
                         p.GiveGold(kv.MiscInt); 
                     } else { 
-                        if (GameLoop.ZPO.ItemLibrary.TryGetValue(kv.MiscString, out Item? reward) && reward != null) {
+                        if (GameLoop.WTN.ItemLibrary.TryGetValue(kv.MiscString, out Item? reward) && reward != null) {
                             if (kv.MiscInt == 1)
-                                GameLoop.ZPO.Log.AddMessage("You receive a" + (Helper.VowelStart(reward.Name.ToLower()) ? "n " : " ") +  reward.Name.ToLower() + ".", Color.Yellow);
+                                GameLoop.WTN.Log.AddMessage("You receive a" + (Helper.VowelStart(reward.Name.ToLower()) ? "n " : " ") +  reward.Name.ToLower() + ".", Color.Yellow);
                             else
-                                GameLoop.ZPO.Log.AddMessage("You receive " + kv.MiscInt + "x " + reward.Name.ToLower() + ".", Color.Yellow);
+                                GameLoop.WTN.Log.AddMessage("You receive " + kv.MiscInt + "x " + reward.Name.ToLower() + ".", Color.Yellow);
 
                             Item pickup = new(reward);
                             pickup.Quantity = kv.MiscInt;
@@ -101,8 +101,8 @@ namespace WorldtreeNexus.DataTypes {
                     if (kv.MiscString == "kitten") {
                         List<string> kittenColors = [ "kittenBlack", "kittenGray", "kittenWhite", "kittenOrange", "kittenBrown", "kittenCalico" ];
 
-                        if (GameLoop.ZPO.ResolveItem(kittenColors[GameLoop.rand.Next(kittenColors.Count)]) is Item kitten) { 
-                            GameLoop.ZPO.Log.AddMessage("You receive a " + kitten.Name.ToLower(), Color.Yellow);
+                        if (GameLoop.WTN.ResolveItem(kittenColors[GameLoop.rand.Next(kittenColors.Count)]) is Item kitten) { 
+                            GameLoop.WTN.Log.AddMessage("You receive a " + kitten.Name.ToLower(), Color.Yellow);
                             p.TryPickup(kitten, 1);
                         }
                     }
@@ -111,7 +111,7 @@ namespace WorldtreeNexus.DataTypes {
         }
 
         public int CurrentStage() {
-            if (GameLoop.ZPO.player.QuestLog.TryGetValue(ID, out QuestStatus? status)) {
+            if (GameLoop.WTN.player.QuestLog.TryGetValue(ID, out QuestStatus? status)) {
                 return status.CurrentStage;
             }
 

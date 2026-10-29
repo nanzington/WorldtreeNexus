@@ -8,7 +8,7 @@ namespace WorldtreeNexus.UI {
         public SadConsole.UI.Colors? CustomColors;
         public Dictionary<string, InstantUI> Interfaces = new();
 
-        public UI_EmbeddedMini zpoWrap;
+        public UI_EmbeddedMini WTNWrap;
         public UI_EmbeddedMini mainMenu;
 
         public UIManager() {
@@ -64,11 +64,11 @@ namespace WorldtreeNexus.UI {
         public void Init() {
             SetupCustomColors(); 
 
-            zpoWrap = new UI_EmbeddedMini(150, 50, "WorldtreeNexus", new WorldtreeNexus());
+            WTNWrap = new UI_EmbeddedMini(150, 50, "WorldtreeNexus", new WorldtreeNexus());
 
-            GameLoop.ZPO = (WorldtreeNexus) zpoWrap.Game;
+            GameLoop.WTN = (WorldtreeNexus) WTNWrap.Game;
 
-            //zpoWrap.Win.IsVisible = true;
+            //WTNWrap.Win.IsVisible = true;
             mainMenu = new UI_EmbeddedMini(150, 50, "MainMenu", new MainMenu());
             mainMenu.Win.IsVisible = true;
             ((MainMenu)mainMenu.Game).SetupTheBG(mainMenu);

@@ -9,24 +9,18 @@ namespace WorldtreeNexus.DataTypes {
         public string Skill = "";
         public int Level = 1;
         public int ExpGranted = 0;
-        public int ExpOnFail = 0;
 
-        public string InteractVerb = "";
-        public int SuccessChance = 100;
+        public string InteractVerb = ""; 
         public int DepleteChance = 100;
 
         public int RestockTime = 1; 
-
-        public int DamageOnFail = 0;
-
-        public bool LevelBasedSuccess = false;
-
+         
         public string NeedToolCat = "";
         public string NeededBait = "";
         public string CustomLogMessage = "";
 
-        public RunAction? GatherAct = null;
-        public Requirement? Req = null;
+        public List<RunAction> Actions = new();
+        public List<Requirement> Reqs = new();
         public bool ShowAnyways = true;
 
         public List<WeightedItem>? PossibleItems = null;
@@ -34,29 +28,28 @@ namespace WorldtreeNexus.DataTypes {
         [JsonIgnore]
         public double LastGathered = 0;
 
-        public GatheringTile(string id, string name, string verb, int succ, int deplete, int restock, string skill = "", int skLevel = 0, int exp = 0, int expFail = 0, int damageOnFail = 0, bool levelBasedSucc = false, string neededTool = "", string neededBait = "", List<WeightedItem>? items = null, Requirement? req = null, bool show = true, RunAction? action = null, string customLog = "") {
+        public GatheringTile(string id, string name, string verb, int deplete, int restock, string skill = "", int skLevel = 0, int exp = 0, string neededTool = "", string neededBait = "", List<WeightedItem>? items = null, List<Requirement>? reqs = null, bool show = true, List<RunAction>? actions = null, string customLog = "") {
             ID = id;
             Name = name;
-            InteractVerb = verb;
-            SuccessChance = succ;
+            InteractVerb = verb; 
             DepleteChance = deplete;
             RestockTime = restock;
 
             PossibleItems = items;
             Skill = skill;
             Level = skLevel;
-            ExpGranted = exp;
-            ExpOnFail = expFail;
-
-            DamageOnFail = damageOnFail;
-            LevelBasedSuccess = levelBasedSucc;
+            ExpGranted = exp; 
+              
             NeedToolCat = neededTool;
             NeededBait = neededBait;
 
-            GatherAct = action;
-            Req = req;
-            ShowAnyways = show;
 
+            if (actions != null)
+                Actions = actions;
+            if (reqs != null)
+                Reqs = reqs;
+            
+            ShowAnyways = show; 
             CustomLogMessage = customLog;
         }
 
@@ -69,146 +62,69 @@ namespace WorldtreeNexus.DataTypes {
 
         public void Gather(Player p, MessageLog log, Dictionary<string, Item> itemLibrary, Location currentLoc, List<Skill> Recents) {
             if (CanGather(p) == "") {
-                if (GatherAct != null) {
-                    GatherAct.Execute(); 
-                }
-
-                ClueLogic.GenericStep(p, log, "Gather", ID);
-
-                int success = GameLoop.rand.Next(100) + 1;
-
-                if (LevelBasedSuccess && p.Skills.ContainsKey(Skill))
-                    success += (p.GetEffectiveSkillLevel(Skill) - Level);
+                foreach (var act in Actions) { act.Execute();  } 
+                ClueLogic.GenericStep(p, log, "Gather", ID);  
                 
-                int mod = 0;
-                if (NeedToolCat != "") { 
-                    mod = -100;
-                    foreach (var kv in p.Equipment) {
-                        if (kv.Value.GetRef() is Item eqp && eqp.MiscString == NeedToolCat) {
-                            if (eqp.EquipLevel <= p.GetEffectiveSkillLevel(Skill)) { 
-                                mod = Math.Max(mod, eqp.EquipLevel - Level);
+                int esl = 100;
+                int levelDiff = Level - esl; // if they don't specify a skill it should essentially just autosucceed every time for now, may need to revisit later
+                if (Skill != "") {
+                    esl = p.GetEffectiveSkillLevel(Skill); 
+                    levelDiff = Level - esl; // apply by subtracting this from your esl during the roll. so negative is good by making your target number higher
+
+                    if (NeedToolCat != "") {  
+                        foreach (var kv in p.Equipment) {
+                            if (kv.Value.GetRef() is Item eqp && eqp.MiscString == NeedToolCat) {
+                                if (eqp.EquipLevel <= p.GetEffectiveSkillLevel(Skill)) { 
+                                    levelDiff = Level - eqp.EquipLevel; // Readjust based on tool used level instead of player level, this is where it can become positive and become a penalty
+                                }
                             }
                         }
-                    }
 
-                    for (int i = 0; i < p.Inventory.Count; i++) {
-                        if (p.Inventory[i].GetRef() is Item inv && inv.MiscString == NeedToolCat) {
-                            if (inv.EquipLevel <= p.GetEffectiveSkillLevel(Skill)) {
-                                mod = Math.Max(mod, inv.EquipLevel - Level);
+                        for (int i = 0; i < p.Inventory.Count; i++) {
+                            if (p.Inventory[i].GetRef() is Item inv && inv.MiscString == NeedToolCat) {
+                                if (inv.EquipLevel <= p.GetEffectiveSkillLevel(Skill)) {
+                                    levelDiff = Level - inv.EquipLevel; // Readjust based on tool used level instead of player level, this is where it can become positive and become a penalty
+                                }
                             }
                         }
-                    }
 
-                    if (Skill == "Fishing") { // TODO: Make tiered fishing tools??
-                        mod = 0;
-                    }
+                        // This should result in levelDiff being negative if they're using a higher tool, zero if tool is equal, positive if tool is worse than level req
+                    }  
                 }
 
-                if (NeededBait != "") {
-                    p.ConsumeItems([NeededBait + ",1"]); 
-                } 
+                if (NeededBait != "") { p.ConsumeItems([NeededBait + ",1"]); } 
+                     
+                 
+                WeightedItem? output = PickItem(esl);
 
-                if (success <= SuccessChance + mod) {
-                    int level = 0;
-                    if (p.Skills.ContainsKey(Skill))
-                        level = p.Skills[Skill].Level;
-                    WeightedItem? output = PickItem(level);
+                // Check to see if a quest is progressed by gathering from this type of gatherSpot successfully
+                foreach (var quest in GameLoop.WTN.QuestLibrary) { quest.Value.CheckProgress(p, "Gather", ID, 1); }
+                 
+                if (CustomLogMessage != "") { log.AddMessage(new ColoredString(CustomLogMessage, Color.Yellow, Color.Black)); }
 
-                    foreach (var quest in GameLoop.ZPO.QuestLibrary) {
-                        quest.Value.CheckProgress(p, "Gather", ID, 1);
-                    }
-
-                    if (output != null) {
-                        if (itemLibrary.ContainsKey(output.Item)) {
-                            Item receive = new(itemLibrary[output.Item]);
-
-                            if (receive.ID == "clayDust" && Skill == "Mining" && p.Equipment.TryGetValue("Hands", out ItemWrapper? bracelet) && bracelet != null && bracelet.ID == "braceletClay") {
-                                if (itemLibrary.ContainsKey("claySoft")) {
-                                    receive = new(itemLibrary["claySoft"]);
-
-                                    bracelet.Charges -= 1;
-
-                                    if (bracelet.Charges <= 0) {
-                                        log.AddMessage(new ColoredString("Your bracelet of clay runs out of charge and shatters.", Color.Crimson, Color.Black));
-                                        p.Equipment.Remove("Hands");
-                                    }
-                                }
-                            }
-
-
-                            if (p.TryPickup(receive, 1)) {
-                                log.AddMessage(new ColoredString("You get " + receive.Name.ToLower() + " from the " + Name + ".", Color.Green, Color.Black));
-                            } else {
-                                log.AddMessage(new ColoredString("Your inventory is full so the " + receive.Name.ToLower() + " falls to the ground.", Color.Goldenrod, Color.Black));
-                            }
-
-                            foreach (var quest in GameLoop.ZPO.QuestLibrary) {
-                                quest.Value.CheckProgress(p, "GatheredItem", output.Item, 1);
-                            } 
-
-                            foreach (var invWrap in p.Inventory) {
-                                if (invWrap.GetRef() is Item inv) {
-                                    if ((inv.MiscString == "Spirit" && inv.UseString2 == output.Item) || (Skill == "Fishing" && inv.ID == "spiritFish")) { 
-                                        Item dupe = new(itemLibrary[output.Item]);
-                                        if (p.TryPickup(receive, 1)) {
-                                            log.AddMessage(new ColoredString("A" + (Helper.VowelStart(inv.Name) ? "n ": " ") + inv.Name.ToLower() + " is released, and you receive an extra " + receive.Name.ToLower() + ".", Color.Green, Color.Black));
-                                        } else {
-                                            log.AddMessage(new ColoredString("A" + (Helper.VowelStart(inv.Name) ? "n ": " ") + inv.Name.ToLower() + " is released, and the extra " + receive.Name.ToLower() + " falls to the ground.", Color.Goldenrod, Color.Black));
-                                        }
-
-                                        invWrap.Quantity -= 1;
-
-                                        if (invWrap.Quantity <= 0) {
-                                            p.Inventory.Remove(invWrap);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (output.MiscInt2 != 0) {
-                                p.TryGrantExp(Skill, output.MiscInt2, log, Recents);
-                            } else {
-                                p.TryGrantExp(Skill, ExpGranted, log, Recents);
-                            }
+                if (PossibleItems != null && PossibleItems.Count > 0) {
+                    if (output != null && itemLibrary.TryGetValue(output.Item, out Item? receive) && receive != null) {
+                        // Try to pick it up, if it failed then it fell to the ground.
+                        if (p.TryPickup(receive, 1)) {
+                            log.AddMessage(new ColoredString("You get " + receive.Name.ToLower() + " from the " + Name + ".", Color.Green, Color.Black));
                         } else {
-                            if (output.Item != "") {
-                                log.AddMessage(new ColoredString("You " + InteractVerb.ToLower() + " the " + Name.ToLower() + ", but output item doesn't exist.", Color.Firebrick, Color.Black));
-                            } else {
-                                log.AddMessage(new ColoredString("You " + InteractVerb.ToLower() + " the " + Name.ToLower() + ", but get nothing.", Color.Firebrick, Color.Black));
-                            }
-
-                            if (output.MiscInt2 != 0) {
-                                p.TryGrantExp(Skill, output.MiscInt2, log, Recents);
-                            } else {
-                                p.TryGrantExp(Skill, ExpGranted, log, Recents);
-                            }
+                            log.AddMessage(new ColoredString("Your inventory is full so the " + receive.Name.ToLower() + " falls to the ground.", Color.Goldenrod, Color.Black));
                         }
-                    }
 
-                    int deplete = GameLoop.rand.Next(100) + 1;
+                        // Check to see if a quest is progressed by gathering this specific item
+                        foreach (var quest in GameLoop.WTN.QuestLibrary) { quest.Value.CheckProgress(p, "GatheredItem", output.Item, 1); }
 
-                    if (deplete <= DepleteChance - (mod / 2)) { 
-                        if (p.PrayerActive("Enduring Nature")) {
-                            deplete = GameLoop.rand.Next(100) + 1;
-
-                            if (deplete <= DepleteChance - (mod / 2)) { 
-                                LastGathered = Helper.Time();
-                            }
-                        } else {
-                            LastGathered = Helper.Time();
+                        // If the output specifies a different exp gained give that, otherwise give the normal exp
+                        if (Skill != "") {
+                            if (output.MiscInt2 != 0) { p.TryGrantExp(Skill, output.MiscInt2, log, Recents); } 
+                            else { p.TryGrantExp(Skill, ExpGranted, log, Recents); }
                         }
-                    }
 
-                    if (CustomLogMessage != "") {
-                        log.AddMessage(new ColoredString(CustomLogMessage, Color.Yellow, Color.Black));
-                    }
-                } else {
-                    log.AddMessage(new ColoredString("You failed to " + InteractVerb.ToLower() + " the " + Name.ToLower() + ".", Color.Red, Color.Black));
-
-                    if (ExpOnFail > 0) {
-                        p.TryGrantExp(Skill, ExpOnFail, log, Recents);
-                    }
+                        int deplete = GameLoop.rand.Next(100) + 1; 
+                        if (deplete <= DepleteChance) { LastGathered = Helper.Time(); } 
+                    } else {
+                        log.AddMessage(new ColoredString("You " + InteractVerb.ToLower() + " the " + Name.ToLower() + " but got nothing.", Color.Crimson, Color.Black)); 
+                    }  
                 }
             } else {
                 log.AddMessage(new ColoredString("You need " + CanGather(p) + " to do that.", Color.Crimson, Color.Black));
@@ -247,16 +163,18 @@ namespace WorldtreeNexus.DataTypes {
             if (NeededBait != "") {
                 if (NeededBait != "keyClue") {
                     if (!p.HasAllItems([NeededBait + ",1"])) {
-                        return "a " + GameLoop.ZPO.ResolveItemName(NeededBait).ToLower(); 
+                        return "a " + GameLoop.WTN.ResolveItemName(NeededBait).ToLower(); 
                     }
                 } else {
                     return "a clue key, likely dropped by a nearby monster.";
                 }
             }
 
-            if (Req != null) {
-                if (!Req.CheckRequirement(p, false, true)) {
-                    return Req.GetSummary();
+            if (Reqs != null && Reqs.Count > 0) {
+                foreach (var req in Reqs) {
+                    if (!req.CheckRequirement(p, false, true)) {
+                        return req.GetSummary();
+                    }
                 }
             }
 

@@ -8,12 +8,13 @@ namespace WorldtreeNexus.DataTypes {
         public int MaxHP = 1;
 
         public string WeakType = "Slash";
+        public string Element = "Earth";
         public List<string> ImmuneTypes = new();
 
         public int DamageReduction = 0; // Reduce damage by this as a percent unless using their weakness
 
         public string DefaultDmgDice = "1d3";  
-        public string DefaultDmgType = "Typeless";
+        public string DefaultDmgType = "Typeless"; 
         public int DefaultPoisonSeverity = 0;
         public List<BossAttack> Specials = new();
           

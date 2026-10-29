@@ -4,14 +4,10 @@ using static WorldtreeNexus.Music;
 using System.Resources;
 using System.Globalization;
 using System.Collections;
+using MeltySynth; 
 
 namespace WorldtreeNexus.Managers {
-    public class SoundManager {
-        // This uses IrrKlang - there are probably other sound solutions that work just as well, but this is the one I got working.
-        // Download it here: https://www.ambiera.com/irrklang/downloads.html , Go into the zip/bin/dotnet-4 , move irrKlang.NET4.dll into your project directory
-        // In VisualStudio set it to always copy when compiling, right click Dependencies and click Add Project Reference. Browse to the dll (in your project folder),
-        // then add click okay. It should work using the rest of this code now.
-        
+    public class SoundManager {        
         public ISoundEngine engine = new();
         public ISoundEngine music = new();
 
@@ -21,8 +17,6 @@ namespace WorldtreeNexus.Managers {
         public bool Looping = false;
 
         public Dictionary<string, ISoundSource> Songs = new(); 
-        public Dictionary<string, ISoundSource> JagexSongs = new(); 
-
         
         public SoundManager() {
             engine.SoundVolume = 0.05f;
@@ -45,9 +39,6 @@ namespace WorldtreeNexus.Managers {
                     }
                 }
             }
-            
-            //Songs.Add("HaloTheme", Music.AddSoundSourceFromIOStream(HaloTheme, "HaloTheme"));
-            //Songs.Add("SmellsLikeTeenSpirit", Music.AddSoundSourceFromIOStream(SmellsLikeTeenSpirit, "SmellsLikeTeenSpirit")); 
         }
 
 
@@ -82,17 +73,17 @@ namespace WorldtreeNexus.Managers {
         }
 
 
-        public void PickMusic(string forced = "") { 
+        public void PickMusic(string forced = "", bool menu = false) { 
             string NewSong = CurrentSong;
             if (MusicEnabled) {
-                List<KeyValuePair<string, ISoundSource>> unlocked = Songs.Where(o => GameLoop.ZPO.player.UnlockedSongs.Contains(o.Key)).ToList();
+                List<KeyValuePair<string, ISoundSource>> unlocked = Songs.Where(o => GameLoop.WTN.player.UnlockedSongs.Contains(o.Key) || GameLoop.WTN.player.AllSongsUnlocked || menu).ToList();
                 
-                if (GameLoop.ZPO.player.AllSongsUnlocked) {
-                    while (NewSong == CurrentSong && Songs.Count > 1 && forced == "" && !(Looping || GameLoop.ZPO.player.MusicMode == "Auto")) {
+                if (GameLoop.WTN.player.AllSongsUnlocked) {
+                    while (NewSong == CurrentSong && Songs.Count > 1 && forced == "" && !(Looping || GameLoop.WTN.player.MusicMode == "Auto")) {
                         NewSong = Songs.Keys.ToList()[GameLoop.rand.Next(Songs.Keys.Count)];
                     }
                 } else { 
-                    while (NewSong == CurrentSong && unlocked.Count > 1 && forced == "" && !(Looping || GameLoop.ZPO.player.MusicMode == "Auto")) {
+                    while (NewSong == CurrentSong && unlocked.Count > 1 && forced == "" && !(Looping || GameLoop.WTN.player.MusicMode == "Auto")) {
                         NewSong = unlocked[GameLoop.rand.Next(unlocked.Count)].Key;
                     }
                 }

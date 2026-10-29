@@ -54,7 +54,7 @@ namespace WorldtreeNexus.DataTypes {
             bool allPassed = true;
             bool anyPassed = false;
 
-            if (!GameLoop.ZPO.Atlas.ContainsKey(Destination)) {
+            if (!GameLoop.WTN.Atlas.ContainsKey(Destination)) {
                 return false;
             }
 
@@ -107,11 +107,11 @@ namespace WorldtreeNexus.DataTypes {
                 int toBeat = 50 + (p.GetEffectiveSkillLevel(ExpTo) - Level);
 
                 if (GameLoop.rand.Next(100) > toBeat) {
-                    if (CheckFailDest != "" && GameLoop.ZPO.Atlas.ContainsKey(CheckFailDest)) {
-                        GameLoop.ZPO.Log.AddMessage("You fail the " + ExpTo + " check and end up somewhere else.", Color.Crimson);
+                    if (CheckFailDest != "" && GameLoop.WTN.Atlas.ContainsKey(CheckFailDest)) {
+                        GameLoop.WTN.Log.AddMessage("You fail the " + ExpTo + " check and end up somewhere else.", Color.Crimson);
                         p.NavLoc = CheckFailDest;
                     } else {
-                        GameLoop.ZPO.Log.AddMessage("You fail the " + ExpTo + " check and gain no experience.", Color.Crimson);
+                        GameLoop.WTN.Log.AddMessage("You fail the " + ExpTo + " check and gain no experience.", Color.Crimson);
                     }
 
                     if (MaximumFailDamage > 0) {
@@ -122,8 +122,8 @@ namespace WorldtreeNexus.DataTypes {
                         }
 
                         if (dmgRoll > 0) {
-                            p.TakeDamage(dmgRoll, GameLoop.ZPO.Log);
-                            GameLoop.ZPO.Log.AddMessage("You take " + dmgRoll + " damage from failing.", Color.Crimson);
+                            p.TakeDamage(dmgRoll, GameLoop.WTN.Log);
+                            GameLoop.WTN.Log.AddMessage("You take " + dmgRoll + " damage from failing.", Color.Crimson);
                         }
                     }
 
@@ -135,18 +135,18 @@ namespace WorldtreeNexus.DataTypes {
                 Helper.AlterWorldState(WorldStateID, WorldStateChange, WorldStateNum);
             }
 
-            if (SetsQuest != "") { p.TryProgressQuest(SetsQuest, QuestStage); }
+            if (SetsQuest != "") { p.TrySetQuest(SetsQuest, QuestStage); }
 
             if (ExpTo != "")
-                p.TryGrantExp(ExpTo, ExpGranted, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills, false); 
+                p.TryGrantExp(ExpTo, ExpGranted, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills, false); 
             p.NavLoc = Destination;
 
             if (GameLoop.SoundManager.MusicEnabled && p.MusicMode == "Auto") {
-                if (GameLoop.ZPO.Atlas.TryGetValue(Destination, out Location? dest)) {
-                    if (dest.UPCsong != "" && GameLoop.SoundManager.CurrentSong != dest.UPCsong) {
+                if (GameLoop.WTN.Atlas.TryGetValue(Destination, out Location? dest)) {
+                    if (dest.SongHere != "" && GameLoop.SoundManager.CurrentSong != dest.SongHere) {
                         GameLoop.SoundManager.CurrentSong = "";
                         GameLoop.SoundManager.music.StopAllSounds();
-                        GameLoop.SoundManager.PickMusic(dest.UPCsong);
+                        GameLoop.SoundManager.PickMusic(dest.SongHere);
                     }
                 }
             }
@@ -155,7 +155,7 @@ namespace WorldtreeNexus.DataTypes {
                 ExtraWindows.CompassRoute.RemoveAt(0);
 
                 if (ExtraWindows.CompassRoute.Count == 0) {
-                    GameLoop.ZPO.Log.AddMessage("You have arrived at your destination. Set a new one at any time.", Color.Lime);
+                    GameLoop.WTN.Log.AddMessage("You have arrived at your destination. Set a new one at any time.", Color.Lime);
                 }
             }
 
@@ -165,7 +165,7 @@ namespace WorldtreeNexus.DataTypes {
             UI_LocCombat.AttackingMonster = null;
 
             foreach (var kv in CutscenesOnTraverse) {
-                if (GameLoop.ZPO.CutsceneLibrary.TryGetValue(kv, out Cutscene? cut)) {
+                if (GameLoop.WTN.CutsceneLibrary.TryGetValue(kv, out Cutscene? cut)) {
                     bool allReqsMet = true;
                     foreach (var req in cut.RequirementsToStart) {
                         if (!req.CheckRequirement(p, false, true)) {

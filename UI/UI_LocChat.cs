@@ -39,7 +39,7 @@ namespace WorldtreeNexus.UI {
                                             foreach (var text in UI_LocNPCs.ConversationPartner.Dialogue[UI_LocNPCs.CurrDialogueStage].Text) {
                                                 if (text.CheckReq()) {
                                                     if (text.Text != "")
-                                                        Log.AddMessage(UI_LocNPCs.ConversationPartner.Name + ": " + text.Text.Replace("@", player.Name));
+                                                        Log.AddMessage(new ColoredString(UI_LocNPCs.ConversationPartner.Name + ": ", choice.SilentChange ? Color.DarkSlateBlue : Color.Yellow, Color.Black) + new ColoredString(text.Text.Replace("@", player.Name), choice.SilentChange ? Color.DarkSlateGray : Color.White, Color.Black));
                                                     break;
                                                 }
                                             } 
@@ -48,7 +48,7 @@ namespace WorldtreeNexus.UI {
                                                 foreach (var text in UI_LocNPCs.ConversationPartner.Dialogue[UI_LocNPCs.CurrDialogueStage].Text) {
                                                     if (text.CheckReq()) {
                                                         if (text.Text != "")
-                                                            Log.AddMessage(text.Text.Replace("@", player.Name));
+                                                            Log.AddMessage(text.Text.Replace("@", player.Name), choice.SilentChange ? Color.DarkSlateGray : Color.White);
                                                         break;
                                                     }
                                                 }
@@ -56,7 +56,7 @@ namespace WorldtreeNexus.UI {
                                                 foreach (var text in UI_LocNPCs.ConversationPartner.Dialogue[UI_LocNPCs.CurrDialogueStage].Text) {
                                                     if (text.CheckReq()) {
                                                         if (text.Text != "")
-                                                            Log.AddMessage(altSpeaker + ": " + text.Text.Replace("@", player.Name));
+                                                            Log.AddMessage(new ColoredString(altSpeaker + ": ", choice.SilentChange ? Color.DarkSlateBlue : Color.Yellow, Color.Black) + new ColoredString(text.Text.Replace("@", player.Name), choice.SilentChange ? Color.DarkSlateGray : Color.White, Color.Black));
                                                         break;
                                                     }
                                                 }
@@ -79,7 +79,7 @@ namespace WorldtreeNexus.UI {
                                     choice.ConsumeItemsIfNeeded(player); 
 
                                     foreach (var kv in choice.Cutscenes) {
-                                        if (GameLoop.ZPO.CutsceneLibrary.TryGetValue(kv, out Cutscene? cut)) {
+                                        if (GameLoop.WTN.CutsceneLibrary.TryGetValue(kv, out Cutscene? cut)) {
                                             foreach (var req in cut.RequirementsToStart) {
                                                 if (!req.CheckRequirement(player, false, true)) {
                                                     continue;
@@ -96,7 +96,7 @@ namespace WorldtreeNexus.UI {
 
                                                 foreach (var item in cut.ItemsGiven) {
                                                     string[] split = item.Split(",");
-                                                    if (GameLoop.ZPO.ResolveItem(split[0]) is Item give) {
+                                                    if (GameLoop.WTN.ResolveItem(split[0]) is Item give) {
                                                         int qty = 1;
                                                         if (split.Length > 1) {
                                                             int.TryParse(split[1], out qty);
@@ -112,7 +112,7 @@ namespace WorldtreeNexus.UI {
                                     if (UI_LocNPCs.ConversationPartner.Dialogue.ContainsKey(UI_LocNPCs.CurrDialogueStage)) {
                                         DialogueStage newDia = UI_LocNPCs.ConversationPartner.Dialogue[UI_LocNPCs.CurrDialogueStage];
 
-                                        if (newDia.SetsQuest != "") { player.TryProgressQuest(newDia.SetsQuest, newDia.SetsQuestStageTo); }
+                                        if (newDia.SetsQuest != "") { player.TrySetQuest(newDia.SetsQuest, newDia.SetsQuestStageTo); }
 
                                         if (newDia.ItemsGiven != null) {
                                             for (int i = 0; i < newDia.ItemsGiven.Count; i++) {
@@ -122,7 +122,7 @@ namespace WorldtreeNexus.UI {
                                                         int.TryParse(split[1], out int qty);
                                                         player.GiveGold(qty); 
                                                     } else {
-                                                        if (GameLoop.ZPO.ItemLibrary.TryGetValue(split[0], out Item? give)) {
+                                                        if (GameLoop.WTN.ItemLibrary.TryGetValue(split[0], out Item? give)) {
                                                             if (give != null) {
                                                                 Item actualGive = new(give);
 
@@ -135,7 +135,7 @@ namespace WorldtreeNexus.UI {
                                                         }
                                                     }
                                                 } else {
-                                                    if (GameLoop.ZPO.ItemLibrary.TryGetValue(newDia.ItemsGiven[i], out Item? give)) {
+                                                    if (GameLoop.WTN.ItemLibrary.TryGetValue(newDia.ItemsGiven[i], out Item? give)) {
                                                         if (give != null) {
                                                             player.TryPickup(new Item(give), give.Quantity);
                                                         }
@@ -168,7 +168,7 @@ namespace WorldtreeNexus.UI {
 
                     if (UI_LocNPCs.CurrDialogueStage == -1) {
                         UI_LocNPCs.ConversationPartner = null;
-                        GameLoop.ZPO.SelectedMenu = "NPCs";
+                        GameLoop.WTN.SelectedMenu = "NPCs";
                     }
                 }
                 else {

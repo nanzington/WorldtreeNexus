@@ -1,23 +1,28 @@
 ﻿using GoRogue.DiceNotation.Terms;
-using Newtonsoft.Json;
-using System.Runtime.InteropServices;
+using Newtonsoft.Json; 
 using WorldtreeNexus.Managers;
 
 namespace WorldtreeNexus.DataTypes {
     public class Player {
         public string Name = "Player"; 
-        public string NavLoc = "TI_Main";
+        public string NavLoc = "TI_StartHut";
         public string NavRespawn = "TI_Temple";
 
+        public Clock Clock = new();
+
         public int CurrentHP = 0;
+        public int CurrentMP = 0;
+        public int CurrentPrayer = 0;
         public int HeldGold = 0;
 
         public int OffenseExpSplit = 2;
         public int DefenseExpSplit = 2;
 
+        public string ElementalAttunement = "Earth";
+
         // Difficulty Settings
 
-        public int GrandExchangeMode = 1; // 0 = full, 1 = limited/bronze, 2 = none/iron
+        public int TradeHallLimit = 1; // 0 = full, 1 = limited/bronze, 2 = none/iron
         public int DeathMode = 1; // 0 = no death penalty, 1 = drop items, 2 = reset character
         public bool NightmareMode = false; // if true, any damage taken will kill the player 
 
@@ -68,15 +73,13 @@ namespace WorldtreeNexus.DataTypes {
         public Dictionary<string, CollectionLogEntry> CollectionLogClues = new();
         public Dictionary<string, CollectionLogEntry> CollectionLogBoss = new();
         public List<ItemWrapper> BankedItems = new(); 
-        public List<string> ItemsEverObtained = new();
+        public List<string> ItemsEverObtained = new(); 
 
-        public string PrayerBook = "Normal";
-        public Dictionary<string, Prayer> Prayers = new();
-
-        public string MagicBook = "Standard";
-        public string CastingSpell = "";
+        public string MagicBook = "Standard"; 
 
         public List<PotionStat> ActivePotions = new(); 
+        public List<string> ActivePrayers = new();
+
         public Dictionary<string, FarmingPatch> FarmingPatches = new();
 
         public Dictionary<string, QuestStatus> QuestLog = new();
@@ -94,37 +97,10 @@ namespace WorldtreeNexus.DataTypes {
         public string CurrentClueElite = "";
         public int StepsDoneElite = 0;
         public string CurrentClueMaster = "";
-        public int StepsDoneMaster = 0;
-
-        public string SlayerTask = "";
-        public string SlayerTaskFrom = "";
-        public int SlayerAssignedKills = 0;
-        public int SlayerKillsRemaining = 0; 
-        public int SlayerTaskStreak = 0;
-        public int SlayerPoints = 0;
-        public bool SlayerTaskExtended = false;
-
-        public string StoredTask = "";
-        public string StoredTaskFrom = "";
-        public int StoredKillsLeft = 0;
-        public int StoredKillsAssigned = 0; 
-        public bool StoredTaskExtended = false;
-
-        public List<string> SlayerBlocked = new();
-        public List<string> SlayerPrefer = new();
-         
-        public string ArtisanTask = "";
-        public int ArtisanTaskRemaining = 0;
-        public int ArtisanTaskStreak = 0;
-        public int ArtisanPoints = 0;
+        public int StepsDoneMaster = 0; 
 
         public int SecondsPlayed = 0;
-        public int PoisonStatus = 0; 
-
-        public int PizazzEnchantment = 0;
-        public int PizazzGraveyard = 0;
-        public int PizazzTelekinetic = 0;
-        public int PizazzAlchemist = 0;
+        public int PoisonStatus = 0;  
          
 
         public Dictionary<string, int> WorldState = new();
@@ -134,25 +110,29 @@ namespace WorldtreeNexus.DataTypes {
         public string MusicMode = "Auto";
         public List<string> UnlockedSongs = new();
 
-        public List<GETransaction> ActiveGE = new();
+        public List<THTransaction> ActiveTH = new();
 
-        public List<M_MahoganyHomesHotspot> MahoganyContractSpots = new(); // The contract spots
-        public string MahoganyDestID = ""; // The map they have to go to
-        public int MahoganyConstructionTotal = 0; // For resolving exp reward after a contract
-        public int MahoganyPoints = 0; // For reward shop
+        public List<M_CozyCottagesHotspot> CozyContractSpots = new(); // The contract spots
+        public string CozyDestID = ""; // The map they have to go to
+        public int CozyPointTotal = 0; // For resolving exp reward after a contract
+        public int CozyRewardPoints = 0; // For reward shop
 
         public Dictionary<string, PlayerOwnedHome> Homes = new();
 
         public int TimeLastRested = 0;
-        public int CurrentRestedBuff = 0;
-
-        public int TimeLastStar = 0;
-        public string CurrentStarLoc = "";
-        public int CurrentStarTier = 0;
-        public bool MiningStar = false;
+        public int CurrentRestedBuff = 0; 
 
         public int LeftIncense = 0;
         public int RightIncense = 0;
+        
+        public bool UsingSpell = false;
+        public SpellCombat CombatCasting = null;
+        public SpellCombat CombatViewing = new();
+        public SpellCombat CombatSpell1 = null;
+        public SpellCombat CombatSpell2 = null;
+        public SpellCombat CombatSpell3 = null;
+        public SpellCombat CombatSpell4 = null;
+        public SpellCombat CombatSpell5 = null;
 
         [JsonIgnore]
         public List<HunterCreature> SpawnedCreatures = new();
@@ -161,27 +141,49 @@ namespace WorldtreeNexus.DataTypes {
             int atk = Skills["Attack"].Level;
             int str = Skills["Strength"].Level;
             int def = Skills["Defense"].Level;
-            int con = Skills["Constitution"].Level;
+            int con = Skills["Hitpoints"].Level;
             int ran = Skills["Ranged"].Level;
-            int mag = Skills["Magic"].Level;
-            int pra = Skills["Prayer"].Level;
+            int mag = Skills["Magic"].Level; 
             
-            return Math.Clamp((atk + str + def + con + ran + mag + (pra / 2)) / 4, 1, 999);
+            return Math.Clamp((atk + str + def + con + ran + mag) / 4, 1, 999);
         }
 
-        public string GetDamageDice() {
-            return SimpleDamageDice();
+        public string GetDamageDice(bool spellBuilder = false) {
+            double max = SimplerDamageDice(spellBuilder);
+            if (IsMaging() || spellBuilder) {
+                if (spellBuilder && CombatViewing != null) {  
+                    if (CombatViewing.Speed == 1.5) { max = Math.Clamp(Math.Ceiling(max * 1.5), max + 2, int.MaxValue); }
+                    if (CombatViewing.Speed == 1.25) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
+                    if (CombatViewing.Speed == 0.75) { max = Math.Clamp(Math.Ceiling(max * 0.75), 1, Math.Clamp(max - 1, 1, max)); }
+                    if (CombatViewing.Speed == 0.5) { max = Math.Clamp(Math.Ceiling(max * 0.5), 1, Math.Clamp(max - 2, 1, max)); } 
+                    if (CombatViewing.Empowered) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
+
+                    return "1d" + (int) max;
+                }
+
+                if (CombatCasting != null) {   
+                    if (CombatCasting.Speed == 1.5) { Math.Clamp(Math.Ceiling(max * 1.25), max + 2, int.MaxValue); }
+                    if (CombatCasting.Speed == 1.25) { Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
+                    if (CombatCasting.Speed == 0.75) { max = Math.Clamp(Math.Ceiling(max * 0.75), 1, Math.Clamp(max - 1, 1, max)); }
+                    if (CombatCasting.Speed == 0.5) { max = Math.Clamp(Math.Ceiling(max * 0.5), 1, Math.Clamp(max - 2, 1, max)); } 
+                    if (CombatCasting.Empowered) { Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
+
+                    return "1d" + (int) max;
+                }
+            }
+            return "1d" + max; 
         }
 
-        public int MaxDamage() {
-            string dmgDice = GetDamageDice();
-
-            return GoRogue.DiceNotation.Dice.Roll(dmgDice.Substring(2));
+        public int MaxDamage(bool spellBuilder = false) {
+            string dmgDice = GetDamageDice(spellBuilder);
+            //if (dmgDice.Contains("("))
+            //    return GoRogue.DiceNotation.Dice.Roll("(" + dmgDice.Substring(3)); 
+            return GoRogue.DiceNotation.Dice.Roll(dmgDice.Replace("1d", ""));
         }
 
-        public string SimpleDamageDice() {
+        public double SimplerDamageDice(bool spellBuilder) {
             double weaponTier = 0.5;
-            bool maging = IsMaging();
+            bool maging = IsMaging() || spellBuilder;
 
             string style = "Melee";
 
@@ -203,19 +205,43 @@ namespace WorldtreeNexus.DataTypes {
                     } 
                 }
 
-                if (maging && eqp.EquipSkill != "Magic") {
-                    weaponTier = 1;
+                if (maging) {
+                    if (eqp.EquipSkill != "Magic") { 
+                        weaponTier = 0; 
+                    } else {
+                        if (spellBuilder) {
+                            if (CombatViewing != null) {
+                                if (weaponTier > CombatViewing.Tier) {
+                                    weaponTier = Math.Min(CombatViewing.Tier, weaponTier);
+                                }
+                            }
+                        }
+                        else {
+                            if (CombatCasting != null) {
+                                if (weaponTier > CombatCasting.Tier) {
+                                    weaponTier = Math.Min(CombatCasting.Tier, weaponTier);
+                                }
+                            } else {
+                                weaponTier = 0;
+                            }
+                        }
+                    }
+                } else {
+                    if (eqp.EquipSkill == "Magic") {
+                        weaponTier = 0;
+                    }
                 }
             }
-            double strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Strength") / 5f) + 1, 1, 20); 
+            double strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Strength") / 5f) + 1, 1, 30); 
 
-            if (maging) { 
+            if (maging && CombatCasting != null) { 
                 style = "Magic";
-                strength = GameLoop.ZPO.SpellLibrary[CastingSpell].Tier + 1;
+                //strength = (CombatCasting.Tier + 1);
+                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Magic") / 5f) + 1, 1, 30);
             }
 
             if (style == "Ranged") {
-                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Ranged") / 5f) + 1, 1, 20); 
+                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Ranged") / 5f) + 1, 1, 30); 
             }
 
             double partialBoost = 0;
@@ -254,20 +280,131 @@ namespace WorldtreeNexus.DataTypes {
             strength += (int) Math.Floor(partialBoost);
 
             // TODO: think of something better than this 
-            return "1d" + ((int) Math.Clamp(Math.Floor(weaponTier * 2), 1, 15)) + "+" + strength;
+            return Math.Clamp(Math.Floor(weaponTier * 2), 1, 22) + strength;
+            //return ((int) Math.Floor(weaponTier)) + "d" + ((int) Math.Floor(strength));
+        }
+
+        public string SimpleDamageDice(bool spellBuilder) {
+            double weaponTier = 0.5;
+            bool maging = IsMaging() || spellBuilder;
+
+            string style = "Melee";
+
+            if (Equipment.TryGetValue("Weapon", out ItemWrapper? eqpWrap) && eqpWrap.GetRef() is Item eqp) {
+                weaponTier = eqp.EquipTier;
+
+                if (eqp.EquipSkill == "Ranged") {
+                    style = "Ranged";
+                    if (eqp.EquipAmmo == "RangedStandard" || eqp.EquipAmmo == "RangedHeavy") { // Only other option currently is Self, where we don't need to change weaponTier
+                        if (Equipment.TryGetValue("Ammo", out ItemWrapper? ammoWrap) && ammoWrap.GetRef() is Item ammo) {
+                            if (ammo.EquipLevel <= eqp.EquipLevel) {
+                                weaponTier = ammo.EquipTier;
+                            } else {
+                                weaponTier = eqp.EquipTier;
+                            }
+                        } else {
+                            weaponTier = 0;
+                        }
+                    } 
+                }
+
+                if (maging) {
+                    if (eqp.EquipSkill != "Magic") { 
+                        weaponTier = 0; 
+                    } else {
+                        if (spellBuilder) {
+                            if (CombatViewing != null) {
+                                if (weaponTier > CombatViewing.Tier) {
+                                    weaponTier = Math.Min(CombatViewing.Tier, weaponTier);
+                                }
+                            }
+                        }
+                        else {
+                            if (CombatCasting != null) {
+                                if (weaponTier > CombatCasting.Tier) {
+                                    weaponTier = Math.Min(CombatCasting.Tier, weaponTier);
+                                }
+                            } else {
+                                weaponTier = 0;
+                            }
+                        }
+                    }
+                } else {
+                    if (eqp.EquipSkill == "Magic") {
+                        weaponTier = 0;
+                    }
+                }
+            }
+            double strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Strength") / 5f) + 1, 1, 30); 
+
+            if (maging && CombatCasting != null) { 
+                style = "Magic";
+                //strength = (CombatCasting.Tier + 1);
+                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Magic") / 5f) + 1, 1, 30);
+            }
+
+            if (style == "Ranged") {
+                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Ranged") / 5f) + 1, 1, 30); 
+            }
+
+            double partialBoost = 0;
+            foreach (var kv in Equipment) {
+                if (kv.Value.GetRef() is Item item) {
+                    if (item.MiscString == "OmniBoost" || item.MiscString == "OffenseBoost") {
+                        strength += item.EquipTier;
+                    }
+
+                    if (item.MiscString == "PowerMelee" && style == "Melee") {
+                        partialBoost += item.EquipTier / 5.0;
+                    }
+
+                    if (item.MiscString == "PowerRange" && style == "Ranged") {
+                        partialBoost += item.EquipTier / 5.0;
+                    }
+
+                    if (item.MiscString == "PowerMagic" && style == "Magic") {
+                        partialBoost += item.EquipTier / 5.0;
+                    }
+
+                    if ((item.MiscString == "OffenseBoostMelee" && style == "Melee") || (item.MiscString == "Defender" && style == "Melee")) {
+                        partialBoost += item.EquipTier;
+                    }
+                    
+                    if (item.MiscString == "OffenseBoostRange" && style == "Ranged") {
+                        partialBoost += item.EquipTier;
+                    }
+
+                    if (item.MiscString == "OffenseBoostMagic" && style == "Magic") {
+                        partialBoost += item.EquipTier;
+                    }
+                } 
+            }
+
+            strength += (int) Math.Floor(partialBoost);
+
+            // TODO: think of something better than this 
+            return "1d" + ((int) Math.Clamp(Math.Floor(weaponTier * 2), 1, 22)) + "+" + strength;
             //return ((int) Math.Floor(weaponTier)) + "d" + ((int) Math.Floor(strength));
         }
 
         public string GetDamageType() {
-            if (IsMaging()) {
-                if (Equipment.TryGetValue("Weapon", out ItemWrapper? staffWrap) && staffWrap.GetRef() is Item staff && staff.EquipSkill == "Magic" && staff.EquipDamageType == "Rat")
-                    return "Rat";
-                return GameLoop.ZPO.SpellLibrary[CastingSpell].MiscString;
+            if (IsMaging() && CombatCasting != null) {
+                return CombatCasting.DamageType;
             }
 
             if (Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrapper) && wepWrapper.GetRef() is Item wep)
                 return wep.EquipDamageType;
             return "Crush";
+        }
+
+        public string GetDamageElement() {
+            if (IsMaging() && CombatCasting != null) {
+                return CombatCasting.Element;
+            }
+
+            if (Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrapper) && wepWrapper.GetRef() is Item wep)
+                return wep.EquipElement;
+            return ElementalAttunement;
         }
 
         public string GetSecondaryDamageType() {
@@ -276,16 +413,26 @@ namespace WorldtreeNexus.DataTypes {
             return "";
         }
 
+        public int GetAttackSpeed() {
+            if (IsMaging() && CombatCasting != null) { 
+                return (int) (CombatCasting.Speed * 2000);
+            }
+
+            if (Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrapper) && wepWrapper.GetRef() is Item wep)
+                return (int) (wep.AttackSpeed * 2000);
+            return 2000;
+        }
+
         public bool TryPickup(ItemWrapper wrap, int qty, bool noted = false, bool shop = false, bool fromGround = false) {
             bool alreadyOwned = false;
             if (wrap.GetRef() is Item item && item.OnlyOneOwnable) {
                 if (Helper.Requirement("ItemOwned", 1, wrap.ID)) {
-                    GameLoop.ZPO.Log.AddMessage("You already own one of those (in inventory, bank, or equipped) and can't pick up another.", Color.Crimson);
+                    GameLoop.WTN.Log.AddMessage("You already own one of those (in inventory, bank, or equipped) and can't pick up another.", Color.Crimson);
                     alreadyOwned = true;
                 }
             }
 
-            if (GameLoop.ZPO.Atlas.TryGetValue(NavLoc, out Location? curr)) {
+            if (GameLoop.WTN.Atlas.TryGetValue(NavLoc, out Location? curr)) {
                 ItemWrapper clone = new(wrap) { Quantity = qty };
                 if (!alreadyOwned) {
                     if (!ItemsEverObtained.Contains(wrap.ID)) { ItemsEverObtained.Add(wrap.ID); }
@@ -324,7 +471,7 @@ namespace WorldtreeNexus.DataTypes {
                                         BankItem(secondClone);
                                         return true;
                                     } else {
-                                        GameLoop.ZPO.TryPlaceItem(NavLoc, secondClone);
+                                        GameLoop.WTN.TryPlaceItem(NavLoc, secondClone);
                                         return true;
                                     }
                                 }
@@ -336,7 +483,7 @@ namespace WorldtreeNexus.DataTypes {
 
                 if (fromGround) {
                     if (!alreadyOwned) {
-                        GameLoop.ZPO.Log.AddMessage("Your inventory is too full to pick up anything else right now.", Color.Crimson);
+                        GameLoop.WTN.Log.AddMessage("Your inventory is too full to pick up anything else right now.", Color.Crimson);
                     }
 
                     return false;
@@ -348,7 +495,8 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 for (int i = 0; i < curr.ItemsHere.Count; i++) {
-                    if (curr.ItemsHere[i].ID == wrap.ID && wrap.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].UseInt4 == wrap.Charges) {
+                    if (curr.ItemsHere[i].ID == wrap.ID && wrap.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].UseInt4 == wrap.Charges
+                        && (curr.ItemsHere[i].Alchemy == null || wrap.Alchemy == null || (curr.ItemsHere[i].Alchemy.CheckMatch(wrap.Alchemy)))) {
                         curr.ItemsHere[i].Quantity += qty; 
                         return true; 
                     }
@@ -367,12 +515,12 @@ namespace WorldtreeNexus.DataTypes {
             bool alreadyOwned = false;
             if (item.OnlyOneOwnable) {
                 if (Helper.Requirement("ItemOwned", 1, item.ID)) {
-                    GameLoop.ZPO.Log.AddMessage("You already own one of those (in inventory, bank, or equipped) and can't pick up another.", Color.Crimson);
+                    GameLoop.WTN.Log.AddMessage("You already own one of those (in inventory, bank, or equipped) and can't pick up another.", Color.Crimson);
                     alreadyOwned = true;
                 }
             }
 
-            if (GameLoop.ZPO.Atlas.TryGetValue(NavLoc, out Location? curr)) { 
+            if (GameLoop.WTN.Atlas.TryGetValue(NavLoc, out Location? curr)) { 
                 Item clone = new(item) { Quantity = qty };
 
                 if (!alreadyOwned) { 
@@ -408,7 +556,7 @@ namespace WorldtreeNexus.DataTypes {
                                         BankItem(new(secondClone));
                                         return true;
                                     } else {
-                                        GameLoop.ZPO.TryPlaceItem(NavLoc, new(secondClone));
+                                        GameLoop.WTN.TryPlaceItem(NavLoc, new(secondClone));
                                         return false;
                                     }
                                 }
@@ -419,7 +567,7 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 if (fromGround) {
-                    GameLoop.ZPO.Log.AddMessage("Your inventory is too full to pick up anything else right now.", Color.Crimson);
+                    GameLoop.WTN.Log.AddMessage("Your inventory is too full to pick up anything else right now.", Color.Crimson);
                     return false;
                 }
                  
@@ -429,7 +577,8 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 for (int i = 0; i < curr.ItemsHere.Count; i++) {
-                    if (curr.ItemsHere[i].ID == item.ID && item.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].UseInt4 == item.UseInt4) {
+                    if (curr.ItemsHere[i].ID == item.ID && item.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].UseInt4 == item.UseInt4 
+                        && (curr.ItemsHere[i].Alchemy == null || item.Alchemy == null || (curr.ItemsHere[i].Alchemy.CheckMatch(item.Alchemy)))) {
                         curr.ItemsHere[i].Quantity += qty; 
                         return true; 
                     }
@@ -444,7 +593,8 @@ namespace WorldtreeNexus.DataTypes {
 
         public void BankItem(ItemWrapper item) {  
             for (int j = 0; j < BankedItems.Count; j++) {
-                if (BankedItems[j].ID == item.ID && BankedItems[j].Charges == item.Charges) {
+                if (BankedItems[j].ID == item.ID && BankedItems[j].Charges == item.Charges
+                    && (BankedItems[j].Alchemy == null || item.Alchemy == null || (BankedItems[j].Alchemy.CheckMatch(item.Alchemy)))) {
                     BankedItems[j].Quantity += item.Quantity; 
                     return; 
                 }
@@ -455,7 +605,7 @@ namespace WorldtreeNexus.DataTypes {
         }
 
         public bool TryDrop(int i, int qtyOverride = -1) {
-            if (GameLoop.ZPO.Atlas.TryGetValue(NavLoc, out Location? curr) && curr != null) {
+            if (GameLoop.WTN.Atlas.TryGetValue(NavLoc, out Location? curr) && curr != null) {
                 int qty = 1;
                                 
                 if (Helper.EitherShift())
@@ -501,7 +651,8 @@ namespace WorldtreeNexus.DataTypes {
                             } else {
                                 bool found = false;
                                 for (int j = 0; j < curr.ItemsHere.Count; j++) {
-                                    if (curr.ItemsHere[j].ID == Inventory[i].ID && curr.ItemsHere[j].Noted == Inventory[i].Noted && curr.ItemsHere[j].UseInt4 == Inventory[i].Charges) {
+                                    if (curr.ItemsHere[j].ID == Inventory[i].ID && curr.ItemsHere[j].Noted == Inventory[i].Noted && curr.ItemsHere[j].UseInt4 == Inventory[i].Charges
+                                        && (curr.ItemsHere[j].Alchemy == null || Inventory[i].Alchemy == null || (curr.ItemsHere[j].Alchemy.CheckMatch(Inventory[i].Alchemy)))) {
                                         curr.ItemsHere[j].Quantity += qty;
                                         Inventory[i].Quantity -= qty;
                                         found = true;
@@ -526,10 +677,10 @@ namespace WorldtreeNexus.DataTypes {
                         }
                         else {
                             if (Inventory[i].Containing.Count > 0) {
-                                GameLoop.ZPO.Log.AddMessage("You probably don't want to sell that, and should remove all items from it first if you do.", Color.Crimson);
+                                GameLoop.WTN.Log.AddMessage("You probably don't want to sell that, and should remove all items from it first if you do.", Color.Crimson);
                             } else {
                                 if (Inventory[i].ID == "coins") { 
-                                    GameLoop.ZPO.Log.AddMessage("It is inadvisable to sell coins, as you're unlikely to get the better end of that deal.", Color.Crimson);
+                                    GameLoop.WTN.Log.AddMessage("It is inadvisable to sell coins, as you're unlikely to get the better end of that deal.", Color.Crimson);
                                 } else {
                                     int sellValue = toDrop.Value;
 
@@ -589,50 +740,23 @@ namespace WorldtreeNexus.DataTypes {
                         return;
                     }
                 }
+                 
+                Skills[which].GrantExp(amount * ExpMultiplier, log, RecentSkills);
 
-                bool grantingExp = false;
-
-                if (buying) {
-                    grantingExp = true;
-                } else {
-                    if (GameLoop.ZPO.Atlas.TryGetValue(NavLoc, out Location? curr) && curr != null) {
-                        if (curr.DungeoneeringLevel >= 1) {
-                            if (GetEffectiveSkillLevel("Dungeoneering") >= curr.DungeoneeringLevel) {
-                                if (GetEffectiveSkillLevel("Dungeoneering") >= curr.DungeoneeringLevel + 10) {
-                                    grantingExp = true;
-                                    Skills["Dungeoneering"].GrantExp(((int) Math.Ceiling(amount / 10.0)) * ExpMultiplier, log, RecentSkills);
-                                } else {
-                                    log.AddMessage("This dungeon only requires " + curr.DungeoneeringLevel + " Dungeoneering, you have grown beyond any benefit of training here.", Color.Crimson);
-                                }
-                            } else {
-                                log.AddMessage("You need " + curr.DungeoneeringLevel + " Dungeoneering to gain experience here.", Color.Crimson);
-                            }
-                        } else {
-                            grantingExp = true;
-                        }
-                    } else {
-                        grantingExp = true;
-                    }
+                if (which == "Hitpoints" && oldLevel != Skills[which].Level) {
+                    CurrentHP += (Skills[which].Level - oldLevel);
                 }
-
-                if (grantingExp) {
-                    Skills[which].GrantExp(amount * ExpMultiplier, log, RecentSkills);
-
-                    if (which == "Constitution" && oldLevel != Skills[which].Level) {
-                        CurrentHP += (Skills[which].Level - oldLevel);
-                    }
                     
-                    if (!WorldState.ContainsKey("SkillPet" + which)) {
-                        if (GameLoop.rand.Next(50000000) < amount * ExpMultiplier) { 
-                            if (GameLoop.ZPO.ResolveItem("petSkill" + which) is Item skillPet) {
-                                TryPickup(skillPet, 1);
-                                GameLoop.ZPO.Log.AddMessage("You get the funny feeling you're being followed...", Color.Yellow);
-                                GameLoop.ZPO.Log.AddMessage("You found the " + which + " skilling pet, " + skillPet.Name + "!", Color.Lime);
-                                WorldState.Add("SkillPet" + which, 1);
-                            }  
-                        }
+                if (!WorldState.ContainsKey("SkillPet" + which)) {
+                    if (GameLoop.rand.Next(50000000) < amount * ExpMultiplier) { 
+                        if (GameLoop.WTN.ResolveItem("petSkill" + which) is Item skillPet) {
+                            TryPickup(skillPet, 1);
+                            GameLoop.WTN.Log.AddMessage("You get the funny feeling you're being followed...", Color.Yellow);
+                            GameLoop.WTN.Log.AddMessage("You found the " + which + " skilling pet, " + skillPet.Name + "!", Color.Lime);
+                            WorldState.Add("SkillPet" + which, 1);
+                        }  
                     }
-                }
+                } 
             } 
         } 
 
@@ -640,7 +764,7 @@ namespace WorldtreeNexus.DataTypes {
             CurrentHP -= amt;
 
             if (CurrentHP > 0) {
-                int maxHP = GetEffectiveSkillLevel("Constitution");
+                int maxHP = GetEffectiveSkillLevel("Hitpoints");
                 
                 if (CurrentHP <  maxHP * 0.2) {
                     if (Equipment.TryGetValue("Amulet", out ItemWrapper? eqp) && eqp != null && eqp.ID == "necklacePhoenix") { 
@@ -670,21 +794,21 @@ namespace WorldtreeNexus.DataTypes {
 
         public void Die(MessageLog log) {
             if (DeathMode == 1) { // Drop all items
-                if (GameLoop.ZPO.Atlas.TryGetValue(NavLoc, out Location? deathSpot)) {
+                if (GameLoop.WTN.Atlas.TryGetValue(NavLoc, out Location? deathSpot)) {
                     if (deathSpot != null) {
                         for (int i = Inventory.Count - 1; i >= 0; i--) {
                             TryDrop(i, Inventory[i].Quantity);
                         }
                         
                         foreach (var kv in Equipment) { 
-                            GameLoop.ZPO.TryPlaceItem(NavLoc, kv.Value); 
+                            GameLoop.WTN.TryPlaceItem(NavLoc, kv.Value); 
                         } 
                         Equipment.Clear();
 
                         if (HeldGold > 0 && CoinPouchDeath) {
-                            if (GameLoop.ZPO.ResolveItem("coins") is Item coin) {
+                            if (GameLoop.WTN.ResolveItem("coins") is Item coin) {
                                 coin.Quantity = HeldGold;
-                                GameLoop.ZPO.TryPlaceItem(NavLoc, new(coin));
+                                GameLoop.WTN.TryPlaceItem(NavLoc, new(coin));
                                 HeldGold = 0;
                             }
                         }
@@ -695,12 +819,12 @@ namespace WorldtreeNexus.DataTypes {
             log.AddMessage(new ColoredString("Oh no, you died!", Color.Crimson, Color.Black));
 
             if (DeathMode == 2) { // Reset character and whole world so you can't cheese it by dropping items before dying then picking them up
-                GameLoop.ZPO.RebuildLibraries();
-                GameLoop.ZPO.SoftResetPlayer();
+                GameLoop.WTN.RebuildLibraries();
+                GameLoop.WTN.SoftResetPlayer();
             } 
 
             NavLoc = NavRespawn;
-            CurrentHP = Skills["Constitution"].Level;
+            CurrentHP = Skills["Hitpoints"].Level;
             PoisonStatus = 0;
         }
 
@@ -718,53 +842,7 @@ namespace WorldtreeNexus.DataTypes {
                     }
                 }
             }
-        }
-
-        public bool PrayerActive(string which) {
-            if (Prayers.TryGetValue(which, out Prayer? p)) {
-                if (p != null) {
-                    return p.Active;
-                }
-            } 
-
-            return false;
-        }
-
-        public void TryTogglePrayer(string which) {
-            if (Prayers.TryGetValue(which, out Prayer? p)) {
-                if (p != null) {
-                    if (p.Active) {
-                        p.Active = false;
-                        return;
-                    } else { 
-                        int PrayerLev = Skills["Prayer"].Level;
-                        int EffectivePL = GetEffectiveSkillLevel("Prayer");
-
-                        if (p.Level <= PrayerLev) {
-                            if (TotalActivePrayers() + p.Level <= EffectivePL) {
-                                p.Active = true;
-                            } else { 
-                                GameLoop.ZPO.Log.AddMessage(new ColoredString("You have too many prayers active to activate that one right now.", Color.Crimson, Color.Black));
-                            }
-                        } else {
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You aren't high enough level to activate that prayer yet.", Color.Crimson, Color.Black));
-                        }
-                    }
-                }
-            }
-        }
-
-        public int TotalActivePrayers() {
-            int count = 0;
-
-            foreach (var kv in Prayers) {
-                if (kv.Value.Active) {
-                    count += kv.Value.Level;
-                }
-            }
-
-            return count;
-        }
+        }   
 
         public int GetEffectiveSkillLevel(string which) {
             if (Skills.TryGetValue(which, out Skill? s)) {
@@ -775,13 +853,7 @@ namespace WorldtreeNexus.DataTypes {
                         if (pot.Stat == which) {
                             level += pot.Change;
                         }
-                    }
-
-                    foreach (var kv in Prayers) {
-                        if (kv.Value.Active && kv.Value.SkillBuffed == which) {
-                            level += (int) Math.Ceiling(kv.Value.Level / 2.0);
-                        }
-                    }
+                    } 
 
                     foreach (var kv in Equipment) {
                         if (kv.Value.GetRef() is Item eqp) {
@@ -789,11 +861,14 @@ namespace WorldtreeNexus.DataTypes {
                                 level += eqp.EquipTier;
                             }
                         }
-                    }
+                    } 
 
-                    if (CurrentHP < Skills["Constitution"].Level / 2) {
-                        if (Equipment.TryGetValue("Amulet", out ItemWrapper? eqp) && eqp != null && eqp.ID == "necklaceFaith") {  
-                            level = (int) Math.Ceiling((double) level * 1.25);
+                    foreach (var pray in GameLoop.WTN.PrayerLibrary) {
+                        if (ActivePrayers.Contains(pray.Value.Name)) {
+                            if (pray.Value.SkillBuffed == which) {
+                                double buff = pray.Value.AmountBuffed / 100.0;
+                                level = (int) Math.Ceiling(Math.Clamp(level * buff, level + 1, int.MaxValue));
+                            }
                         }
                     }
 
@@ -801,16 +876,24 @@ namespace WorldtreeNexus.DataTypes {
                 }
             }
 
-            return 1;  
-        } 
+            return 0;  
+        }  
 
+        public int GetSkillCheck(string which) {
+            if (Skills.ContainsKey(which)) {
+                int stat = GetEffectiveSkillLevel(which);
+                return stat < 3 ? 10 + stat : 12 + (((stat - 2) / 2) / 4);
+            }
+
+            return 10;
+        }
 
         public bool CanCraft(CraftRecipe craft) {
             if (!Skills.ContainsKey(craft.Skill))
                 return false;
             if (Skills[craft.Skill].Level < craft.Level)
                 return false;
-            if (!GameLoop.ZPO.ItemLibrary.ContainsKey(craft.OutputItem))
+            if (!GameLoop.WTN.ItemLibrary.ContainsKey(craft.OutputItem))
                 return false;
 
             foreach (var req in craft.Reqs) {
@@ -842,7 +925,7 @@ namespace WorldtreeNexus.DataTypes {
 
             ConsumeItems(craft.NeededItems); 
 
-            Item item = new(GameLoop.ZPO.ItemLibrary[craft.OutputItem]);
+            Item item = new(GameLoop.WTN.ItemLibrary[craft.OutputItem]);
             if (item.Stackable) {
                 for (int i = 0; i < craft.OutputQty; i++) {
                     Item clone = new(item);
@@ -852,7 +935,7 @@ namespace WorldtreeNexus.DataTypes {
                 item.Quantity = craft.OutputQty; 
                 TryPickup(item, item.Quantity);
             }
-            TryGrantExp(craft.Skill, craft.ExpGranted, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
+            TryGrantExp(craft.Skill, craft.ExpGranted, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
         }
 
         public bool HasAllItems(List<string> items, bool notedOkay = false, bool equippedOkay = false, bool ONLYequipped = false) { 
@@ -1468,25 +1551,47 @@ namespace WorldtreeNexus.DataTypes {
 
 
         public bool IsMaging() {
-            if (CastingSpell == "")
-                return false;
-            if (!GameLoop.ZPO.SpellLibrary.ContainsKey(CastingSpell))
+            if (CombatCasting == null)
                 return false;
             if (!Skills.ContainsKey("Magic"))
                 return false;
-            
-            Spell spell = GameLoop.ZPO.SpellLibrary[CastingSpell];
 
-            if (spell.Book != MagicBook)
+            int spellLevel = CombatCasting.Tier == 1 ? 1 : CombatCasting.Tier * 10;
+            if (spellLevel > GetEffectiveSkillLevel("Magic"))
                 return false;
 
-            if (spell.Level > Skills["Magic"].Level)
-                return false;
-
-            if (!HasAllItems(spell.Runes, false, true) && !HasAllItems(["tab" + CastingSpell]))
+            if (!HasAllItems(CombatCasting.Talismans(), false, true))
                 return false;
 
             return true;
+        }
+
+        public string CanCast(SpellCombat spell) {
+            int level = spell.Tier == 1 ? 1 : spell.Tier * 10;
+            if (!Skills.ContainsKey("Magic"))
+                return "Malformed skill list, Magic entry not found."; 
+            if (level > Skills["Magic"].Level)
+                return "Need " + level + " Magic to cast, only have " + Skills["Magic"].Level + ".";
+
+            List<string> tali = spell.Talismans();
+            if (!HasAllItems(spell.Talismans(), false, true)) {
+                string items = "";
+
+                for (int i = 0; i < tali.Count; i++) {
+                    string[] rune = tali[i].Split(",");
+                    int qty = 0;
+
+                    if (int.TryParse(rune[1], out qty)) {
+                        if (i != 0)
+                            items += ", ";
+                        items += qty + "x " + GameLoop.WTN.ResolveItemName(rune[0]); 
+                    } 
+                }
+
+                return "Missing talismans, need " + items + ".";
+            }
+
+            return "";
         }
 
         public string CanCast(Spell spell) {
@@ -1506,7 +1611,7 @@ namespace WorldtreeNexus.DataTypes {
                     if (int.TryParse(rune[1], out qty)) {
                         if (i != 0)
                             items += ", ";
-                        items += qty + "x " + GameLoop.ZPO.ResolveItemName(rune[0]); 
+                        items += qty + "x " + GameLoop.WTN.ResolveItemName(rune[0]); 
                     } 
                 }
 
@@ -1552,6 +1657,16 @@ namespace WorldtreeNexus.DataTypes {
                 ActivePotions.Add(new(stat, change));
         }
 
+        public int PotionStatus(string stat) {
+            foreach (var pot in ActivePotions) {
+                if (pot.Stat == stat) {
+                    return pot.Change;
+                }
+            }
+
+            return 0;
+        }
+
         public bool HasLightSource() {
             foreach (var kv in Inventory) {
                 if (kv.GetRef() is Item item) {
@@ -1587,9 +1702,9 @@ namespace WorldtreeNexus.DataTypes {
         public void ExtinguishLights(bool coveredToo) {
             foreach (var kv in Inventory) {
                 if (kv.GetRef() is Item item) {
-                    if (item.Name.Contains("(lit)") && (item.ExposedFlame || (!item.ExposedFlame && coveredToo)) && item.UseString != "" && GameLoop.ZPO.ItemLibrary.ContainsKey(item.UseString2)) {
+                    if (item.Name.Contains("(lit)") && (item.ExposedFlame || (!item.ExposedFlame && coveredToo)) && item.UseString != "" && GameLoop.WTN.ItemLibrary.ContainsKey(item.UseString2)) {
                         kv.ID = item.UseString2;
-                        GameLoop.ZPO.Log.AddMessage("Your " + GameLoop.ZPO.ResolveItemName(kv.ID) + " is extinguished!");
+                        GameLoop.WTN.Log.AddMessage("Your " + GameLoop.WTN.ResolveItemName(kv.ID) + " is extinguished!");
                     }
                 }
             }
@@ -1605,7 +1720,7 @@ namespace WorldtreeNexus.DataTypes {
         public void GiveGold(int amount) {
             if (CoinPouch) { HeldGold += amount; }
             else {
-                if (GameLoop.ZPO.ResolveItem("coins") is Item coin) {
+                if (GameLoop.WTN.ResolveItem("coins") is Item coin) {
                     TryPickup(new Item(coin), amount);
                 }
             }
@@ -1637,112 +1752,48 @@ namespace WorldtreeNexus.DataTypes {
             return total;
         }
 
-        public void TryProgressQuest(string ID, int stage) {
-            if (GameLoop.ZPO.QuestLibrary.TryGetValue(ID, out Quest? quest)) {
+        public void TrySetQuest(string ID, int stage) {
+            if (GameLoop.WTN.QuestLibrary.TryGetValue(ID, out Quest? quest)) {
                 if (QuestLog.TryGetValue(ID, out QuestStatus? status)) {
                     if (status.CurrentStage < stage) {
                         status.CurrentStage = stage;
                         if (status.CurrentStage == quest.CompleteStage) { 
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You have completed " + quest.Name + "!", Color.Lime, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("You have completed " + quest.Name + "!", Color.Lime, Color.Black));
                             quest.ProcessRewards(this);
                         }
 
                         if (status.CurrentStage == 0) {
-                            GameLoop.ZPO.Log.AddMessage(new ColoredString("You have started the quest: " + quest.Name + ".", Color.Yellow, Color.Black));
+                            GameLoop.WTN.Log.AddMessage(new ColoredString("You have started the quest: " + quest.Name + ".", Color.Yellow, Color.Black));
                         }
                     }
                 }
             }
-        }
+        }  
 
-        public void ProgressSlayerTask(AreaMonster AttackingMonster) {
-            if (AttackingMonster.ID == SlayerTask || (AttackingMonster.CountsAsSlayer.Contains(SlayerTask))) {
-                if (Equipment.TryGetValue("Hands", out ItemWrapper? eqp) && eqp != null && eqp.ID == "braceletExpeditious" && GameLoop.rand.Next(4) == 0) { 
-                    eqp.Charges -= 1; 
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("Your expeditious bracelet made that kill count double!", Color.AntiqueWhite, Color.Black));
+        public void TryProgressQuest(string method, string thing) {
+            foreach (var quest in GameLoop.WTN.QuestLibrary) {
+                if (QuestLog.TryGetValue(quest.Key, out QuestStatus? status)) {
+                    if (status.CurrentStage != quest.Value.CompleteStage && quest.Value.Stages.ContainsKey(status.CurrentStage)) {
+                        if (quest.Value.Stages[status.CurrentStage].ProgressType == method && quest.Value.Stages[status.CurrentStage].MiscString == thing) {
+                            status.NumTracker++;
 
-                    if (eqp.Charges <= 0) { 
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Your expeditious bracelet runs out of charge and shatters.", Color.Crimson, Color.Black));
-                        Equipment.Remove("Hands");
+                            if (status.NumTracker >= quest.Value.Stages[status.CurrentStage].MiscInt) {
+                                status.CurrentStage = quest.Value.Stages[status.CurrentStage].LeadsToStage;
+                                status.NumTracker = 0; 
+
+                                if (status.CurrentStage == quest.Value.CompleteStage) {
+                                    GameLoop.WTN.Log.AddMessage(new ColoredString("You have completed " + quest.Value.Name + "!", Color.Lime, Color.Black));
+                                    quest.Value.ProcessRewards(GameLoop.WTN.player);
+                                }
+                            }
+                        }
                     }
-                    SlayerKillsRemaining -= 2;
-                } else if (Equipment.TryGetValue("Hands", out ItemWrapper? eqp2) && eqp2 != null && eqp2.ID == "braceletSlaughter" && GameLoop.rand.Next(4) == 0) { 
-                    eqp2.Charges -= 1; 
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("Your bracelet of slaughter made that kill count not count.", Color.Magenta, Color.Black));
-
-                    if (eqp2.Charges <= 0) { 
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Your bracelet of slaughter runs out of charge and shatters.", Color.Crimson, Color.Black));
-                        Equipment.Remove("Hands");
-                    }
-                } else { 
-                    SlayerKillsRemaining--;
-                }
-
-                if (SlayerKillsRemaining <= 0) {
-                    GameLoop.ZPO.Log.AddMessage("You have finished your Slayer task and should go get another.", Color.MediumPurple);
-                    SlayerTask = "";
-                    SlayerKillsRemaining = 0;
-                    SlayerAssignedKills = 0;
-                    SlayerTaskExtended = false;
-                    
-                    SlayerTaskStreak++;
-
-                    if (SlayerTaskFrom == "mistLumJacquelyn") {
-                        if (SlayerTaskStreak % 50 == 0) { SlayerPoints += QuestCompleted("DES_SmokingKills") ? 15 : 7; }
-                        else if (SlayerTaskStreak % 10 == 0) { SlayerPoints += QuestCompleted("DES_SmokingKills)") ? 5 : 2; }
-                        else { SlayerPoints += QuestCompleted("DES_SmokingKills)") ? 1 : 1; }
-                    }
-
-                    SlayerTaskFrom = "";
-                }
-            }
-        }
-
-        public void ProgressSlayerTask(BossFight boss) {
-            if (boss.ID == SlayerTask || (boss.CountsAsSlayer.Contains(SlayerTask))) {
-                if (Equipment.TryGetValue("Hands", out ItemWrapper? eqp) && eqp != null && eqp.ID == "braceletExpeditious" && GameLoop.rand.Next(4) == 0) { 
-                    eqp.Charges -= 1; 
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("Your expeditious bracelet made that kill count double!", Color.AntiqueWhite, Color.Black));
-
-                    if (eqp.Charges <= 0) { 
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Your expeditious bracelet runs out of charge and shatters.", Color.Crimson, Color.Black));
-                        Equipment.Remove("Hands");
-                    }
-                    SlayerKillsRemaining -= 2;
-                } else if (Equipment.TryGetValue("Hands", out ItemWrapper? eqp2) && eqp2 != null && eqp2.ID == "braceletSlaughter" && GameLoop.rand.Next(4) == 0) { 
-                    eqp2.Charges -= 1; 
-                    GameLoop.ZPO.Log.AddMessage(new ColoredString("Your bracelet of slaughter made that kill count not count.", Color.Magenta, Color.Black));
-
-                    if (eqp2.Charges <= 0) { 
-                        GameLoop.ZPO.Log.AddMessage(new ColoredString("Your bracelet of slaughter runs out of charge and shatters.", Color.Crimson, Color.Black));
-                        Equipment.Remove("Hands");
-                    }
-                } else { 
-                    SlayerKillsRemaining--;
-                }
-
-                if (SlayerKillsRemaining <= 0) {
-                    GameLoop.ZPO.Log.AddMessage("You have finished your Slayer task and should go get another.", Color.MediumPurple);
-                    SlayerTask = "";
-                    SlayerKillsRemaining = 0;
-                    SlayerAssignedKills = 0;
-                    SlayerTaskExtended = false;
-                    
-                    SlayerTaskStreak++;
-
-                    if (SlayerTaskFrom == "mistLumJacquelyn") {
-                        if (SlayerTaskStreak % 50 == 0) { SlayerPoints += QuestCompleted("DES_SmokingKills") ? 15 : 7; }
-                        else if (SlayerTaskStreak % 10 == 0) { SlayerPoints += QuestCompleted("DES_SmokingKills)") ? 5 : 2; }
-                        else { SlayerPoints += QuestCompleted("DES_SmokingKills)") ? 1 : 1; }
-                    }
-
-                    SlayerTaskFrom = ""; 
                 }
             }
         }
 
         public bool QuestCompleted(string id) {
-            if (GameLoop.ZPO.QuestLibrary.TryGetValue(id, out Quest? quest)) {
+            if (GameLoop.WTN.QuestLibrary.TryGetValue(id, out Quest? quest)) {
                 if (QuestLog.TryGetValue(id, out QuestStatus? status)) {
                     if (status.CurrentStage == quest.CompleteStage) {
                         return true;
@@ -1757,7 +1808,7 @@ namespace WorldtreeNexus.DataTypes {
             int questPoints = 0;
             int totalPossibleQP = 0; 
 
-            foreach (var kv in GameLoop.ZPO.QuestLibrary) {
+            foreach (var kv in GameLoop.WTN.QuestLibrary) {
                 totalPossibleQP += kv.Value.QuestPoints;
                 if (kv.Value.CurrentStage() == kv.Value.CompleteStage)
                     questPoints += kv.Value.QuestPoints;
@@ -1767,7 +1818,7 @@ namespace WorldtreeNexus.DataTypes {
         }
 
         public string GetRegion() {
-            if (GameLoop.ZPO.Atlas.TryGetValue(NavLoc, out Location? curr) && curr != null) {
+            if (GameLoop.WTN.Atlas.TryGetValue(NavLoc, out Location? curr) && curr != null) {
                 return curr.Region;
             }
 
@@ -1807,29 +1858,103 @@ namespace WorldtreeNexus.DataTypes {
 
             return held;
         }
+        
 
-        public bool HasSlashing() {
-            foreach (var kv in Equipment) {
-                if (kv.Value.GetRef() is Item wep) {
-                    if (wep.EquipDamageType == "Slash") {
-                        return true;
+        public int GetMaxPrayer() {
+            return 10 * GetEffectiveSkillLevel("Prayer");
+        }
+
+        public int GetPrayerBonus() {
+            double bonus = 0;
+
+            foreach (var eqpWrap in Equipment) {
+                if (eqpWrap.Value.GetRef() is Item eqp) {
+                    if (eqp.MiscString == "PrayerBonus") {
+                        bonus += eqp.EquipTier;
                     }
                 }
             }
 
-            foreach (var kv in Inventory) {
-                if (kv.GetRef() is Item inv) {
-                    if (inv.EquipDamageType == "Slash") {
-                        return true;
-                    }
-                }
+            return (int) Math.Ceiling(bonus);
+        }
+
+        public CombatSim GetSimBlock(string attackType) {
+            return new CombatSim(GetEffectiveSkillLevel("Hitpoints"), GetEffectiveSkillLevel("Attack"), GetEffectiveSkillLevel("Defense"), MaxDamage(), GetDamageType(), GetDamageElement(), GetAttackSpeed(), TotalArmorValue(attackType), "", ElementalAttunement);
+        }
+
+        public bool Safespotting(string dmgType, bool inaccessible = false) {
+            if (dmgType != "Melee") { return false; }
+
+            if (Equipment.TryGetValue("Weapon", out ItemWrapper? weaponWrap) && weaponWrap.GetRef() is Item wep2) {
+                if (wep2.EquipSkill == "Ranged") { return true; }
             }
 
-            if (HasAllItems(["knife,1"], false, true, true)) {
-                return true;
-            }
+            if (IsMaging()) { return true; } 
+            if (inaccessible) { return true; }
 
             return false;
+        }
+
+        public void GainCombatExp(int dmg, bool reachedKillLimit = false, bool usedAmmo = false) {
+            if (IsMaging() && CombatCasting != null && !reachedKillLimit) {  
+                TryGrantExp("Magic", (dmg * 4), GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+
+                string cast = CanCast(CombatCasting);
+                if (cast != "") { 
+                    GameLoop.WTN.Log.AddMessage(new ColoredString("Cannot cast spell anymore: " + cast, Color.Crimson, Color.Black)); 
+                    CombatCasting = null;
+                }
+            } else if (usedAmmo && !reachedKillLimit) { 
+                TryGrantExp("Ranged", dmg * 4, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+            } else {
+                if (OffenseExpSplit > 0 && !reachedKillLimit)
+                    TryGrantExp("Attack", dmg * OffenseExpSplit, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+
+                if (OffenseExpSplit < 4 && !reachedKillLimit)
+                    TryGrantExp("Strength", dmg * (4 - OffenseExpSplit), GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+            }
+
+            if (DefenseExpSplit > 0 && !reachedKillLimit)
+                TryGrantExp("Defense", dmg * DefenseExpSplit, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+
+            if (DefenseExpSplit < 4 && !reachedKillLimit)
+                TryGrantExp("Hitpoints", dmg * (4 - DefenseExpSplit), GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+        }
+
+        public int UseRangedAmmo(bool inaccessible = false) { // 1 = has ammo and used some, -1 = needs ammo but didn't have, 0 = no ammo required so probably not ranged
+            if (Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrap) && wepWrap != null && wepWrap.GetRef() is Item weapon) {
+                if (weapon.EquipAmmo == "Self") {
+                    wepWrap.Quantity -= 1;
+                    Item droppedAmmo = new(weapon) { Quantity = 1 }; 
+                    if (GameLoop.rand.Next(4) != 0)
+                        GameLoop.WTN.TryPlaceItem(NavLoc, new(droppedAmmo, inaccessible));
+                    return 1;
+                } else if (weapon.EquipAmmo == "Chargebow") {
+                    return 1;
+                } else if (weapon.EquipAmmo == "RangedStandard") {
+                    if (Equipment.TryGetValue("Ammo", out ItemWrapper? arrowWrap) && arrowWrap.GetRef() is Item arrow && arrow.EquipDamageType == "RangedStandard") {
+                        arrowWrap.Quantity -= 1;
+                        Item droppedAmmo = new(arrow) { Quantity = 1 }; 
+                        if (GameLoop.rand.Next(4) != 0)
+                            GameLoop.WTN.TryPlaceItem(NavLoc, new(droppedAmmo, inaccessible));
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                } else if (weapon.EquipAmmo == "RangedHeavy") {
+                    if (Equipment.TryGetValue("Ammo", out ItemWrapper? boltWrap) && boltWrap.GetRef() is Item bolt && bolt.EquipDamageType == "RangedHeavy") {
+                        boltWrap.Quantity -= 1;
+                        Item droppedAmmo = new(bolt) { Quantity = 1 }; 
+                        if (GameLoop.rand.Next(4) != 0)
+                            GameLoop.WTN.TryPlaceItem(NavLoc, new(droppedAmmo, inaccessible));
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+            }
+
+            return 0;
         }
     }
 }

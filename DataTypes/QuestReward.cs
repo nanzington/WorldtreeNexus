@@ -18,7 +18,7 @@
             }
 
             if (RewardType == "Item") {
-                build = (MiscInt > 1 ? MiscInt + "x " : "") + GameLoop.ZPO.ResolveItemName(MiscString);
+                build = (MiscInt > 1 ? MiscInt + "x " : "") + GameLoop.WTN.ResolveItemName(MiscString);
             }
 
             if (RewardType == "RandomItem") {

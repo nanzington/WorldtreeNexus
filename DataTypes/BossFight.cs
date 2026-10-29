@@ -7,7 +7,6 @@ namespace WorldtreeNexus.DataTypes {
         public int Level = 1;
 
         public string SpecialCategory = "";
-        public List<string> CountsAsSlayer = new(); 
         public string KillItem = "";
 
         public int AggroLevel = 0; // If the players combat level is below this, the monster will automatically attack them 

@@ -1,44 +1,35 @@
 ﻿namespace WorldtreeNexus.HardcodedData {
     public static class ColorLib {
         // Metals
+        public static Color Copper = new Color(245, 163, 86, 255);
         public static Color Bronze = new Color(205, 127, 50, 255);
         public static Color Iron = new Color(75, 75, 75, 255);
+        public static Color Silver = new Color(200, 200, 200, 255);
+        public static Color Gold = new Color(239, 191, 4, 255);
+        public static Color Platinum = new Color(229, 228, 226);
         public static Color Steel = new Color(150, 150, 150, 255);
-        public static Color Mithril = Color.SteelBlue;
-        public static Color Adamant = new Color(34, 139, 34, 255);
-        public static Color Rune = Color.Turquoise;
+        public static Color Cobalt = new Color(4, 61, 156, 255);
+        public static Color Tungsten = new Color(181, 172, 159, 255);
+        public static Color Titanium = new Color(145, 32, 100, 255);
 
         // Logs 
-        public static Color Pine = new Color(237, 202, 161, 255);
-        public static Color Oak = new Color(207, 172, 131, 255);
-        public static Color Willow = new Color(92, 64, 51, 255);
-        public static Color Teak = new Color(255, 222, 181, 255);
-        public static Color Maple = new Color(181, 101, 29, 255);
-        public static Color Acadia = new Color(196, 164, 132, 255);
-        public static Color Mahogany = new Color(192, 64, 0, 255);
-        public static Color Yew = new Color(216, 163, 115, 255);
-        public static Color Magic = new Color(144, 213, 255, 255);
-        public static Color Elder = new Color(103, 91, 91, 255);
+        
+        public static Color Poplar = new Color(155, 112, 48, 255);
+        public static Color Elm = new Color(144, 120, 101, 255);
+        public static Color Walnut = new Color(119, 63, 26, 255);
+        public static Color Holly = new Color(195, 163, 114, 255);
+        public static Color Acacia = new Color(167, 108, 64, 255);
+        public static Color Birch = new Color(215, 206, 193, 255);
+        public static Color Hickory = new Color(183, 162, 142, 255);
+        public static Color Bloodwood = new Color(175, 63, 51, 255);
+        public static Color Camatillo = new Color(74, 46, 67, 255);
+        public static Color Katalox = new Color(68, 58, 52, 255);
 
-        // Herbs
-        public static Color Guam = Color.ForestGreen;
-        public static Color Tarromin = Color.SeaGreen;
-        public static Color Marrentill = Color.SeaGreen;
-        public static Color Harralander = Color.SpringGreen;
-        public static Color Ranarr = Color.MediumSpringGreen;
-        public static Color Toadflax = Color.Green;
-        public static Color Spiritweed = Color.LawnGreen;
-        public static Color Irit = Color.Lime;
-        public static Color Wergali = Color.Crimson;
-        public static Color Avantoe = Color.SpringGreen;
-        public static Color Kwuarm = Color.Olive;
-        public static Color Bloodweed = Color.Crimson;
-        public static Color Snapdragon = Color.Orange;
-        public static Color Cadantine = Color.YellowGreen;
-        public static Color Lantadyme = Color.Teal;
-        public static Color Dwarfweed = Color.ForestGreen;
-        public static Color Torstol = Color.DarkGreen;
-        public static Color Arbuck = Color.Orange;
-        public static Color Fellstalk = Color.AntiqueWhite;
+        // Pastels
+        public static Color PastelYellow = new Color(253, 253, 150);
+        public static Color PastelPink = new Color(255, 209, 220);
+        public static Color PastelBlue = new Color(179, 235, 242);
+        public static Color PastelGreen = new Color(128, 239, 128);
+
     }
 }

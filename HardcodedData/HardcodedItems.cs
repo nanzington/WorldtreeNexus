@@ -5,47 +5,10 @@ using WorldtreeNexus.Managers;
 
 namespace WorldtreeNexus.Hardcodes {
     public static class HardcodedItems {
-        public static Dictionary<string, int> RuneCosts = new();
         public static void InitItems(Dictionary<string, Item> ItemLibrary, Dictionary<string, Spell> SpellLib) {
-            RuneCosts.Add("runeAir", 4);
-            RuneCosts.Add("runeEarth", 4);
-            RuneCosts.Add("runeFire", 4);
-            RuneCosts.Add("runeWater", 4);
-            RuneCosts.Add("runeMind", 3);
-            RuneCosts.Add("runeBody", 3); 
-            RuneCosts.Add("runeNature", 180);
-            RuneCosts.Add("runeChaos", 90);
-            RuneCosts.Add("runeLaw", 240);
-            RuneCosts.Add("runeDeath", 180);
-            RuneCosts.Add("runeBlood", 400);
-            RuneCosts.Add("runeCosmic", 50);
-            RuneCosts.Add("runeSoul", 300);
-            RuneCosts.Add("runeAstral", 50);
-            RuneCosts.Add("runeWrath", 500);  
 
             List<Item> itemsToAdd = new();
-            itemsToAdd.Add(new Item("Pine log", "A bundle of pine logs.", "logPine", ColorLib.Pine, 10));
-            itemsToAdd.Add(new Item("Oak log", "A bundle of oak logs.", "logOak", ColorLib.Oak, 20));
-            itemsToAdd.Add(new Item("Willow log", "A bundle of willow logs.", "logWillow", ColorLib.Willow, 40));
-            itemsToAdd.Add(new Item("Teak log", "A bundle of teak logs.", "logTeak", ColorLib.Teak, 60));
-            itemsToAdd.Add(new Item("Maple log", "A bundle of maple logs.", "logMaple", ColorLib.Maple, 80));
-            itemsToAdd.Add(new Item("Acadia log", "A bundle of acadia logs.", "logAcadia",ColorLib.Acadia, 100));
-            itemsToAdd.Add(new Item("Mahogany log", "A bundle of mahogany logs.", "logMahogany", ColorLib.Mahogany, 120));
-            itemsToAdd.Add(new Item("Yew log", "A bundle of yew logs.", "logYew", ColorLib.Yew, 240));
-            itemsToAdd.Add(new Item("Magic log", "A bundle of magic logs.", "logMagic", ColorLib.Magic, 360));
-            itemsToAdd.Add(new Item("Elder log", "A bundle of elder logs.", "logElder", ColorLib.Elder, 480));
-             
-            itemsToAdd.Add(new Item("Pine wood spirit", "When chopping pine logs, this is consumed and you will receive an extra log.", "spiritWoodPine", ColorLib.Pine, 20, true) { MiscString = "Spirit", UseString2 = "logPine" });
-            itemsToAdd.Add(new Item("Oak wood spirit", "When chopping oak logs, this is consumed and you will receive an extra log.", "spiritWoodOak", ColorLib.Oak, 20, true) { MiscString = "Spirit", UseString2 = "logOak" });
-            itemsToAdd.Add(new Item("Willow wood spirit", "When chopping willow logs, this is consumed and you will receive an extra log.", "spiritWoodWillow", ColorLib.Willow, 20, true) { MiscString = "Spirit", UseString2 = "logWillow" });
-            itemsToAdd.Add(new Item("Teak wood spirit", "When chopping teak logs, this is consumed and you will receive an extra log.", "spiritWoodTeak", ColorLib.Teak, 20, true) { MiscString = "Spirit", UseString2 = "logTeak" });
-            itemsToAdd.Add(new Item("Maple wood spirit", "When chopping maple logs, this is consumed and you will receive an extra log.", "spiritWoodMaple", ColorLib.Maple, 20, true) { MiscString = "Spirit", UseString2 = "logMaple" });
-            itemsToAdd.Add(new Item("Acadia wood spirit", "When chopping acadia logs, this is consumed and you will receive an extra log.", "spiritWoodAcadia",ColorLib.Acadia, 20, true) { MiscString = "Spirit", UseString2 = "logAcadia" });
-            itemsToAdd.Add(new Item("Mahogany wood spirit", "When chopping mahogany logs, this is consumed and you will receive an extra log.", "spiritWoodMahogany", ColorLib.Mahogany, 20, true) { MiscString = "Spirit", UseString2 = "logMahogany" });
-            itemsToAdd.Add(new Item("Yew wood spirit", "When chopping yew logs, this is consumed and you will receive an extra log.", "spiritWoodYew", ColorLib.Yew, 20, true) { MiscString = "Spirit", UseString2 = "logYew" });
-            itemsToAdd.Add(new Item("Magic wood spirit", "When chopping magic logs, this is consumed and you will receive an extra log.", "spiritWoodMagic", ColorLib.Magic, 20, true) { MiscString = "Spirit", UseString2 = "logMagic" });
-            itemsToAdd.Add(new Item("Elder wood spirit", "When chopping elder logs, this is consumed and you will receive an extra log.", "spiritWoodElder", ColorLib.Elder, 20, true) { MiscString = "Spirit", UseString2 = "logElder" });
-               
+
             itemsToAdd.Add(new Item("Limestone brick", "A well carved limestone block.", "blockLimestone", Color.DarkGray, 20));
             itemsToAdd.Add(new Item("Clockwork", "A clockwork mechanism.", "clockwork", Color.DarkGray, 500));
             itemsToAdd.Add(new Item("Marble block", "A beautifully carved marble block.", "blockMarble", Color.White, 250_000));
@@ -53,16 +16,16 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Magic stone", "A magic stone to make high-level furniture.", "stoneMagic", Color.Gray, 750_000));
             itemsToAdd.Add(new Item("Condensed gold", "The gold standard of gold.", "goldCondensed", Color.Gold, 8_000_000));
 
-            itemsToAdd.Add(new Item("Tinderbox", "An arsonist's best friend.", "tinderbox", 255, 255, 255, 1));
-            itemsToAdd.Add(new Item("Ashes", "A pile of wood ash.", "ashes", 200, 200, 200, 2));
-            itemsToAdd.Add(new Item("Hammer", "Good for hitting things!", "hammer", 150, 150, 150, 1));
-            itemsToAdd.Add(new Item("Saw", "Good for cutting wood.", "saw", 150, 150, 150, 10));
-            itemsToAdd.Add(new Item("Knife", "Good for chopping or whittling, not so much for stabbing.", "knife", 150, 150, 150, 1) { UseString = "Knife", ConsumedOnUse = false});
+            itemsToAdd.Add(new Item("Tinderbox", "An arsonist's best friend.", "tinderbox", 255, 255, 255, 5));
+            itemsToAdd.Add(new Item("Ashes", "A pile of wood ash.", "ashes", 200, 200, 200, 5));
+            itemsToAdd.Add(new Item("Hammer", "Good for hitting things!", "hammer", 150, 150, 150, 5));
+            itemsToAdd.Add(new Item("Saw", "Good for cutting wood.", "saw", 150, 150, 150, 10)); 
+            itemsToAdd.Add(new Item("Knife", "Good for chopping or whittling, not so much for stabbing.", "knife", 150, 150, 150, 5) { UseString = "Knife", ConsumedOnUse = false});
             itemsToAdd.Add(new Item("Needle", "Now to get a camel through eye of this thing...", "needle", 200, 200, 200, 1) { UseString = "Needle", ConsumedOnUse = false});
             itemsToAdd.Add(new Item("Glassblowing pipe", "Used to form molten glass into useful items.", "glassblowingPipe", ColorLib.Steel, 2) { UseString = "Glassblowing Pipe", ConsumedOnUse = false});
             itemsToAdd.Add(new Item("Feather", "I could probably make arrows with this. Or put one in my cap!", "feather", 255, 255, 255, 2, true)); 
-            itemsToAdd.Add(new Item("Steel studs", "A set of studs for leather armour.", "studsSteel", ColorLib.Steel, 45)); 
-            itemsToAdd.Add(new Item("Shears", "Necessary to de-wool sheep.", "shears", 200, 200, 200, 1, misc: "Shears"));
+            itemsToAdd.Add(new Item("Iron studs", "A set of studs for leather armour.", "studsIron", ColorLib.Iron, 45)); 
+            itemsToAdd.Add(new Item("Shears", "Necessary to de-wool sheep.", "shears", ColorLib.Steel, 5, misc: "Shears"));
             itemsToAdd.Add(new Item("Papyrus", "Used for making notes.", "papyrus", Color.Khaki, 10));
             itemsToAdd.Add(new Item("Waterskin (0)", "A completely empty waterskin - you'll need to fill it up.", "waterskin0", Color.Khaki, 15));
             itemsToAdd.Add(new Item("Waterskin (1)", "A nearly empty waterskin with one portion of water.", "waterskin1", Color.Khaki, 18));
@@ -70,60 +33,50 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Waterskin (3)", "A nearly full waterskin with three portions of water.", "waterskin3", Color.Khaki, 27));
             itemsToAdd.Add(new Item("Waterskin (4)", "A full waterskin with four portions of water.", "waterskin4", Color.Khaki, 30));
             itemsToAdd.Add(new Item("Rope", "A coil of rope.", "rope", Color.SaddleBrown, 18));
-            itemsToAdd.Add(new Item("Mahogany Homes contract", "A note detailing your current active Mahogany Homes contract, if any. Activate to check.", "mahoganyHomesContract", Color.Beige, 1) { UseString = "MahoganyHomes", ConsumedOnUse = false});
+            itemsToAdd.Add(new Item("Cozy Cottages contract", "A note detailing your current active Cozy Cottages contract, if any. Activate to check.", "cozyCottagesContract", Color.Beige, 1) { UseString = "CozyCottages", ConsumedOnUse = false});
             itemsToAdd.Add(new Item("Compass", "Points to any map within 20 connections. Only considers usable primary connection destinations. May not result in fastest possible route.", "compass", ColorLib.Steel, 100) { UseString = "CompassMenu", ConsumedOnUse = false });
              
-            
-            itemsToAdd.Add(new Item("Broken arrows", "This must have been shot at high speed.", "arrowsBroken", Color.SaddleBrown, 1, true, false));
-            itemsToAdd.Add(new Item("Broken staff", "I pity the poor person beaten with this!", "staffBroken", Color.SaddleBrown, 1, false, false));
-            itemsToAdd.Add(new Item("Rusty sword", "A decent-enough weapon gone rusty.", "swordRusty", Color.Orange, 1, false, false));
-
-            itemsToAdd.Add(new Item("Mithril grapple (unf)", "An unfinished mithril grapple. Needs a rope to be useful.", "grappleUnf", ColorLib.Mithril, 1000)); 
-            itemsToAdd.Add(new Item("Mithril grapple", "A mithril grapple with a rope. Useful for some shortcuts.", "grapple", ColorLib.Mithril, 1500)); 
-            
-            itemsToAdd.Add(new Item("Bird snare", "Snares the leg of any bird that lands on it wrong.", "trapBird", 237, 202, 161, 5));
-            
-            itemsToAdd.Add(new Item("Small fishing net", "Useful for catching small fish.", "fishingNetSmall", 50, 50, 50, 5, misc: "Small net"));
-            itemsToAdd.Add(new Item("Big fishing net", "Useful for catching lots of fish.", "fishingNetBig", 50, 50, 50, 20, misc: "Big net"));
-            itemsToAdd.Add(new Item("Fishing rod", "Useful for catching sardine or herring.", "fishingRod", 139, 69, 19, 5, misc: "Fishing rod")); 
             itemsToAdd.Add(new Item("Fish bait", "For use with a fishing rod.", "baitFish", 233, 185, 93, 3, true));
-            itemsToAdd.Add(new Item("Fly fishing rod", "Like a fishing rod, but with cool glasses and a sick haircut.", "fishingRodFly", 139, 69, 19, 5, misc: "Fly fishing rod"));
-            itemsToAdd.Add(new Item("Harpoon", "Useful for catching really big fish.", "fishingHarpoon", 139, 69, 19, 45, misc: "Harpoon"));
-            itemsToAdd.Add(new Item("Lobster pot", "Useful for catching lobsters.", "fishingPotLobster", 139, 69, 19, 20, misc: "Lobster pot"));
-
-            
-            
              
-
             itemsToAdd.Add(new Item("Arrow shaft", "The most important part of an arrow.", "arrowshaft", 139, 69, 19, 2, true));
             itemsToAdd.Add(new Item("Headless shafts", "An arrow shaft with a feather attached. Needs to be tipped.", "headlessShaft", 139, 69, 19, 2, true));
             itemsToAdd.Add(new Item("Flax", "I should use this with a spinning wheel.", "flax", 189, 246, 254, 5));
             itemsToAdd.Add(new Item("Bow string", "I need a bow stave to attach this to.", "bowstring", 207, 185, 151, 10));
             itemsToAdd.Add(new Item("Sinew", "I can use this to make a crossbow string.", "sinew", 207, 185, 151, 10));
-            itemsToAdd.Add(new Item("Crossbow string", "A string for a crossbow.", "crossbowString", 207, 185, 151, 10));
-
+            itemsToAdd.Add(new Item("Crossbow string", "A string for a crossbow.", "crossbowString", 207, 185, 151, 10)); 
 
             // Fletching Factory
-            List<MaterialDef> Woods = new() {
-                new("Pine", ColorLib.Pine, 1, 1, 10, "bronze"),
-                new("Oak", ColorLib.Oak, 2, 10, 20, "iron"),
-                new("Willow", ColorLib.Willow, 3, 20, 40, "steel"),
-                new("Teak", ColorLib.Teak, 4, 30, 60, "mithril"),
-                new("Maple", ColorLib.Maple, 5, 40, 80, "adamant"),
-                new("Acadia", ColorLib.Acadia, 6, 50, 100, "rune"),
-                new("Mahogany", ColorLib.Mahogany, 7, 60, 120, "orichalcum"),
-                new("Yew", ColorLib.Yew, 8, 70, 240, "necrite"),
-                new("Magic", ColorLib.Magic, 9, 80, 360, "banite"),
-                new("Elder", ColorLib.Elder, 10, 90, 480, "elder rune")
-            };
+            itemsToAdd.Add(new Item("Poplar ashes", "A small pile of poplar ash.", "ashesPoplar", ColorLib.Poplar, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(-2, 3, -3, 3, 1) });
+            itemsToAdd.Add(new Item("Elm ashes", "A small pile of elm ash.", "ashesElm", ColorLib.Elm, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(0, -3, -4, 3, 10) });
+            itemsToAdd.Add(new Item("Walnut ashes", "A small pile of walnut ash.", "ashesWalnut", ColorLib.Walnut, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(6, 0, 0, -3, 20) });
+            itemsToAdd.Add(new Item("Holly ashes", "A small pile of holly ash.", "ashesHolly", ColorLib.Holly, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(1, -2, 4, 1, 30) });
+            itemsToAdd.Add(new Item("Acacia ashes", "A small pile of acacia ash.", "ashesAcacia", ColorLib.Acacia, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(0, -4, 2, -1, 40) });
+            itemsToAdd.Add(new Item("Birch ashes", "A small pile of birch ash.", "ashesBirch", ColorLib.Birch, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(-3, 1, 0, 2, 50) });
+            itemsToAdd.Add(new Item("Hickory ashes", "A small pile of hickory ash.", "ashesHickory", ColorLib.Hickory, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(0, 2, -2, -1, 60) });
+            itemsToAdd.Add(new Item("Bloodwood ashes", "A small pile of bloodwood ash.", "ashesBloodwood", ColorLib.Bloodwood, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(2, 1, 1, 0, 70) });
+            itemsToAdd.Add(new Item("Camatillo ashes", "A small pile of camatillo ash.", "ashesCamatillo", ColorLib.Camatillo, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(0, -2, 1, 0, 80) });
+            itemsToAdd.Add(new Item("Katalox ashes", "A small pile of katalox ash.", "ashesKatalox", ColorLib.Katalox, 5) { CountsAsIDs = [ "ashes" ], Alchemy = new(-1, -1, 0, 0, 90) });
+             
+            itemsToAdd.Add(new Item("Paper mould", "A mould for making sheets of paper.", "mouldPaper", ColorLib.Poplar, 20));
 
-            foreach (var mat in Woods) { 
+            foreach (var mat in Materials.Woods) { 
+                itemsToAdd.Add(new Item(mat.Name + " log", "A bundle of " + mat.Name.ToLower() + " logs.", "log" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier));
+                itemsToAdd.Add(new Item(mat.Name + " chips", "A pile of " + mat.Name.ToLower() + " chips. Needs to be added to a pot of lye (water + ashes).", "chips" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier));
+                itemsToAdd.Add(new Item("Pot of " + mat.Name.ToLower() + " chips", "A pot of lye with " + mat.Name.ToLower() + " chips. Needs to be heated.", "potChips" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier + 6));
+                itemsToAdd.Add(new Item(mat.Name + " pulp", "A lump of " + mat.Name.ToLower() + " pulp. Needs to be pressed into sheets.", "pulp" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier / 5, true) { UseString = "ManualPaper" });
+                itemsToAdd.Add(new Item(mat.Name + " paper", "A sheet of " + mat.Name.ToLower() + " paper. Will generally need level " + mat.Level + " to use.", "paper" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier / 5, true) { EquipLevel = mat.Level });
+                
+                itemsToAdd.Add(new Item(mat.Name + " rod", "A fishing rod made of " + mat.Name.ToLower() + ".", "rod" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier, misc: "Fishing rod") { EquipLevel = mat.Level });
+                itemsToAdd.Add(new Item(mat.Name + " rod (u)", "A fishing pole made of " + mat.Name.ToLower() + ". Needs a", "rod" + mat.Name + "U", mat.R, mat.G, mat.B, mat.CostMultiplier));
+                itemsToAdd.Add(new Item(mat.Name + " rod (s)", "A strung fishing pole made of " + mat.Name.ToLower() + ". Still needs a " + Materials.MetalNames[(int) mat.Tier - 1].ToLower() + " hook.", "rod" + mat.Name + "S", mat.R, mat.G, mat.B, mat.CostMultiplier));
+
                 itemsToAdd.Add(new Item(mat.Name + " shortbow (u)", "A shortbow stave fletched from " + mat.Name.ToLower() + ".", "shortbow" + mat.Name + "U", mat.R, mat.G, mat.B, mat.CostMultiplier));
                 itemsToAdd.Add(new Item(mat.Name + " shortbow", "A shortbow fletched from " + mat.Name.ToLower() + ".", "shortbow" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier + 15) {
                     EquipSlot = "Weapon",
                     EquipTier = mat.Tier,
                     EquipLevel = mat.Level, 
                     EquipDamageType = "RangedStandard",
+                    EquipElement = "Wood",
                     EquipSkill = "Ranged",
                     EquipAmmo = "RangedStandard",
                     AttackSpeed = 0.75, 
@@ -136,6 +89,7 @@ namespace WorldtreeNexus.Hardcodes {
                     EquipTier = mat.Tier + 1,
                     EquipLevel = mat.Level, 
                     EquipDamageType = "RangedStandard",
+                    EquipElement = "Wood",
                     EquipSkill = "Ranged",
                     EquipAmmo = "RangedStandard",
                     AttackSpeed = 1.25, 
@@ -147,6 +101,7 @@ namespace WorldtreeNexus.Hardcodes {
                     EquipTier = mat.Tier + 1,
                     EquipLevel = mat.Level, 
                     EquipDamageType = "RangedStandard",
+                    EquipElement = "Wood",
                     EquipSkill = "Ranged",
                     EquipAmmo = "RangedStandard", 
                     TwoHanded = true
@@ -159,9 +114,20 @@ namespace WorldtreeNexus.Hardcodes {
                     EquipTier = mat.Tier,
                     EquipLevel = mat.Level, 
                     EquipDamageType = "RangedHeavy",
+                    EquipElement = "Metal",
                     EquipSkill = "Ranged",
                     EquipAmmo = "RangedHeavy",
                     AttackSpeed = 1.5
+                }); 
+
+                itemsToAdd.Add(new Item(mat.Name + " wand shaft", "A wand shaft fletched from " + mat.Name.ToLower() + ". Needs to be tipped with a cut " + Materials.JewelNames[(int) mat.Tier - 1].ToLower() + ".", "wand" + mat.Name + "Unf", mat.R, mat.G, mat.B, mat.CostMultiplier));
+                itemsToAdd.Add(new Item(mat.Name + " wand", "A wand fletched from " + mat.Name.ToLower() + ". (T" + mat.Tier + ")", "wand" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier + Materials.JewelCosts[(int) mat.Tier - 1]) {
+                    EquipSlot = "Weapon",
+                    EquipTier = mat.Tier,
+                    EquipLevel = mat.Level, 
+                    EquipDamageType = "Crush",
+                    EquipElement = "Wood",
+                    EquipSkill = "Magic"
                 });
 
                 itemsToAdd.Add(new Item(mat.Name + " plank", "A plank carved from a" + (Helper.VowelStart(mat.Name.ToLower()) ? "n " : " ") + mat.Name.ToLower() + " log.", "plank" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier * 2));
@@ -169,7 +135,6 @@ namespace WorldtreeNexus.Hardcodes {
             }   
 
             itemsToAdd.Add(new Item("Shovel", "Could be used to dig for buried treasure.", "shovel", 200, 200, 200, 3) { UseString = "Dig", ConsumedOnUse = false });
-            itemsToAdd.Add(new Item("Map (Lumbridge Swamp)", "Useful for navigating a confusing swamp.", "mapLumbridgeSwamp", Color.Khaki, 3) { Noteable = false, EquipSlot = "Pocket", UseString = "Map", UseString2 = "Lumbridge Swamp", UseInt = 6, UseInt2 = 4, ConsumedOnUse = false });
             itemsToAdd.Add(new Item("Candle (lit)", "A lit candle.", "candleLit", Color.Yellow, 3) { UseString = "Extinguish", UseString2 = "candle", ConsumedOnUse = false, ExposedFlame = true, ProvidesLight = true });
             itemsToAdd.Add(new Item("Candle", "A candle.", "candle", Color.White, 3) { UseString = "Light", UseString2 = "candleLit", ConsumedOnUse = false });
             itemsToAdd.Add(new Item("Candle lantern (lit)", "A flickering candle in a glass cage.", "candleLanternLit", Color.Yellow, 15) { UseString = "Extinguish", UseString2 = "candleLantern", ConsumedOnUse = false, ProvidesLight = true });
@@ -186,12 +151,7 @@ namespace WorldtreeNexus.Hardcodes {
             
 
             itemsToAdd.Add(new Item("Tutorial Island cape", "A cape signifying you completed all challenges on Tutorial Island. Congratulations!", "capeCompTI", 135, 206, 235, 0, trade: false) { EquipSlot = "Cape", EquipTier = 1, MiscString = "OmniBoost" });
-            itemsToAdd.Add(new Item("Defense skillcape", "The cape worn by masters of the art of Defense.", "capeSkillDefense", Color.CornflowerBlue, 0, trade: false) { EquipSlot = "Cape", EquipTier = 2, MiscString = "OmniBoost" });
-            itemsToAdd.Add(new Item("Cooking skillcape", "The cape worn by masters of the art of Cooking.", "capeSkillCooking", Color.Purple, 0, trade: false) { EquipSlot = "Cape", EquipTier = 2, MiscString = "OmniBoost" });
-            itemsToAdd.Add(new Item("Farming skillcape", "The cape worn by masters of the art of Farming.", "capeSkillFarming", Color.ForestGreen, 0, trade: false) { EquipSlot = "Cape", EquipTier = 2, MiscString = "OmniBoost" });
-            itemsToAdd.Add(new Item("Runecrafting skillcape", "The cape worn by masters of the art of Runecrafting.", "capeSkillRunecrafting", Color.Yellow, 0, trade: false) { EquipSlot = "Cape", EquipTier = 2, MiscString = "OmniBoost" });
-            itemsToAdd.Add(new Item("Construction skillcape", "The cape worn by masters of the art of Construction.", "capeSkillConstruction", Color.AntiqueWhite, 0, trade: false) { EquipSlot = "Cape", EquipTier = 2, MiscString = "OmniBoost" });
-
+            
             {
                 // ordinary wizard
                 itemsToAdd.Add(new Item("Blue wizard hat", "A silly pointed hat.", "wizardBlueHat", 0, 157, 196, 2) { EquipSlot = "Head", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
@@ -200,331 +160,22 @@ namespace WorldtreeNexus.Hardcodes {
                 itemsToAdd.Add(new Item("Black wizard hat", "A silly pointed hat.", "wizardBlackHat", Color.DimGray, 2) { EquipSlot = "Head", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
                 itemsToAdd.Add(new Item("Black wizard shirt", "I can do better magic in this.", "wizardBlackRobe", Color.DimGray, 15) { EquipSlot = "Body", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
                 itemsToAdd.Add(new Item("Black wizard skirt", "I can do better magic in this.", "wizardBlackBottom", Color.DimGray, 15) { EquipSlot = "Legs", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                
-                // Zamorak monk robes
-                itemsToAdd.Add(new Item("Zamorak monk top", "A robe worn by worshippers of Zamorak.", "monkZamorakTop", Color.Crimson, 40) { EquipSlot = "Body", EquipTier = 1, MiscString = "PrayerBoost" });
-                itemsToAdd.Add(new Item("Zamorak monk bottom", "A robe worn by worshippers of Zamorak.", "monkZamorakBottom", Color.Crimson, 30) { EquipSlot = "Legs", EquipTier = 1, MiscString = "PrayerBoost" });
-               
-
-
-                // Desert robes
-                itemsToAdd.Add(new Item("Fake beard", "Makes me itch.", "beardFake", Color.White, 1));
-                itemsToAdd.Add(new Item("Kharidian headpiece", "Wear it on your head.", "kharidianHeadpiece", Color.White, 1));
-                itemsToAdd.Add(new Item("Desert disguise", "A disguise suitable for the desert.", "desertDisguise", Color.White, 1) { EquipSlot = "Head", Cosmetic = true });
-                itemsToAdd.Add(new Item("Desert shirt", "A cool, light desert shirt.", "desertShirt", Color.White, 40) { EquipSlot = "Body", Cosmetic = true });
-                itemsToAdd.Add(new Item("Desert robe", "A cool, light desert robe.", "desertRobe", Color.White, 40) { EquipSlot = "Legs", Cosmetic = true });
-                itemsToAdd.Add(new Item("Desert boots", "Comfortable desert shoes.", "desertBoots", Color.White, 20) { EquipSlot = "Feet", Cosmetic = true });
-                
-                // mystic (blue)
-                itemsToAdd.Add(new Item("Mystic hat", "A magical hat.", "mysticHat", Color.Turquoise, 15000) { EquipSlot = "Head", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic robe top", "The upper half of a magical robe.", "mysticRobeTop", Color.Turquoise, 120000) { EquipSlot = "Body", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic robe bottom", "The lower half of a magical robe.", "mysticRobeBottom", Color.Turquoise, 80000) { EquipSlot = "Legs", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic gloves", "Magical gloves.", "mysticGloves", Color.Turquoise, 10000) { EquipSlot = "Hands", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic boots", "Magical boots.", "mysticBoots", Color.Turquoise, 10000) { EquipSlot = "Feet", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                // mystic (light)
-                itemsToAdd.Add(new Item("Mystic hat (light)", "A bright magical hat.", "mysticHatLight", Color.White, 15000) { EquipSlot = "Head", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic robe top (light)", "The upper half of a bright magical robe.", "mysticRobeTopLight", Color.White, 120000) { EquipSlot = "Body", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic robe bottom (light)", "The lower half of a bright magical robe.", "mysticRobeBottomLight", Color.White, 80000) { EquipSlot = "Legs", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic gloves (light)", "Bright magical gloves.", "mysticGlovesLight", Color.White, 10000) { EquipSlot = "Hands", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic boots (light)", "Bright magical boots.", "mysticBootsLight", Color.White, 10000) { EquipSlot = "Feet", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                // mystic (dark)
-                itemsToAdd.Add(new Item("Mystic hat (dark)", "A dark magical hat.", "mysticHatDark", Color.DimGray, 15000) { EquipSlot = "Head", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic robe top (dark)", "The upper half of a dark magical robe.", "mysticRobeTopDark", Color.DimGray, 120000) { EquipSlot = "Body", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic robe bottom (dark)", "The lower half of a dark magical robe.", "mysticRobeBottomDark", Color.DimGray, 80000) { EquipSlot = "Legs", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic gloves (dark)", "Dark magical gloves.", "mysticGlovesDark", Color.DimGray, 10000) { EquipSlot = "Hands", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Mystic boots (dark)", "Dark magical boots.", "mysticBootsDark", Color.DimGray, 10000) { EquipSlot = "Feet", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "PowerMagic" });
-                 
-                // infinity / mage arena reward
-                itemsToAdd.Add(new Item("Infinity hat", "A magical hat.", "infinityHat", Color.Magenta, 17000) { EquipSlot = "Head", EquipTier = 6, EquipSkill = "Defense", EquipLevel = 50, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Infinity robe top", "The upper half of a magical robe.", "infinityRobeTop", Color.Magenta, 140000) { EquipSlot = "Body", EquipTier = 6, EquipSkill = "Defense", EquipLevel = 50, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Infinity robe bottom", "The lower half of a magical robe.", "infinityRobeBottom", Color.Magenta, 90000) { EquipSlot = "Legs", EquipTier = 6, EquipSkill = "Defense", EquipLevel = 50, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Infinity gloves", "Magical gloves.", "infinityGloves", Color.Magenta, 12000) { EquipSlot = "Hands", EquipTier = 6, EquipSkill = "Defense", EquipLevel = 50, MiscString = "PowerMagic" });
-                itemsToAdd.Add(new Item("Infinity boots", "Magical boots.", "infinityBoots", Color.Magenta, 12000) { EquipSlot = "Feet", EquipTier = 6, EquipSkill = "Defense", EquipLevel = 50, MiscString = "PowerMagic" });
-                
-
-                // Splitbark
-                itemsToAdd.Add(new Item("Split-bark helm", "A wooden helmet.", "helmSplitbark", Color.Khaki, 10000) { EquipSlot = "Head", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Split-bark body", "Provides good protection.", "bodySplitbark", Color.Khaki, 45000) { EquipSlot = "Body", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Split-bark legs", "These should protect my legs.", "legsSplitbark", Color.Khaki, 40000) { EquipSlot = "Legs", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Split-bark gauntlets", "These should keep my hands safe.", "gauntletsSplitbark", Color.Khaki, 5000) { EquipSlot = "Hands", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Split-bark boots", "Wooden foot protection.", "bootsSplitbark", Color.Khaki, 5000) { EquipSlot = "Feet", EquipTier = 5, EquipSkill = "Defense", EquipLevel = 40, MiscString = "DefenseMagic" });
-                 
-                // Trimmed regular wizard
-                itemsToAdd.Add(new Item("Blue wizard hat", "A silly pointed hat. Trimmed.", "wizardBlueHatT", 0, 157, 196, 4) { CosmeticNote = "t", EquipSlot = "Head", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Blue wizard shirt", "I can do better magic in this. Trimmed.", "wizardBlueRobeT", 0, 157, 196, 30) { CosmeticNote = "t", EquipSlot = "Body", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Blue wizard skirt", "I can do better magic in this. Trimmed.", "wizardBlueBottomT", 0, 157, 196, 30) { CosmeticNote = "t", EquipSlot = "Legs", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard hat", "A silly pointed hat. Trimmed.", "wizardBlackHatT", Color.DimGray, 4) { CosmeticNote = "t", EquipSlot = "Head", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard shirt", "I can do better magic in this. Trimmed.", "wizardBlackRobeT", Color.DimGray, 30) { CosmeticNote = "t", EquipSlot = "Body", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard skirt", "I can do better magic in this. Trimmed.", "wizardBlackBottomT", Color.DimGray, 30) { CosmeticNote = "t", EquipSlot = "Legs", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                
-                // Gold trimmed regular wizard
-                itemsToAdd.Add(new Item("Blue wizard hat", "A silly pointed hat. Trimmed with gold.", "wizardBlueHatG", 0, 157, 196, 4) { CosmeticNote = "g", EquipSlot = "Head", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Blue wizard shirt", "I can do better magic in this. Trimmed with gold.", "wizardBlueRobeG", 0, 157, 196, 30) { CosmeticNote = "g", EquipSlot = "Body", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Blue wizard skirt", "I can do better magic in this. Trimmed with gold.", "wizardBlueBottomG", 0, 157, 196, 30) { CosmeticNote = "g", EquipSlot = "Legs", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard hat", "A silly pointed hat. Trimmed with gold.", "wizardBlackHatG", Color.DimGray, 4) { CosmeticNote = "g", EquipSlot = "Head", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard shirt", "I can do better magic in this. Trimmed with gold.", "wizardBlackRobeG", Color.DimGray, 30) { CosmeticNote = "g", EquipSlot = "Body", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard skirt", "I can do better magic in this. Trimmed with gold.", "wizardBlackBottomG", Color.DimGray, 30) { CosmeticNote = "g", EquipSlot = "Legs", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
             }
 
-            itemsToAdd.Add(new Item("Beginner wand", "A beginner level wand.", "wandBeginner", Color.BurlyWood, 1200) { EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Magic", EquipLevel = 30, EquipDamageType = "Crush" });
-            itemsToAdd.Add(new Item("Apprentice wand", "An apprentice level wand.", "wandApprentice", Color.BurlyWood, 2400) { EquipSlot = "Weapon",  EquipTier = 5, EquipSkill = "Magic", EquipLevel = 40, EquipDamageType = "Crush" });
-            itemsToAdd.Add(new Item("Teacher wand", "A teacher level wand.", "wandTeacher", Color.BurlyWood, 4800) { EquipSlot = "Weapon",  EquipTier = 6, EquipSkill = "Magic", EquipLevel = 50, EquipDamageType = "Crush" });
-            itemsToAdd.Add(new Item("Master wand", "A master level wand.", "wandMaster", Color.BurlyWood, 100000) { EquipSlot = "Weapon",  EquipTier = 7, EquipSkill = "Magic", EquipLevel = 60, EquipDamageType = "Crush" });
-            itemsToAdd.Add(new Item("Mage's book", "The magical book of a mage.", "magesBook", Color.Crimson, 100000) { EquipSlot = "Offhand",  EquipTier = 3, EquipSkill = "Magic", EquipLevel = 60, EquipDamageType = "Crush" });
-            
-            itemsToAdd.Add(new Item("Rune pouch note", "Can be exchanged for a rune pouch at any bank.", "pouchRuneNote", Color.SaddleBrown, 100000, trade: false) { UseString = "RedeemRunePouch" });
-            itemsToAdd.Add(new Item("Rune pouch", "You can store runes in here.", "pouchRune", Color.SaddleBrown, 100000, trade: false) { OnlyOneOwnable = true, EquipSlot = "Pocket", EquipSkill = "Magic", EquipLevel = 66, UseString = "ViewInventory", ConsumedOnUse = false, ContainerSlots = 3, ContainableIDs = [ "runeAir","runeWater","runeEarth","runeFire","runeMind","runeBody","runeCosmic","runeChaos","runeAstral","runeNature","runeLaw","runeDeath","runeBlood","runeSoul","runeWrath","runeMist","runeDust","runeMud","runeSmoke","runeSteam","runeLava" ] });
             itemsToAdd.Add(new Item("Herb sack", "You can store grimy herbs in here, up to 30 of each kind.", "sackHerb", Color.SandyBrown, 1, trade: false) {  UseString = "ViewInventory", ConsumedOnUse = false, ContainerStacksUnstackable = true, ContainerMaxStack = 30, ContainerSlots = 30, ContainableIDs = [ "herbGrimyArbuck", "herbGrimyAvantoe", "herbGrimyBloodweed", "herbGrimyCadantine", "herbGrimyDwarfweed", "herbGrimyFellstalk", "herbGrimyGuam", "herbGrimyHarralander", "herbGrimyIrit", "herbGrimyKwuarm", "herbGrimyLantadyme", "herbGrimyMarrentill", "herbGrimyRanarr", "herbGrimySnapdragon", "herbGrimySpiritweed", "herbGrimyTarromin", "herbGrimyToadflax", "herbGrimyTorstol", "herbGrimyWergali" ] });
             
 
             itemsToAdd.Add(new Item("Chef's hat", "What a silly hat.", "chefHat", 255, 255, 255, 2) { EquipSlot = "Head", Cosmetic = true });
-            itemsToAdd.Add(new Item("White apron", "What a silly hat.", "whiteApron", 255, 255, 255, 2) { EquipSlot = "Body", Cosmetic = true });
-            itemsToAdd.Add(new Item("Brown apron", "A mostly clean apron.", "brownApron", Color.SaddleBrown, 2) { EquipSlot = "Body", Cosmetic = true });
+            itemsToAdd.Add(new Item("White apron", "A chef's apron.", "whiteApron", 255, 255, 255, 2) { EquipSlot = "Body", Cosmetic = true });
+            itemsToAdd.Add(new Item("Brown apron", "A craftsman's apron.", "brownApron", Color.SaddleBrown, 2) { EquipSlot = "Body", Cosmetic = true });
             itemsToAdd.Add(new Item("Black cape", "A warm black cape.", "capeBlack", Color.DimGray, 7) { EquipSlot = "Cape", Cosmetic = true });
-            itemsToAdd.Add(new Item("Goblin mail", "Some brown armor designed to fit goblins.", "goblinMail", Color.SaddleBrown, 40));
-            itemsToAdd.Add(new Item("Goblin book", "A tattered goblin holy book.", "goblinBook", Color.SaddleBrown, 1) { UseString = "Book", UseString2 = "Goblin", ConsumedOnUse = false });
-
-
-            
-            itemsToAdd.Add(new Item("Air talisman", "A mysterious power emanates from the talisman...", "talismanAir", 200, 200, 200, 200));
-            itemsToAdd.Add(new Item("Mind talisman", "A mysterious power emanates from the talisman...", "talismanMind", 231, 60, 0, 200)); 
-            itemsToAdd.Add(new Item("Earth talisman", "A mysterious power emanates from the talisman...", "talismanEarth", Color.SaddleBrown, 200)); 
-            itemsToAdd.Add(new Item("Fire talisman", "A mysterious power emanates from the talisman...", "talismanFire", Color.Firebrick, 200)); 
-            itemsToAdd.Add(new Item("Water talisman", "A mysterious power emanates from the talisman...", "talismanWater", Color.CadetBlue, 200)); 
-            itemsToAdd.Add(new Item("Chaos talisman", "A mysterious power emanates from the talisman...", "talismanChaos", Color.Orange, 200)); 
-            itemsToAdd.Add(new Item("Nature talisman", "A mysterious power emanates from the talisman...", "talismanNature", Color.Green, 200)); 
-            itemsToAdd.Add(new Item("Body talisman", "A mysterious power emanates from the talisman...", "talismanBody", Color.PowderBlue, 200)); 
-            itemsToAdd.Add(new Item("Death talisman", "A mysterious power emanates from the talisman...", "talismanDeath", Color.White, 200)); 
-            itemsToAdd.Add(new Item("Cosmic talisman", "A mysterious power emanates from the talisman...", "talismanCosmic", Color.Yellow, 200)); 
-            itemsToAdd.Add(new Item("Law talisman", "A mysterious power emanates from the talisman...", "talismanLaw", Color.CadetBlue, 200));
-            itemsToAdd.Add(new Item("Blood talisman", "A mysterious power emanates from the talisman...", "talismanBlood", Color.Crimson, 200)); 
-            itemsToAdd.Add(new Item("Wrath talisman", "A mysterious power emanates from the talisman...", "talismanWrath", Color.DimGray, 500));   
-
-            itemsToAdd.Add(new Item("Tiara", "Makes me feel like a Princess.", "tiara", ColorLib.Steel, 100) { EquipSlot = "Head", Cosmetic = true });
-            itemsToAdd.Add(new Item("Air tiara", "A tiara infused with the properties of air.", "tiaraAir", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanAir"], UseInt4 = -1 });
-            itemsToAdd.Add(new Item("Blood tiara", "A tiara infused with the properties of blood.", "tiaraBlood", ColorLib.Steel, 500) { EquipSlot = "Head", CountsAsIDs = ["talismanBlood"], UseInt4 = -1 });
-            itemsToAdd.Add(new Item("Body tiara", "A tiara infused with the properties of body.", "tiaraBody", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanBody"], UseInt4 = -1 });
-            itemsToAdd.Add(new Item("Chaos tiara", "A tiara infused with the properties of chaos.", "tiaraChaos", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanChaos"], UseInt4 = -1 });
-            itemsToAdd.Add(new Item("Cosmic tiara", "A tiara infused with the properties of the cosmos.", "tiaraCosmic", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanCosmic"], UseInt4 = -1 });
-            itemsToAdd.Add(new Item("Death tiara", "A tiara infused with the properties of death.", "tiaraDeath", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanDeath"], UseInt4 = -1 });
-            itemsToAdd.Add(new Item("Earth tiara", "A tiara infused with the properties of earth.", "tiaraEarth", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanEarth"], UseInt4 = -1});
-            itemsToAdd.Add(new Item("Fire tiara", "A tiara infused with the properties of fire.", "tiaraFire", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanFire"], UseInt4 = -1});
-            itemsToAdd.Add(new Item("Law tiara", "A tiara infused with the properties of law.", "tiaraLaw", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanLaw"], UseInt4 = -1});
-            itemsToAdd.Add(new Item("Mind tiara", "A tiara infused with the properties of the mind.", "tiaraMind", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanMind"], UseInt4 = -1});
-            itemsToAdd.Add(new Item("Nature tiara", "A tiara infused with the properties of nature.", "tiaraNature", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanNature"], UseInt4 = -1});
-            itemsToAdd.Add(new Item("Water tiara", "A tiara infused with the properties of water.", "tiaraWater", ColorLib.Steel, 100) { EquipSlot = "Head", CountsAsIDs = ["talismanWater"], UseInt4 = -1});
-            itemsToAdd.Add(new Item("Wrath tiara", "A tiara infused with the properties of wrath.", "tiaraWrath", ColorLib.Steel, 500) { EquipSlot = "Head", CountsAsIDs = ["talismanWrath"], UseInt4 = -1});
-                
-            
-            itemsToAdd.Add(new Item("Rune essence", "An unimbued rune.", "runeEssence", Color.DarkGray, 2));
-            itemsToAdd.Add(new Item("Pure essence", "An unimbued rune.", "pureEssence", Color.LightGray, 4));
-            itemsToAdd.Add(new Item("Air rune", "One of the 4 basic elemental runes.", "runeAir", Color.LightGray, 4, true));
-            itemsToAdd.Add(new Item("Earth rune", "One of the 4 basic elemental runes.", "runeEarth", Color.LightGray, 4, true));
-            itemsToAdd.Add(new Item("Fire rune", "One of the 4 basic elemental runes.", "runeFire", Color.LightGray, 4, true));
-            itemsToAdd.Add(new Item("Water rune", "One of the 4 basic elemental runes.", "runeWater", Color.LightGray, 4, true));
-            itemsToAdd.Add(new Item("Mind rune", "Used for basic level missile spells.", "runeMind", Color.LightGray, 3, true));
-            itemsToAdd.Add(new Item("Body rune", "Used for curse spells.", "runeBody", Color.LightGray, 3, true));
-            itemsToAdd.Add(new Item("Nature rune", "Used for alchemy spells.", "runeNature", Color.LightGray, 180, true));
-            itemsToAdd.Add(new Item("Chaos rune", "Used for low level missile spells.", "runeChaos", Color.LightGray, 90, true));
-            itemsToAdd.Add(new Item("Law rune", "Used for teleport spells.", "runeLaw", Color.LightGray, 240, true));
-            itemsToAdd.Add(new Item("Death rune", "Used for medium level missile spells.", "runeDeath", Color.LightGray, 180, true));
-            itemsToAdd.Add(new Item("Blood rune", "Used for high level missile spells.", "runeBlood", Color.LightGray, 400, true));
-            itemsToAdd.Add(new Item("Cosmic rune", "Used for enchant spells.", "runeCosmic", Color.LightGray, 50, true));
-            itemsToAdd.Add(new Item("Soul rune", "Used for high level curse spells.", "runeSoul", Color.LightGray, 300, true));
-            itemsToAdd.Add(new Item("Astral rune", "Used for Lunar spells.", "runeAstral", Color.LightGray, 50, true));
-            itemsToAdd.Add(new Item("Wrath rune", "Used for very high level missile spells.", "runeWrath", Color.LightGray, 500, true));
-            itemsToAdd.Add(new Item("Mist rune", "A combined Air and Water Rune.", "runeMist", Color.LightGray, 20, true) { CountsAsIDs = ["runeAir", "runeWater"] });
-            itemsToAdd.Add(new Item("Dust rune", "A combined Air and Earth Rune.", "runeDust", Color.LightGray, 20, true) { CountsAsIDs = ["runeAir", "runeEarth"] });
-            itemsToAdd.Add(new Item("Mud rune", "A combined Earth and Water Rune.", "runeMud", Color.LightGray, 20, true) { CountsAsIDs = ["runeEarth", "runeWater"] });
-            itemsToAdd.Add(new Item("Smoke rune", "A combined Air and Fire Rune.", "runeSmoke", Color.LightGray, 20, true) { CountsAsIDs = ["runeAir", "runeFire"] });
-            itemsToAdd.Add(new Item("Steam rune", "A combined Water and Fire Rune.", "runeSteam", Color.LightGray, 20, true) { CountsAsIDs = ["runeFire", "runeWater"] });
-            itemsToAdd.Add(new Item("Lava rune", "A combined Earth and Fire Rune.", "runeLava", Color.LightGray, 20, true) { CountsAsIDs = ["runeEarth", "runeFire"] });
-
-
-            foreach (var kv in SpellLib) {
-                if (kv.Value.Runes.Count > 0) { 
-                    int totalCost = 0;
-
-                    foreach (string mats in kv.Value.Runes) {
-                        string[] split = mats.Split(",");
-                        
-                        int runeCost = 0;
-
-                        if (RuneCosts.ContainsKey(split[0])) {
-                            runeCost = RuneCosts[split[0]];
-
-                            if (split.Length > 1) {
-                                int.TryParse(split[1], out int qty);
-
-                                if (qty != 0) {
-                                    runeCost *= qty;
-                                }
-                            } 
-                        }
-
-                        totalCost += runeCost;
-                    }
-
-                    totalCost = (int) Math.Ceiling(totalCost * 1.5);
-
-                    string name = kv.Value.Name.ToLower();
-                    if (name.Contains("enchant")) {
-                        name = name.Substring(0, 12);
-                    }
-
-                    Item newTab = new Item("Spell tab (" + name + ")", "A tablet that can replace the runes when casting " + kv.Value.Name + ".", "tab" + kv.Value.ID, Color.MediumPurple, totalCost, true);
-
-                    if (kv.Value.Category == "Tele") {
-                        if (kv.Value.ID == "teleHome") { 
-                            newTab.UseString = "HouseTele";
-                            newTab.ConsumedOnUse = false;
-                        } else {
-                            newTab.UseString = "Teleport";
-                            newTab.UseString2 = kv.Value.MiscString;
-                        }
-                    } else if (kv.Value.ID.Contains("utilEnchant")) {
-                        newTab.UseString = "SpellTab";
-                        newTab.UseString2 = "Enchant";
-                        newTab.UseString3 = kv.Value.ID[^1].ToString(); 
-                    } else if (kv.Value.ID == "utilBonesBananas") {
-                        newTab.UseString = "SpellTab";
-                        newTab.UseString2 = "BonesBananas";
-                    } else if (kv.Value.ID == "utilBonesPeaches") {
-                        newTab.UseString = "SpellTab";
-                        newTab.UseString2 = "BonesPeaches";
-                    } else if (kv.Value.ID == "utilSuperheat") {
-                        newTab.UseString = "SpellTab";
-                        newTab.UseString2 = "Superheat";
-                    }
-
-                    itemsToAdd.Add(newTab);
-                }
-            }
-
-
-
-            itemsToAdd.Add(new Item("Staff of air", "A magical staff. Provides unlimited air runes.", "staffAir", 255, 255, 255, 1500) {
-                EquipSlot = "Weapon",  EquipTier = 1, EquipSkill = "Magic", EquipLevel = 1, EquipDamageType = "Crush", CountsAsIDs = [ "runeAir" ], UseInt4 = -1, MustBeEquipped = true
-            });
-
-            itemsToAdd.Add(new Item("Staff of water", "A magical staff. Provides unlimited water runes.", "staffWater", 30, 144, 255, 1500) {
-                EquipSlot = "Weapon",  EquipTier = 1, EquipSkill = "Magic", EquipLevel = 1, EquipDamageType = "Crush", CountsAsIDs = [ "runeWater" ],  UseInt4 = -1, MustBeEquipped = true
-            }); 
-
-            itemsToAdd.Add(new Item("Staff of earth", "A magical staff. Provides unlimited earth runes.", "staffEarth", 165, 42, 42, 1500) {
-                EquipSlot = "Weapon",  EquipTier = 1, EquipSkill = "Magic", EquipLevel = 1, EquipDamageType = "Crush", CountsAsIDs = [ "runeEarth" ],  UseInt4 = -1, MustBeEquipped = true
-            }); 
-
-            itemsToAdd.Add(new Item("Staff of fire", "A magical staff. Provides unlimited fire runes.", "staffFire", 220, 20, 60, 1500) {
-                EquipSlot = "Weapon",  EquipTier = 1, EquipSkill = "Magic", EquipLevel = 1, EquipDamageType = "Crush", CountsAsIDs = [ "runeFire" ],  UseInt4 = -1, MustBeEquipped = true
-            });
-
-            itemsToAdd.Add(new Item("Staff", "It's a barely magical stick.", "staff", Color.BurlyWood, 15) { EquipSlot = "Weapon",  EquipTier = 1, EquipSkill = "Magic", EquipLevel = 1, EquipDamageType = "Crush" });
-            itemsToAdd.Add(new Item("Magic staff", "It's a slightly magical stick.", "staffMagic", Color.BurlyWood, 200) { EquipSlot = "Weapon",  EquipTier = 2, EquipSkill = "Magic", EquipLevel = 10, EquipDamageType = "Crush" });
-            itemsToAdd.Add(new Item("Battlestaff", "It's a magical stick.", "battlestaff", Color.BurlyWood, 7000) { EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Magic", EquipLevel = 30, EquipDamageType = "Crush" });
-
-            itemsToAdd.Add(new Item("Air battlestaff", "A magical staff. Provides unlimited air runes.", "battlestaffAir", 255, 255, 255, 15500) { EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Magic", EquipLevel = 30, EquipDamageType = "Crush", CountsAsIDs = [ "runeAir" ], UseInt4 = -1, MustBeEquipped = true });
-            itemsToAdd.Add(new Item("Water battlestaff", "A magical staff. Provides unlimited water runes.", "battlestaffWater", 30, 144, 255, 15500) { EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Magic", EquipLevel = 30, EquipDamageType = "Crush", CountsAsIDs = [ "runeWater" ],  UseInt4 = -1, MustBeEquipped = true }); 
-            itemsToAdd.Add(new Item("Earth battlestaff", "A magical staff. Provides unlimited earth runes.", "battlestaffEarth", 165, 42, 42, 15500) { EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Magic", EquipLevel = 30, EquipDamageType = "Crush", CountsAsIDs = [ "runeEarth" ],  UseInt4 = -1, MustBeEquipped = true }); 
-            itemsToAdd.Add(new Item("Fire battlestaff", "A magical staff. Provides unlimited fire runes.", "battlestaffFire", 220, 20, 60, 15500) { EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Magic", EquipLevel = 30, EquipDamageType = "Crush", CountsAsIDs = [ "runeFire" ],  UseInt4 = -1, MustBeEquipped = true });
-
-            itemsToAdd.Add(new Item("Mystic air staff", "A magical staff. Provides unlimited air runes.", "staffMysticAir", 255, 255, 255, 42500) { EquipSlot = "Weapon",  EquipTier = 7, EquipSkill = "Magic", EquipLevel = 60, EquipDamageType = "Crush", CountsAsIDs = [ "runeAir" ], UseInt4 = -1, MustBeEquipped = true });
-            itemsToAdd.Add(new Item("Mystic water staff", "A magical staff. Provides unlimited water runes.", "staffMysticWater", 30, 144, 255, 42500) { EquipSlot = "Weapon",  EquipTier = 7, EquipSkill = "Magic", EquipLevel = 60, EquipDamageType = "Crush", CountsAsIDs = [ "runeWater" ],  UseInt4 = -1, MustBeEquipped = true }); 
-            itemsToAdd.Add(new Item("Mystic earth staff", "A magical staff. Provides unlimited earth runes.", "staffMysticEarth", 165, 42, 42, 42500) { EquipSlot = "Weapon",  EquipTier = 7, EquipSkill = "Magic", EquipLevel = 60, EquipDamageType = "Crush", CountsAsIDs = [ "runeEarth" ],  UseInt4 = -1, MustBeEquipped = true }); 
-            itemsToAdd.Add(new Item("Mystic fire staff", "A magical staff. Provides unlimited fire runes.", "staffMysticFire", 220, 20, 60, 42500) { EquipSlot = "Weapon",  EquipTier = 7, EquipSkill = "Magic", EquipLevel = 60, EquipDamageType = "Crush", CountsAsIDs = [ "runeFire" ],  UseInt4 = -1, MustBeEquipped = true });
-
+             
 
             // Pickpocket Loot
             itemsToAdd.Add(new Item("Small coin pouch", "Has a few coins in it.", "coinPouchSmall", 111, 66, 33, 5, true, false) { UseString = "GetGold", UseInt = 5 });
             itemsToAdd.Add(new Item("Medium coin pouch", "Has a few more coins in it.", "coinPouchMedium", 111, 66, 33, 5, true, false) { UseString = "GetGold", UseInt = 20 });
+              
 
-
-            // Slayer Items
-            {
-                itemsToAdd.Add(new Item("Slayer gem", "A pretty blue gem that can tell you your current slayer task.", "gemSlayer", 102, 205, 170, 1) { UseString = "SlayerGem", ConsumedOnUse = false });
-                itemsToAdd.Add(new Item("Mirror shield", "I can just about see things in this shield's reflection.", "shieldMirror", Color.DarkGray, 5000) {
-                    EquipSlot = "Offhand",  EquipTier = 3, EquipSkill = "Defense", EquipLevel = 20, MiscString = "DefenseAll", EquipReq = new("Skill", 25, "Slayer")
-                });
-                itemsToAdd.Add(new Item("Leaf-bladed spear", "A spear with a leaf-shaped point.", "spearLeafbladed", Color.DarkGray, 31000) {
-                    EquipSlot = "Weapon",  EquipTier = 6, EquipSkill = "Attack", EquipLevel = 50, EquipReq = new("Skill", 55, "Slayer"), EquipDamageType = "Stab", EquipSecondaryDamage = "Leaf", AttackSpeed = 0.75, TwoHanded = true
-                }); 
-                itemsToAdd.Add(new Item("Broad arrows", "Arrows with a wider than normal tip.", "arrowsBroad", Color.DarkGray, 60, true) {
-                    EquipSlot = "Ammo",  EquipTier = 6, EquipSkill = "Ranged", EquipLevel = 50, EquipDamageType = "RangedStandard", EquipSecondaryDamage = "Leaf", EquipReq = new("Skill", 55, "Slayer")
-                }); 
-                itemsToAdd.Add(new Item("Broad arrowheads", "Arrowheads with broad tips.", "arrowheadsBroad", Color.DarkGray, 55, true));
-
-                itemsToAdd.Add(new Item("Broad bolts", "Bolts with a wider than normal tip.", "boltsBroad", Color.DarkGray, 60, true) {
-                    EquipSlot = "Ammo",  EquipTier = 6, EquipSkill = "Ranged", EquipLevel = 50, EquipDamageType = "RangedHeavy", EquipSecondaryDamage = "Leaf", EquipReq = new("Skill", 55, "Slayer")
-                });
-                itemsToAdd.Add(new Item("Broad bolts (unf)", "Add feathers to make broad-tipped crossbow bolts.", "boltsUnfBroad", Color.DarkGray, 55, true));
-                 
-                itemsToAdd.Add(new Item("Rock hammer", "I can even smash stone with this.", "hammerRock", Color.Gray, 500, true));
-
-                itemsToAdd.Add(new Item("Facemask", "Stops me breathing in too much dust.", "facemask", Color.SandyBrown, 200) { EquipSlot = "Head", EquipReq = new("Skill", 10, "Slayer") });
-                itemsToAdd.Add(new Item("Earmuffs", "These will protect my ears from loud noise.", "earmuffs", Color.SaddleBrown, 200) { EquipSlot = "Head", EquipReq = new("Skill", 15, "Slayer") });
-                itemsToAdd.Add(new Item("Nose peg", "Protects me from any bad smells.", "nosepeg", Color.BurlyWood, 200) { EquipSlot = "Head", EquipReq = new("Skill", 60, "Slayer") });
-            
-                itemsToAdd.Add(new Item("Slayer's staff", "An old and magical staff.", "staffSlayer", Color.DarkGray, 21000) {
-                    EquipSlot = "Weapon",  EquipTier = 6, EquipSkill = "Magic", EquipLevel = 50, EquipReq = new("Skill", 55, "Slayer"), EquipDamageType = "Crush"
-                });     
-                
-                itemsToAdd.Add(new Item("Spiny helmet", "You don't want to wear it inside-out.", "helmSpiny", Color.DarkGray, 650) { EquipSlot = "Head",  EquipTier = 2, EquipSkill = "Defense", EquipLevel = 10, MiscString = "DefenseAll" });
-                 
-                itemsToAdd.Add(new Item("Bag of salt", "A bag of salt.", "bagSalt", Color.White, 10, true));
-                itemsToAdd.Add(new Item("Salt shaker", "Acts as unlimited salt.", "saltShaker", Color.White, 30000, true) { CountsAsIDs = ["bagSalt"], UseInt4 = -1 });
-                itemsToAdd.Add(new Item("Fishing explosive", "The jar keeps shaking... I'm scared.", "explosiveFishing", Color.Gray, 60, true));
-                itemsToAdd.Add(new Item("Explosive shaker", "Acts as unlimited fishing explosives.", "explosiveShaker", Color.Yellow, 50000, true) { CountsAsIDs = ["explosiveFishing"], UseInt4 = -1 });
-                itemsToAdd.Add(new Item("Ice cooler", "Contains ice-cold water.", "iceCooler", Color.Turquoise, 1, true));
-                itemsToAdd.Add(new Item("Ice shaker", "Acts as an unlimited ice cooler.", "iceShaker", Color.Turquoise, 40000, true) { CountsAsIDs = ["iceCooler"], UseInt4 = -1 });
-                itemsToAdd.Add(new Item("Fungicide", "Does exactly what it says on the tin. (Kills fungi.)", "fungicide", Color.SkyBlue, 10, true));
-                itemsToAdd.Add(new Item("Fungicide shaker", "Acts as unlimited fungicide.", "fungicideShaker", Color.SkyBlue, 60000, true) { CountsAsIDs = ["fungicide"], UseInt4 = -1 });
-                
-                
-                itemsToAdd.Add(new Item("Slayer gloves", "Especially good against diseased arachnids.", "glovesSlayer", 205, 127, 50, 200) {
-                    EquipSlot = "Hands",  EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMelee", EquipReq = new("Skill", 42, "Slayer")
-                });
-                
-                itemsToAdd.Add(new Item("Bug lantern", "A lantern to aid attacking Harpie bugs.", "lanternBug", Color.Goldenrod, 130) {
-                    EquipSlot = "Offhand", EquipReq = new("Skill", 33, "Slayer"), UseString = "Light", UseString2 = "lanternBugLit", ConsumedOnUse = false
-                });
-
-                itemsToAdd.Add(new Item("Bug lantern (lit)", "A lantern to aid attacking Harpie bugs.", "lanternBugLit", Color.Yellow, 130) {
-                    EquipSlot = "Offhand", EquipReq = new("Skill", 33, "Slayer"), UseString = "Extinguish", UseString2 = "lanternBug", ConsumedOnUse = false
-                });
-
-                itemsToAdd.Add(new Item("Insulated boots", "They're heavily insulated wellies.", "bootsInsulated", Color.DimGray, 200) { EquipSlot = "Feet", EquipReq = new("Skill", 37, "Slayer") });
-                itemsToAdd.Add(new Item("Witchwood icon", "A stick on a string... pure style.", "witchwood", Color.SaddleBrown, 900) { EquipSlot = "Amulet", EquipReq = new("Skill", 35, "Slayer"), MiscString = "PrayerBoost", EquipTier = 1 });
-                itemsToAdd.Add(new Item("Slayer bell", "Don't make anyone jump when you ring this!", "bellSlayer", Color.Goldenrod, 900) { UseString = "Bell" });
-
-                itemsToAdd.Add(new Item("Boots of stone", "A pair of heat resistant boots with rocky soles.", "bootsStone", Color.DimGray, 200) {
-                    EquipSlot = "Feet", EquipReq = new("Skill", 44, "Slayer")
-                });
-
-                itemsToAdd.Add(new Item("Reinforced goggles", "A very sturdy-feeling pair of slayer goggles.", "gogglesReinforced", Color.Crimson, 100) { EquipSlot = "Head" });
-                
-
-
-
-            }
-
-
-            // Enemy Remains - Bones, Ashes
-            {
-                itemsToAdd.Add(new Item("Bones", "The remains of some creature or person.", "bonesRegular", 255, 255, 255, 20) { UseString = "Bones", UseInt = 5 });
-                itemsToAdd.Add(new Item("Big bones", "The remains of some huge creature or person.", "bonesBig", 255, 255, 255, 100) { UseString = "Bones", UseInt = 15 });
-                itemsToAdd.Add(new Item("Long bone", "A Construction bone.", "boneLong", 255, 255, 255, 100, trade: false) { UseString = "Bones", UseInt = 15 });
-                itemsToAdd.Add(new Item("Curved bone", "A curved Construction bone.", "boneCurved", 255, 255, 255, 100, trade: false) { UseString = "Bones", UseInt = 15 });
-
-                itemsToAdd.Add(new Item("Bull bones", "Bigger than cow bones.", "bonesBull", 255, 255, 255, 1, trade: false) { UseString = "Bones", UseInt = 40 });
-                itemsToAdd.Add(new Item("Giant bones", "Bigger than big bones.", "bonesGiant", 255, 255, 255, 1, trade: false) { UseString = "Bones", UseInt = 150 });
-            
-                itemsToAdd.Add(new Item("Fiendish ashes", "A heap of ashes.", "ashesFiendish", 122, 104, 127, 1) { UseString = "Ashes", UseInt = 10 });
-                itemsToAdd.Add(new Item("Vile ashes", "A heap of ashes.", "ashesVile", 122, 104, 127, 1) { UseString = "Ashes", UseInt = 25 });
-            }
-
-            itemsToAdd.Add(new Item("Fish spirit", "When you catch a fish, this is consumed and you will receive an extra fish.", "spiritFish", Color.Turquoise, 20, true) { MiscString = "Spirit", UseString2 = "fish" });
-            itemsToAdd.Add(new Item("Herb spirit", "When you brew a potion, this is consumed and your potion will have an extra dose.", "spiritHerb", Color.Lime, 20, true) { MiscString = "Spirit", UseString2 = "herb" });
-            
 
             itemsToAdd.Add(new Item("Empty bucket", "An empty bucket. Could probably hold something.", "bucketEmpty", 111, 66, 33, 2)); 
             itemsToAdd.Add(new Item("Bucket of compost", "Good for plants, helps them grow.", "bucketCompost", 111, 66, 33, 2) { UseString = "Compost", UseInt = 1, ItemReturned = "bucketEmpty" });
@@ -533,9 +184,9 @@ namespace WorldtreeNexus.Hardcodes {
 
 
             itemsToAdd.Add(new Item("Huge club", "Upon closer inspection this is actually a huge femur.", "clubHuge", 255, 255, 255, 1000) {
-                EquipSlot = "Weapon",  EquipTier = 3, EquipSkill = "Attack", EquipLevel = 10, EquipDamageType = "Crush", AttackSpeed = 1.5
+                EquipSlot = "Weapon",  EquipTier = 3, EquipSkill = "Attack", EquipLevel = 10, EquipDamageType = "Crush", EquipElement = "Earth", AttackSpeed = 1.5
             });itemsToAdd.Add(new Item("Huger club", "Where did that zombie even get such a large bone? You can barely move this thing.", "clubHuger", 255, 255, 255, 5000) {
-                EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Attack", EquipLevel = 10, EquipDamageType = "Crush", AttackSpeed = 2
+                EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Attack", EquipLevel = 10, EquipDamageType = "Crush", EquipElement = "Earth", AttackSpeed = 2
             });
             itemsToAdd.Add(new Item("Rotten flesh", "This doesn't really seem edible...", "fleshRotten", 150, 100, 50, 4) { UseString = "Heal", UseInt = 2, Potion = new() { new("Attack", -3) } });
             
@@ -543,97 +194,18 @@ namespace WorldtreeNexus.Hardcodes {
             
             itemsToAdd.Add(new Item("Swamp tar", "A foul smelling thick tar-like substance.", "swampTar", 50, 50, 50, 1, true));
             
-            itemsToAdd.Add(new Item("Pestle and mortar", "I can grind things for potions in this.", "pestleMortar", Color.White, 4));
-            itemsToAdd.Add(new Item("Eye of newt", "A basic herblore ingredient and only slightly gross.", "eyeNewt", 255, 255, 255, 3));
+            
             itemsToAdd.Add(new Item("Unicorn horn", "This horn has restorative properties.", "unicornHorn", Color.SandyBrown, 20));
-            itemsToAdd.Add(new Item("Unicorn horn dust", "Finely ground horn of Unicorn.", "unicornHornDust", Color.SandyBrown, 25));
             itemsToAdd.Add(new Item("Chocolate bar", "Mmmmmmmm chocolate.", "chocolateBar", Color.Chocolate, 10));
-            itemsToAdd.Add(new Item("Unicorn horn dust", "It's ground up chocolate.", "chocolateDust", Color.Chocolate, 10));
-            itemsToAdd.Add(new Item("Bear fur", "This would make warm clothing.", "fur", Color.SandyBrown, 10));
-            itemsToAdd.Add(new Item("Red spiders' eggs", "Ewww!", "spiderEggsRed", Color.Crimson, 7));
-            itemsToAdd.Add(new Item("Goat horn", "Not much good for blowing.", "goatHorn", Color.AntiqueWhite, 12));
-            itemsToAdd.Add(new Item("Goat horn dust", "Finely ground goat horn.", "goatHornDust", Color.AntiqueWhite, 12));
-
-            itemsToAdd.Add(new Item("Vial", "A glass vial, currently empty.", "vialEmpty", 200, 200, 200, 2) { colA = 150 });
-            itemsToAdd.Add(new Item("Vial of water", "A glass vial full of water.", "vialWater", 14, 129, 205, 2) { colA = 150 }); 
-            itemsToAdd.Add(new Item("Empty vial pack", "A pack containing 100 empty vials.", "vialEmptyPack", Color.SandyBrown, 200) { UseString = "ItemPack", UseString2 = "vialEmpty", UseInt = 100});
-            itemsToAdd.Add(new Item("Water-filled vial pack", "A pack containing 100 vials of water.", "vialWaterPack", Color.SandyBrown, 200) { UseString = "ItemPack", UseString2 = "vialWater", UseInt = 100});
-            itemsToAdd.Add(new Item("Eye of newt pack", "A pack containing 100 newt eyes.", "eyeNewtPack", Color.SandyBrown, 300) { UseString = "ItemPack", UseString2 = "eyeNewt", UseInt = 100});
-
-            itemsToAdd.Add(new Item("Guam potion (unf)", "I need another ingredient to finish this Guam potion.", "potionUnfGuam", ColorLib.Guam.SetAlpha(150), 3));
-            itemsToAdd.Add(new Item("Marrentill potion (unf)", "I need another ingredient to finish this Marrentill potion.", "potionUnfMarrentill", ColorLib.Marrentill.SetAlpha(150), 5));
-            itemsToAdd.Add(new Item("Tarromin potion (unf)", "I need another ingredient to finish this Tarromin potion.", "potionUnfTarromin", ColorLib.Tarromin.SetAlpha(150), 11));
-            itemsToAdd.Add(new Item("Harralander potion (unf)", "I need another ingredient to finish this Harralander potion.", "potionUnfHarralander", ColorLib.Harralander.SetAlpha(150), 20));
-            itemsToAdd.Add(new Item("Ranarr potion (unf)", "I need another ingredient to finish this Ranarr potion.", "potionUnfRanarr", ColorLib.Ranarr.SetAlpha(150), 25));
-            itemsToAdd.Add(new Item("Toadflax potion (unf)", "I need another ingredient to finish this Toadflax potion.", "potionUnfToadflax", ColorLib.Toadflax.SetAlpha(150), 48));
-            itemsToAdd.Add(new Item("Irit potion (unf)", "I need another ingredient to finish this Irit potion.", "potionUnfIrit", ColorLib.Irit.SetAlpha(150), 40));
-            itemsToAdd.Add(new Item("Avantoe potion (unf)", "I need another ingredient to finish this Avantoe potion.", "potionUnfAvantoe", ColorLib.Avantoe.SetAlpha(150), 48));
-            itemsToAdd.Add(new Item("Snapdragon potion (unf)", "I need another ingredient to finish this Snapdragon potion.", "potionUnfSnapdragon", ColorLib.Snapdragon.SetAlpha(150), 59));
-            itemsToAdd.Add(new Item("Cadantine potion (unf)", "I need another ingredient to finish this Cadantine potion.", "potionUnfCadantine", ColorLib.Cadantine.SetAlpha(150), 65));
-            itemsToAdd.Add(new Item("Lantadyme potion (unf)", "I need another ingredient to finish this Lantadyme potion.", "potionUnfLantadyme", ColorLib.Lantadyme.SetAlpha(150), 68));
-            itemsToAdd.Add(new Item("Dwarf weed potion (unf)", "I need another ingredient to finish this Dwarf weed potion.", "potionUnfDwarfweed", ColorLib.Dwarfweed.SetAlpha(150), 70));
-            itemsToAdd.Add(new Item("Torstol potion (unf)", "I need another ingredient to finish this Torstol potion.", "potionUnfTorstol", ColorLib.Torstol.SetAlpha(150), 25));
-            itemsToAdd.Add(new Item("Spirit weed potion (unf)", "I need another ingredient to finish this Spirit weed potion.", "potionUnfSpiritweed", ColorLib.Spiritweed.SetAlpha(150), 54));
-            itemsToAdd.Add(new Item("Fellstalk potion (unf)", "I need another ingredient to finish this Fellstalk potion.", "potionUnfFellstalk", ColorLib.Fellstalk.SetAlpha(150), 150));
-            itemsToAdd.Add(new Item("Arbuck potion (unf)", "I need another ingredient to finish this Arbuck potion.", "potionUnfArbuck", ColorLib.Arbuck.SetAlpha(150), 100));
-            itemsToAdd.Add(new Item("Bloodweed potion (unf)", "I need another ingredient to finish this Bloodweed potion.", "potionUnfBloodweed", ColorLib.Bloodweed.SetAlpha(150), 70));
-            itemsToAdd.Add(new Item("Wergali potion (unf)", "I need another ingredient to finish this Wergali potion.", "potionUnfWergali", ColorLib.Wergali.SetAlpha(150), 45));
-            itemsToAdd.Add(new Item("Kwuarm potion (unf)", "I need another ingredient to finish this Kwuarm potion.", "potionUnfKwuarm", ColorLib.Kwuarm.SetAlpha(150), 54));
-            
-            
-            itemsToAdd.Add(new Item("Attack potion", "Temporarily boosts your Attack level by 5.", "potionAttack", 0, 255, 255, 5) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Attack", 5) } });
-            itemsToAdd.Add(new Item("Strength potion", "Temporarily boosts your Strength level by 5.", "potionStrength", Color.Yellow, 5) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Strength", 5) } });
-            itemsToAdd.Add(new Item("Magic potion", "Temporarily boosts your Magic level by 5.", "potionMagic", Color.CadetBlue, 80) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Magic", 5) } });
-            itemsToAdd.Add(new Item("Defense potion", "Temporarily boosts your Defense level by 5.", "potionDefense", Color.Lime, 50) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Defense", 5) } });
-            itemsToAdd.Add(new Item("Combat potion", "Temporarily boosts your Attack and Strength levels by 5 each.", "potionCombat", Color.SpringGreen, 70) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Attack", 5), new("Strength", 5) } });
-            itemsToAdd.Add(new Item("Cooking potion", "Temporarily boosts your Cooking level by 5.", "potionCooking", Color.Orange, 50) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Cooking", 5) } });
-            itemsToAdd.Add(new Item("Ranging potion", "Temporarily boosts your Ranged level by 5.", "potionRanging", Color.Cyan, 90) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Ranged", 5) } });
-            itemsToAdd.Add(new Item("Energy potion", "Energizes you to receive up to 5% additional experience from all actions.", "potionEnergy", Color.DeepPink.GetDark(), 50) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Experience", 5) } });
-            itemsToAdd.Add(new Item("Restore potion", "Restores reduced stats by up to 5 levels per sip.", "potionRestore", Color.Salmon, 30) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Restore", 5) } });
-            itemsToAdd.Add(new Item("Antipoison", "Cures poison and provides immunity to poison for two minutes.", "potionAntipoison", Color.Lime, 90) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Antipoison", 2) } });
-            itemsToAdd.Add(new Item("Super strength potion", "Temporarily boosts your Strength level by 10.", "potionStrengthSuper", Color.White, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Strength", 10) } });
-            itemsToAdd.Add(new Item("Prayer potion", "Temporarily boosts your Prayer level by 5.", "potionPrayer", Color.Turquoise, 75) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Prayer", 5) } });
-            
-
-            itemsToAdd.Add(new Item("Al Kharid flyer", "The money off voucher has expired.", "flyerAli", Color.Khaki, 1) { UseString = "SecondExamine", MiscString = "'Come to the Al Kharid Market place! High quality produce at low, low prices! Show this flyer to a merchant for money off your next purchase, courtesy of Ali Morrisane!'", ConsumedOnUse = false});
-
-            itemsToAdd.Add(new Item("Goblin champion scroll", "It's a challenge from the Goblin Champion!", "scrollChampionGoblin", Color.ForestGreen, 1, trade: false));
-            itemsToAdd.Add(new Item("Lesser demon champion scroll", "It's a challenge from the Lesser Demon Champion!", "scrollChampionLesserDemon", Color.Crimson, 1, trade: false));
-            itemsToAdd.Add(new Item("Imp champion scroll", "It's a challenge from the Imp Champion!", "scrollChampionImp", Color.Crimson.GetBrighter(), 1, trade: false));
-            itemsToAdd.Add(new Item("Zombie champion scroll", "It's a challenge from the Zombie Champion!", "scrollChampionZombie", Color.Teal, 1, trade: false));
-            itemsToAdd.Add(new Item("Skeleton champion scroll", "It's a challenge from the Skeleton Champion!", "scrollChampionSkeleton", Color.White, 1, trade: false));
-            itemsToAdd.Add(new Item("Giant champion scroll", "It's a challenge from the Giant Champion!", "scrollChampionGiant", Color.SandyBrown, 1, trade: false));
+            itemsToAdd.Add(new Item("Chocolate dust", "It's ground up chocolate.", "chocolateDust", Color.Chocolate, 10));
 
             
             itemsToAdd.Add(new Item("Coins", "Filthy lucre. Activate to add to your coin pouch.", "coins", Color.Goldenrod, 1, true) { UseString = "Gold" });
-            itemsToAdd.Add(new Item("Key (Varrock shack)", "This key opens the door of the shack at the Varrock West Crossroads.", "keyVarrockShack", Color.Goldenrod, 100));
-            itemsToAdd.Add(new Item("Mossy key", "This key opens the gate to Bryophyta in the Varrock Sewers, and also the rewards chest within.", "keyMossy", Color.ForestGreen, 1, trade: false));
             itemsToAdd.Add(new Item("Key (clue step)", "Used to open the container you need to access for your clue step.", "keyClue", Color.Goldenrod, 0, trade: false));
 
-            itemsToAdd.Add(new Item("Pie recipe book", "Lots of pie recipes for me to try.", "bookRecipesPie", Color.Crimson, 5) { ConsumedOnUse = false, UseString = "Book", UseString2 = "recipesPie"});
-            itemsToAdd.Add(new Item("Scrumpled paper", "A piece of paper with barely legible writing - looks like a recipe!", "paperScrumpled", Color.White, 10) { ConsumedOnUse = false, UseString = "Book", UseString2 = "paperScrumpled" });
-            
-            itemsToAdd.Add(new Item("Anti-dragon shield", "This provides partial protection from dragonbreath attack.", "shieldAntidragon", Color.Orange, 20) {
-                EquipSlot = "Offhand",  EquipTier = 2, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseAll", EquipReq = new("QuestPast", 0, "MI_DragonSlayer")
-            });
-
-            itemsToAdd.Add(new Item("Cow slippers", "Cute cow slippers.", "slippersCow",  Color.DimGray, 1000) { EquipSlot = "Feet", Cosmetic = true });
-            itemsToAdd.Add(new Item("Mooleta", "A defensive weapon.", "mooleta", Color.DarkGray, 1, trade: false) {
-                EquipSlot = "Offhand",  EquipTier = 2, EquipSkill = "Defense", EquipDamageType = "Slash", EquipLevel =1, MiscString = "Defender"
-            });
-            
             itemsToAdd.Add(new Item("Construction guidebook", "Curious about home ownership? Read this!", "bookConstructionGuide", Color.SaddleBrown, 1) { ConsumedOnUse = false, UseString = "Book", UseString2 = "bookConstructionGuide" });
+            itemsToAdd.Add(new Item("Papermaker pamphlet", "A brief guide outlining the steps to create paper.", "bookPapermaker", Color.AntiqueWhite, 1) { ConsumedOnUse = false, UseString = "Book", UseString2 = "bookPapermaker" });
             
-            itemsToAdd.Add(new Item("Scurrius' spine", "Could be attached to a battlestaff, rune mace, or acadia shortbow.", "spineScurrius", Color.AntiqueWhite, 0, trade: false));
-            itemsToAdd.Add(new Item("Bone shortbow", "An acadia shortbow fused with Scurrius' spine.", "shortbowBone", Color.AntiqueWhite, 0, trade: false) {
-                EquipSlot = "Weapon", EquipTier = 7, EquipLevel = 60,  EquipDamageType = "Rat", EquipSkill = "Ranged", EquipAmmo = "RangedStandard", AttackSpeed = 0.75, TwoHanded = true
-            });
-            itemsToAdd.Add(new Item("Bone mace", "A rune mace fused with Scurrius' spine.", "maceBone", Color.AntiqueWhite, 0, trade: false) {
-                EquipSlot = "Weapon", EquipTier = 7, EquipLevel = 60,  EquipDamageType = "Rat", EquipSkill = "Attack", AttackSpeed = 0.75
-            });
-            itemsToAdd.Add(new Item("Bone staff", "A battlestaff fused with Scurrius' spine.", "staffBone", Color.AntiqueWhite, 0, trade: false) {
-                EquipSlot = "Weapon", EquipTier = 7, EquipLevel = 60,  EquipDamageType = "Rat", EquipSkill = "Magic", AttackSpeed = 0.75
-            });
 
             for (int i = 0; i < itemsToAdd.Count; i++) {
                 ItemLibrary.Add(itemsToAdd[i].ID, itemsToAdd[i]);

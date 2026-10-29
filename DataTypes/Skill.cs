@@ -11,16 +11,14 @@
         public void GrantExp(int amt, MessageLog log, List<Skill> RecentSkills) {
             Exp += amt;
             
-            while (Exp >= ExpToLevel() && Level < 120) {
+            while (Exp >= ExpToLevel() && Level < 100) {
                 Level++;
                  
                 if (log != null) {
                     log.AddMessage("You levelled " + Name + " to " + Level + ".");
 
-                    if (Level == 99)
+                    if (Level == 100)
                         log.AddMessage("You have mastered " + Name + "!");
-                    if (Level == 120)
-                        log.AddMessage("You have achieved true " + Name + " mastery!"); 
                 }
             }
 
@@ -37,6 +35,8 @@
         }
 
         public int ExpToLevel() { 
+            return (int) ((1060 - ((Level + 4) * 9)) * (Math.Pow(2, ((Level + 4) / 5f)))) / 5 - 356;
+
             return (int)(Math.Floor(0.125 * (Level + 1) * (Level)) 
                        + Math.Floor(75 * ((Math.Pow(2, (Level + 1) / 7f) - Math.Pow(2, 1f / 7f)) / (Math.Pow(2, 1f / 7f) - 1)))
                        + Math.Floor(0.109 * (Level + 1)));

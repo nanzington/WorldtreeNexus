@@ -28,6 +28,7 @@ namespace WorldtreeNexus.DataTypes {
         public double EquipTier = 0;
         public string EquipDamageType = "";
         public string EquipSecondaryDamage = "";
+        public string EquipElement = "";
         public int EquipLevel = 0;
         public string EquipSkill = "";
         public double AttackSpeed = 1.0; // Speed in seconds between attacks
@@ -71,6 +72,8 @@ namespace WorldtreeNexus.DataTypes {
         public int ContainerMaxStack = -1;
         public List<ItemWrapper> Containing = new();
         public List<string> ContainableIDs = new(); 
+
+        public AlchemyStats Alchemy = null;
 
         [JsonIgnore]
         public bool Inaccessible = false;
@@ -116,6 +119,7 @@ namespace WorldtreeNexus.DataTypes {
             EquipTier = other.EquipTier;
             EquipDamageType = other.EquipDamageType;
             EquipSecondaryDamage = other.EquipSecondaryDamage;
+            EquipElement = other.EquipElement;
             EquipLevel = other.EquipLevel;
             EquipSkill = other.EquipSkill;
             AttackSpeed = other.AttackSpeed;
@@ -194,6 +198,10 @@ namespace WorldtreeNexus.DataTypes {
             for (int i = 0; i < other.ContainableIDs.Count; i++) {
                 ContainableIDs.Add(other.ContainableIDs[i]);
             } 
+
+            if (other.Alchemy != null) {
+                Alchemy = new(other.Alchemy);
+            }
         }
 
         public int ColorSum() {
@@ -220,7 +228,7 @@ namespace WorldtreeNexus.DataTypes {
             return true;
         }
 
-        public ColoredString GetNameCS(int qty = 1, int shop = 0, int charges = 0, bool noted = false) {
+        public ColoredString GetNameCS(int qty = 1, int shop = 0, int charges = 0, bool noted = false, ItemWrapper? held = null, bool overrideLoupe = false) {
             ColoredString build = qty > 1 ? new ColoredString(qty + "x ") : new ColoredString("");
             build += new ColoredString(Name, GetColor(), ColorSum() > 50 ? Color.Black : Color.White);
              
@@ -244,6 +252,31 @@ namespace WorldtreeNexus.DataTypes {
                 build += new ColoredString(")", Color.White, Color.Black);
             }
 
+            if (held != null || overrideLoupe) {
+                if (held != null && held.Alchemy != null && GameLoop.WTN.player.HasAllItems(["alchemyLoupe,1"], false, true)) {
+                    build += new ColoredString(" <", Color.SeaGreen, Color.Black);
+                    build += new ColoredString(held.Alchemy.Red.ToString(), Color.Crimson, Color.Black);
+                    build += new ColoredString("/", Color.SeaGreen, Color.Black);
+                    build += new ColoredString(held.Alchemy.Black.ToString(), Color.DimGray, Color.Black);
+                    build += new ColoredString("/", Color.SeaGreen, Color.Black);
+                    build += new ColoredString(held.Alchemy.Yellow.ToString(), Color.Yellow, Color.Black);
+                    build += new ColoredString("/", Color.SeaGreen, Color.Black);
+                    build += new ColoredString(held.Alchemy.White.ToString(), Color.White, Color.Black);
+                    build += new ColoredString(">", Color.SeaGreen, Color.Black);
+                }
+                if (Alchemy != null && overrideLoupe) {
+                    build += new ColoredString(" <", Color.SeaGreen, Color.Black);
+                    build += new ColoredString(Alchemy.Red.ToString(), Color.Crimson, Color.Black);
+                    build += new ColoredString("/", Color.SeaGreen, Color.Black);
+                    build += new ColoredString(Alchemy.Black.ToString(), Color.DimGray, Color.Black);
+                    build += new ColoredString("/", Color.SeaGreen, Color.Black);
+                    build += new ColoredString(Alchemy.Yellow.ToString(), Color.Yellow, Color.Black);
+                    build += new ColoredString("/", Color.SeaGreen, Color.Black);
+                    build += new ColoredString(Alchemy.White.ToString(), Color.White, Color.Black);
+                    build += new ColoredString(">", Color.SeaGreen, Color.Black);
+                }
+            }
+
 
             if (noted) {
                 build += new ColoredString(" (n)", Color.Khaki, Color.Black);
@@ -256,11 +289,11 @@ namespace WorldtreeNexus.DataTypes {
                     sellValue *= charges;
                 }
 
-                if (GameLoop.ZPO.Atlas.TryGetValue(GameLoop.ZPO.player.NavLoc, out Location? curr) && curr != null && curr.ShopPriceMultiplier < 1.0) {
+                if (GameLoop.WTN.Atlas.TryGetValue(GameLoop.WTN.player.NavLoc, out Location? curr) && curr != null && curr.ShopPriceMultiplier < 1.0) {
                     sellValue = (int) (sellValue * curr.ShopPriceMultiplier);
                 }
                                         
-                if (!GameLoop.ZPO.player.ShopsAlwaysFullPrice && shop == 1) {
+                if (!GameLoop.WTN.player.ShopsAlwaysFullPrice && shop == 1) {
                     sellValue = (int) (Math.Floor(sellValue / 2.0));
                 }
 
@@ -301,11 +334,11 @@ namespace WorldtreeNexus.DataTypes {
                     sellValue *= charges;
                 }
 
-                if (GameLoop.ZPO.Atlas.TryGetValue(GameLoop.ZPO.player.NavLoc, out Location? curr) && curr != null && curr.ShopPriceMultiplier < 1.0) {
+                if (GameLoop.WTN.Atlas.TryGetValue(GameLoop.WTN.player.NavLoc, out Location? curr) && curr != null && curr.ShopPriceMultiplier < 1.0) {
                     sellValue = (int) (sellValue * curr.ShopPriceMultiplier);
                 }
                                         
-                if (!GameLoop.ZPO.player.ShopsAlwaysFullPrice && shop == 1) {
+                if (!GameLoop.WTN.player.ShopsAlwaysFullPrice && shop == 1) {
                     sellValue = (int) (Math.Floor(sellValue / 2.0));
                 }
 

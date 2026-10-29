@@ -13,8 +13,6 @@ namespace WorldtreeNexus.DataTypes {
         public Dictionary<int, DialogueStage> Dialogue = new();
         public List<Requirement>? ReqsToSee = null;
 
-        public int SlayerLevel, MinSlayerLevel, MinCombatLevel = 0;
-        public List<SlayerTask> SlayerTasks = new();
 
         public NPC(string n, string id, Dictionary<int, DialogueStage> dia, int ppL = 0, int ppExp = 0, int ppDmg = 1, List<Requirement>? reqs = null) {
             Name = n;

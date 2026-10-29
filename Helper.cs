@@ -4,6 +4,7 @@ using SadConsole.Input;
 using System.ComponentModel;
 using System.Globalization; 
 using WorldtreeNexus.DataTypes;
+using WorldtreeNexus.HardcodedData;
 using WorldtreeNexus.Managers; 
 using Rectangle = SadRogue.Primitives.Rectangle;
 
@@ -583,7 +584,7 @@ namespace WorldtreeNexus {
         public static void PrintClickableBool(this SadConsole.Console instance, int x, int y, ColoredString input, ref bool toggler) {
             Point mousePos = new MouseScreenObjectState(instance, GameHost.Instance.Mouse).CellPosition;
 
-            ColoredString str = input + Helper.Checkmark(toggler);
+            ColoredString str = input + Checkmark(toggler);
 
             if (mousePos.X >= x && mousePos.X < x + str.Length && mousePos.Y == y) {
                 instance.Print(x, y, str.GetDarker());
@@ -623,10 +624,12 @@ namespace WorldtreeNexus {
                 || (ExtraWindows.Cutscene.IsVisible && instance != ExtraWindows.Cutscene)
                 || (ExtraWindows.Shop.IsVisible && instance != ExtraWindows.Shop)
                 || (ExtraWindows.LampMenu.IsVisible && instance != ExtraWindows.LampMenu)
-                || (ExtraWindows.GrandExchange.IsVisible && instance != ExtraWindows.GrandExchange)
+                || (ExtraWindows.TradeHall.IsVisible && instance != ExtraWindows.TradeHall)
                 || (ExtraWindows.CatMenu.IsVisible && instance != ExtraWindows.CatMenu)
                 || (ExtraWindows.HouseMenu.IsVisible && instance != ExtraWindows.HouseMenu)
                 || (ExtraWindows.Compass.IsVisible && instance != ExtraWindows.Compass)
+                || (ExtraWindows.Alchemy.IsVisible && instance != ExtraWindows.Alchemy)
+                || (ExtraWindows.Talisman.IsVisible && instance != ExtraWindows.Talisman)
                 || (ExtraWindows.Map.IsVisible && instance != ExtraWindows.Map && (mousePos.X < 55 || mousePos.X > 108))) {
                 return;
             }
@@ -865,10 +868,12 @@ namespace WorldtreeNexus {
                 || (ExtraWindows.Cutscene.IsVisible && instance != ExtraWindows.Cutscene)
                 || (ExtraWindows.Shop.IsVisible && instance != ExtraWindows.Shop)
                 || (ExtraWindows.LampMenu.IsVisible && instance != ExtraWindows.LampMenu)
-                || (ExtraWindows.GrandExchange.IsVisible && instance != ExtraWindows.GrandExchange)
+                || (ExtraWindows.TradeHall.IsVisible && instance != ExtraWindows.TradeHall)
                 || (ExtraWindows.CatMenu.IsVisible && instance != ExtraWindows.CatMenu)
                 || (ExtraWindows.HouseMenu.IsVisible && instance != ExtraWindows.HouseMenu)
                 || (ExtraWindows.Compass.IsVisible && instance != ExtraWindows.Compass)
+                || (ExtraWindows.Alchemy.IsVisible && instance != ExtraWindows.Alchemy)
+                || (ExtraWindows.Talisman.IsVisible && instance != ExtraWindows.Talisman)
                 || (ExtraWindows.Map.IsVisible && instance != ExtraWindows.Map && (mousePos.X < 55 || mousePos.X > 108))) {
                 return y;
             }
@@ -1027,10 +1032,12 @@ namespace WorldtreeNexus {
                 || (ExtraWindows.Cutscene.IsVisible && instance != ExtraWindows.Cutscene)
                 || (ExtraWindows.Shop.IsVisible && instance != ExtraWindows.Shop)
                 || (ExtraWindows.LampMenu.IsVisible && instance != ExtraWindows.LampMenu)
-                || (ExtraWindows.GrandExchange.IsVisible && instance != ExtraWindows.GrandExchange)
+                || (ExtraWindows.TradeHall.IsVisible && instance != ExtraWindows.TradeHall)
                 || (ExtraWindows.CatMenu.IsVisible && instance != ExtraWindows.CatMenu)
                 || (ExtraWindows.HouseMenu.IsVisible && instance != ExtraWindows.HouseMenu)
                 || (ExtraWindows.Compass.IsVisible && instance != ExtraWindows.Compass)
+                || (ExtraWindows.Alchemy.IsVisible && instance != ExtraWindows.Alchemy)
+                || (ExtraWindows.Talisman.IsVisible && instance != ExtraWindows.Talisman)
                 || (ExtraWindows.Map.IsVisible && instance != ExtraWindows.Map && (mousePos.X < 55 || mousePos.X > 108))) {
                 return y;
             }
@@ -1070,7 +1077,7 @@ namespace WorldtreeNexus {
                         if (item.Requirements != null && item.Requirements.Count > 0) {
                             bool canAdd = true;
                             for (int i = 0; i < item.Requirements.Count; i++) {
-                                if (!item.Requirements[i].CheckRequirement(GameLoop.ZPO.player, false, true)) {
+                                if (!item.Requirements[i].CheckRequirement(GameLoop.WTN.player, false, true)) {
                                     canAdd = false;
                                     break;
                                 }
@@ -1087,7 +1094,7 @@ namespace WorldtreeNexus {
                     if (item.Requirements != null && item.Requirements.Count > 0) {
                         bool canAdd = true;
                         for (int i = 0; i < item.Requirements.Count; i++) {
-                            if (!item.Requirements[i].CheckRequirement(GameLoop.ZPO.player, false, true)) {
+                            if (!item.Requirements[i].CheckRequirement(GameLoop.WTN.player, false, true)) {
                                 canAdd = false;
                                 break;
                             }
@@ -1115,7 +1122,7 @@ namespace WorldtreeNexus {
 
                 if (item.Requirements != null && item.Requirements.Count > 0) {
                     foreach (var req in item.Requirements) {
-                        if (!req.CheckRequirement(GameLoop.ZPO.player, false, true)) {
+                        if (!req.CheckRequirement(GameLoop.WTN.player, false, true)) {
                             isValid = false;
                         }
                     }
@@ -1131,62 +1138,6 @@ namespace WorldtreeNexus {
             }
 
             return null;
-        }
-
-        public static SlayerTask? ChooseWeighted(List<SlayerTask> list) {
-            int totalWeight = 0;
-            int currentCount = 0; 
-
-            foreach (var item in list) {
-                if (item.Requirements != null && item.Requirements.Count > 0) {
-                    bool canAdd = true;
-                    for (int i = 0; i < item.Requirements.Count; i++) {
-                        if (!item.Requirements[i].CheckRequirement(GameLoop.ZPO.player, false, true)) {
-                            canAdd = false;
-                            break;
-                        }
-                    } 
-
-                    if (canAdd) {
-                        totalWeight += item.Weight;
-                    }
-                } else {
-                    totalWeight += item.Weight;
-                }
-            }
-
-            int targetWeight = GameLoop.rand.Next(0, totalWeight);
-
-            foreach (SlayerTask item in list) { 
-                bool isValid = true;
-
-                if (item.Requirements != null && item.Requirements.Count > 0) {
-                    foreach (var req in item.Requirements) {
-                        if (!req.CheckRequirement(GameLoop.ZPO.player, false, true)) {
-                            isValid = false;
-                        }
-                    }
-                }
-
-                if (isValid) {
-                    currentCount += item.Weight;
-
-                    if (currentCount > targetWeight) {
-                        return item;
-                    }
-                } 
-            }
-
-            return null;
-        }
-
-        public static ColoredString GoldString(int geltValue, bool shop) {
-            if (geltValue > 0 || !shop) {
-                ColoredString GeltString = new(geltValue + "gp", Color.Gold, Color.Black);
-                return GeltString;
-            } else {
-                return new ColoredString("FREE", Color.Lime, Color.Black);
-            }
         }
         
         public static int MapSpot(int idx, int dx, int dy, int mapW, int mapH) {
@@ -1220,7 +1171,7 @@ namespace WorldtreeNexus {
                 rolled.Clear();
                  
                 foreach (var drop in filtered) {
-                    if (GameLoop.rand.Next((int) Math.Round(drop.InY, MidpointRounding.AwayFromZero)) < (drop.DropX * GameLoop.ZPO.player.DropMultiplier) || (fortune && GameLoop.rand.Next((int) Math.Round(drop.InY, MidpointRounding.AwayFromZero)) < (drop.DropX * GameLoop.ZPO.player.DropMultiplier))) {
+                    if (GameLoop.rand.Next((int) Math.Round(drop.InY, MidpointRounding.AwayFromZero)) < (drop.DropX * GameLoop.WTN.player.DropMultiplier) || (fortune && GameLoop.rand.Next((int) Math.Round(drop.InY, MidpointRounding.AwayFromZero)) < (drop.DropX * GameLoop.WTN.player.DropMultiplier))) {
                         rolled.Add(drop.ItemID);
                     }
                 }
@@ -1228,7 +1179,7 @@ namespace WorldtreeNexus {
                 if (maxRewards != -1) {
                     while(rolled.Count < maxRewards) {
                         foreach (var drop in filtered) {
-                            if (GameLoop.rand.Next((int) Math.Round(drop.InY, MidpointRounding.AwayFromZero)) < (drop.DropX * GameLoop.ZPO.player.DropMultiplier) || (fortune && GameLoop.rand.Next((int) Math.Round(drop.InY, MidpointRounding.AwayFromZero)) < (drop.DropX * GameLoop.ZPO.player.DropMultiplier))) {
+                            if (GameLoop.rand.Next((int) Math.Round(drop.InY, MidpointRounding.AwayFromZero)) < (drop.DropX * GameLoop.WTN.player.DropMultiplier) || (fortune && GameLoop.rand.Next((int) Math.Round(drop.InY, MidpointRounding.AwayFromZero)) < (drop.DropX * GameLoop.WTN.player.DropMultiplier))) {
                                 rolled.Add(drop.ItemID);
                             }
                         }
@@ -1253,32 +1204,32 @@ namespace WorldtreeNexus {
 
 
         public static int ReadWorldState(string id) {
-            if (GameLoop.ZPO.player.WorldState.TryGetValue(id, out int val)) {
+            if (GameLoop.WTN.player.WorldState.TryGetValue(id, out int val)) {
                 return val;
             } 
             return 0;
         }
 
         public static void AlterWorldState(string id, string how, int num) {
-            if (!GameLoop.ZPO.player.WorldState.ContainsKey(id)) { GameLoop.ZPO.player.WorldState.Add(id, 0); }
+            if (!GameLoop.WTN.player.WorldState.ContainsKey(id)) { GameLoop.WTN.player.WorldState.Add(id, 0); }
 
-            if (how == "set") { GameLoop.ZPO.player.WorldState[id] = num; }  
-            if (how == "add") { GameLoop.ZPO.player.WorldState[id] += num; }  
-            if (how == "sub") { GameLoop.ZPO.player.WorldState[id] -= num; } 
-            if (how == "mul") { GameLoop.ZPO.player.WorldState[id] *= num; }
-            if (how == "div") { GameLoop.ZPO.player.WorldState[id] /= num; } // May give unexpected results due to how dividing by ints works, try to avoid
-            if (how == "pow") { GameLoop.ZPO.player.WorldState[id] = (int) Math.Pow(GameLoop.ZPO.player.WorldState[id], num); } 
+            if (how == "set") { GameLoop.WTN.player.WorldState[id] = num; }  
+            if (how == "add") { GameLoop.WTN.player.WorldState[id] += num; }  
+            if (how == "sub") { GameLoop.WTN.player.WorldState[id] -= num; } 
+            if (how == "mul") { GameLoop.WTN.player.WorldState[id] *= num; }
+            if (how == "div") { GameLoop.WTN.player.WorldState[id] /= num; } // May give unexpected results due to how dividing by ints works, try to avoid
+            if (how == "pow") { GameLoop.WTN.player.WorldState[id] = (int) Math.Pow(GameLoop.WTN.player.WorldState[id], num); } 
         }
 
         public static bool CompareWorldState(string id, string how, int num) {
-            if (!GameLoop.ZPO.player.WorldState.ContainsKey(id)) { GameLoop.ZPO.player.WorldState.Add(id, 0); }
+            if (!GameLoop.WTN.player.WorldState.ContainsKey(id)) { GameLoop.WTN.player.WorldState.Add(id, 0); }
 
-            if (how == "over") { return GameLoop.ZPO.player.WorldState[id] > num; }
-            if (how == "below") { return GameLoop.ZPO.player.WorldState[id] < num; }
-            if (how == "equals") { return GameLoop.ZPO.player.WorldState[id] == num; }
-            if (how == "notEquals") { return GameLoop.ZPO.player.WorldState[id] != num; }
-            if (how == "overOrEqual") { return GameLoop.ZPO.player.WorldState[id] >= num; }
-            if (how == "belowOrEqual") { return GameLoop.ZPO.player.WorldState[id] <= num; }
+            if (how == "over") { return GameLoop.WTN.player.WorldState[id] > num; }
+            if (how == "below") { return GameLoop.WTN.player.WorldState[id] < num; }
+            if (how == "equals") { return GameLoop.WTN.player.WorldState[id] == num; }
+            if (how == "notEquals") { return GameLoop.WTN.player.WorldState[id] != num; }
+            if (how == "overOrEqual") { return GameLoop.WTN.player.WorldState[id] >= num; }
+            if (how == "belowOrEqual") { return GameLoop.WTN.player.WorldState[id] <= num; }
 
             return false;
         }
@@ -1304,7 +1255,7 @@ namespace WorldtreeNexus {
 
         public static bool Requirement(string type, int miscint, string misc1, string misc2 = "", bool consume = false, bool notes = false, bool equipped = true) {
             Requirement req = new(type, miscint, misc1, consume, misc2);
-            return req.CheckRequirement(GameLoop.ZPO.player, notes, equipped);
+            return req.CheckRequirement(GameLoop.WTN.player, notes, equipped);
         }
 
         public static int QuantitySelector(int curr, int max, bool negative = false, bool allowAlt = false, bool allowSpace = false) {
@@ -1318,6 +1269,81 @@ namespace WorldtreeNexus {
             qty = Math.Clamp(curr + qty, 0, max);
 
             return qty;
+        }
+
+        public static int CombatSimulator(CombatSim first, CombatSim second, int rounds, string returnWhich = "first") {
+            int firstWins = 0;
+            int secondWins = 0;
+            int draws = 0;
+
+            for (int i = 0; i < rounds; i++) {
+                first.CurrentHP = first.MaxHP;
+                second.CurrentHP = second.MaxHP;
+
+                first.LastAttackTime = 0;
+                second.LastAttackTime = 0;
+
+                bool someoneWon = false;
+
+                for (int time = 0; time < 600_000; time += 100) {
+                    if (second.LastAttackTime + second.AttackSpeedInMS <= time) { // Second can attack, happens first like player vs monster normally works
+                        if (GameLoop.rand.Next(100) + (second.AttackLv / 4) >= 25 + (first.DefenseLv / 4)) {
+                            int dmg = GameLoop.rand.Next(second.MaxDamage + 1);  
+                            Materials.ElementalWeaknesses.TryGetValue(first.Element, out string? weakElement);
+
+                            if (weakElement == null || weakElement == "") { weakElement = "Wood"; }
+
+                            if (first.DRvsStyle > 0) { dmg -= first.DRvsStyle; }
+
+                            if (second.DamageElement == weakElement) { dmg = (int) Math.Ceiling(dmg * 1.5); }
+                            if (second.DamageType == first.WeakType) { dmg = (int) Math.Ceiling(dmg * 1.5); }
+
+                            first.CurrentHP -= dmg;
+
+                            if (first.CurrentHP <= 0) { someoneWon = true; secondWins++; break;}
+                        }
+                    }
+
+                    if (first.LastAttackTime + first.AttackSpeedInMS <= time) { // First can attack
+                        if (GameLoop.rand.Next(100) + (first.AttackLv / 4) >= 25 + (second.DefenseLv / 4)) {
+                            int dmg = GameLoop.rand.Next(first.MaxDamage + 1);  
+                            Materials.ElementalWeaknesses.TryGetValue(second.Element, out string? weakElement);
+
+                            if (weakElement == null || weakElement == "") { weakElement = "Wood"; }
+
+                            if (second.DRvsStyle > 0) { dmg -= second.DRvsStyle; }
+
+                            if (first.DamageElement == weakElement) { dmg = (int) Math.Ceiling(dmg * 1.5); }
+                            if (first.DamageType == second.WeakType) { dmg = (int) Math.Ceiling(dmg * 1.5); }
+
+                            second.CurrentHP -= dmg;
+
+                            if (second.CurrentHP <= 0) { someoneWon = true; firstWins++; break;}
+                        }
+                    }
+                }
+
+                if (!someoneWon) {
+                    draws++;
+                }
+            }
+
+            return firstWins;
+        }
+
+        public static string ConvertTime(int Minutes, bool twelve) {
+            return ConvertTime(Minutes / 60, Minutes % 60, twelve);
+        }
+
+        public static string ConvertTime(int Hour, int Minute, bool twelve) {
+            if (twelve) {
+                bool pm = Hour >= 12;
+                int adjHour = pm ? (Hour > 12 ? Hour - 12 : 12) : Hour;
+
+                return adjHour.ToString().Align(HorizontalAlignment.Right, 2) + ":" + Minute.ToString().Align(HorizontalAlignment.Right, 2, '0') + (pm ? " pm" : " am");
+            } else { 
+                return (Hour == 0 ? "00:" + Minute.ToString().Align(HorizontalAlignment.Right, 2, '0') : (Hour.ToString().Align(HorizontalAlignment.Right, 2) + ":" + Minute.ToString().Align(HorizontalAlignment.Right, 2, '0')));
+            }
         }
     }
 

@@ -96,14 +96,14 @@ namespace WorldtreeNexus.DataTypes {
                         if (player.Equipment.TryGetValue("Ring", out ItemWrapper? eqp2) && eqp2 != null && eqp2.ID == "ringFortune") { wealth = true; fortune = true; }
 
                         bool dryActive = log.DryProtection(ItemID, (int) Math.Ceiling(InY / (double) dropX));
-                        if (dropRoll < dropX || (player.PrayerActive("Good Fortune") && dropRoll2 < dropX) || (wealth && dropRoll3 < dropX) || (fortune && dropRoll4 < dropX) ||  (player.DropModifier == 1 && dryActive)) {
+                        if (dropRoll < dropX || (wealth && dropRoll3 < dropX) || (fortune && dropRoll4 < dropX) ||  (player.DropModifier == 1 && dryActive)) {
                             if (!log.DropsObtained.ContainsKey(ItemID))
                                 log.DropsObtained.Add(ItemID, 0);
                             if (!justReturn)
                                 log.DropsObtained[ItemID] += 1;
 
-                            if (GameLoop.ZPO.ItemLibrary.ContainsKey(ItemID)) {
-                                Item spawn = new(GameLoop.ZPO.ItemLibrary[ItemID]);
+                            if (GameLoop.WTN.ItemLibrary.ContainsKey(ItemID)) {
+                                Item spawn = new(GameLoop.WTN.ItemLibrary[ItemID]);
 
                                 if (QuantityMin == QuantityMax)
                                     spawn.Quantity = QuantityMin;
@@ -121,10 +121,10 @@ namespace WorldtreeNexus.DataTypes {
                                 }
 
                                 if (player.DropModifier == 1 && log.DropsObtained[ItemID] == 1 && dryActive && InY != 1) { 
-                                    GameLoop.ZPO.Log.AddMessage(new ColoredString("Received " + GameLoop.ZPO.ResolveItemName(ItemID) + " due to Dry Protection.", Color.Green, Color.Black));
+                                    GameLoop.WTN.Log.AddMessage(new ColoredString("Received " + GameLoop.WTN.ResolveItemName(ItemID) + " due to Dry Protection.", Color.Green, Color.Black));
                                 }
 
-                                GameLoop.ZPO.TryPlaceItem(player.NavLoc, new(spawn, inaccessible)); 
+                                GameLoop.WTN.TryPlaceItem(player.NavLoc, new(spawn, inaccessible)); 
                                 if (!player.ItemsEverObtained.Contains(spawn.ID)) { player.ItemsEverObtained.Add(spawn.ID); }
 
                             }
@@ -136,8 +136,8 @@ namespace WorldtreeNexus.DataTypes {
                             if (!justReturn)
                                 log.DropsObtained[ItemID] += 1;
 
-                            if (GameLoop.ZPO.ItemLibrary.ContainsKey(ItemID)) {
-                                Item spawn = new(GameLoop.ZPO.ItemLibrary[ItemID]);
+                            if (GameLoop.WTN.ItemLibrary.ContainsKey(ItemID)) {
+                                Item spawn = new(GameLoop.WTN.ItemLibrary[ItemID]);
 
                                 if (QuantityMin == QuantityMax)
                                     spawn.Quantity = QuantityMin;
@@ -153,7 +153,7 @@ namespace WorldtreeNexus.DataTypes {
                                 if (justReturn)
                                     return spawn;
 
-                                GameLoop.ZPO.TryPlaceItem(player.NavLoc, new(spawn, inaccessible));
+                                GameLoop.WTN.TryPlaceItem(player.NavLoc, new(spawn, inaccessible));
                                 if (!player.ItemsEverObtained.Contains(spawn.ID)) { player.ItemsEverObtained.Add(spawn.ID); }
                             }
                         }

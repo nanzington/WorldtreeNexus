@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 namespace WorldtreeNexus.DataTypes {
-    public class M_MahoganyHomesHotspot {
+    public class M_CozyCottagesHotspot {
         public string Name = "";
         public string ID = "";
 
@@ -12,9 +12,9 @@ namespace WorldtreeNexus.DataTypes {
         public int CandlesNeeded = 0; // Maybe tier this somehow too, for now just always default to normal white candles
         
         [JsonConstructor]
-        public M_MahoganyHomesHotspot() { }
+        public M_CozyCottagesHotspot() { }
 
-        public M_MahoganyHomesHotspot(string id, string name, int planks, int bars, int fabric, int candles) {
+        public M_CozyCottagesHotspot(string id, string name, int planks, int bars, int fabric, int candles) {
             Name = name;
             ID = id;
             
@@ -24,7 +24,7 @@ namespace WorldtreeNexus.DataTypes {
             CandlesNeeded = candles;
         }
 
-        public M_MahoganyHomesHotspot(M_MahoganyHomesHotspot other) {
+        public M_CozyCottagesHotspot(M_CozyCottagesHotspot other) {
             Name = other.Name;
             ID = other.ID;
             
@@ -35,16 +35,16 @@ namespace WorldtreeNexus.DataTypes {
         }
 
 
-        // 1 - Pine plank, bronze nails, bronze bar
-        // 10 - Oak plank, iron nails, iron bar
-        // 20 - Willow plank, steel nails, steel bar
-        // 30 - Teak plank, mithril nails, mithril bar
-        // 40 - Maple plank, adamant nails, adamant bar
-        // 50 - Acadia plank, rune nails, rune bar
-        // 60 - Mahogany plank, orichalcum nails, orichalcum bar
-        // 70 - Yew plank, necronium nails, necronium bar
-        // 80 - Magic plank, bane nails, bane bar
-        // 90 - Elder plank, elder rune nails, elder rune bar
+        // 1 - Poplar plank, copper nails, copper bar
+        // 10 - Elm plank, bronze nails, bronze bar
+        // 20 - Walnut plank, iron nails, iron bar
+        // 30 - Holly plank, silver nails, silver bar
+        // 40 - Acacia plank, gold nails, gold bar
+        // 50 - Birch plank, platinum nails, platinum bar
+        // 60 - Hickory plank, steel nails, steel bar
+        // 70 - Bloodwood plank, cobalt nails, cobalt bar
+        // 80 - Camatillo plank, tungsten nails, tungsten bar
+        // 90 - Katalox plank, titanium nails, titanium bar
 
         // Exp drops: Total hotspot points, divide by 5 to get average points per hotspot, divide by 10 to get average tier, floor, add 1, multiply by 450 exp.
         // Thus doing all level 1 materials gives you 5 / 5 = 1 / 10 = 0.1, floor = 0 + 1 base = 1 * 450 = 450 exp, approximately 0.49 gp/exp if buying ingredients at market value
@@ -54,9 +54,9 @@ namespace WorldtreeNexus.DataTypes {
         public List<string> NeededItems(int tier) {
             List<string> mats = new(); 
 
-            List<string> planks = [ "plankPine", "plankOak", "plankWillow", "plankTeak", "plankMaple", "plankAcadia", "plankMahogany", "plankYew", "plankMagic", "plankElder" ];
-            List<string> bars = [ "barBronze", "barIron", "barSteel", "barMithril", "barAdamant", "barRune", "barOrichalcum", "barNecronium", "barBane", "barElderRune" ];
-            List<string> nails = [ "nailsBronze", "nailsIron", "nailsSteel", "nailsMithril", "nailsAdamant", "nailsRune", "nailsOrichalcum", "nailsNecronium", "nailsBane", "nailsElderRune" ];
+            List<string> planks = [ "plankPoplar", "plankElm", "plankWalnut", "plankHolly", "plankAcacia", "plankBirch", "plankHickory", "plankBloodwood", "plankCamatillo", "plankKatalox" ];
+            List<string> bars = [ "barCopper", "barBronze", "barIron", "barSilver", "barGold", "barPlatinum", "barSteel", "barCobalt", "barTungsten", "barTitanium" ];
+            List<string> nails = [ "nailsCopper", "nailsBronze", "nailsIron", "nailsSilver", "nailsGold", "nailsPlatinum", "nailsSteel", "nailsCobalt", "nailsTungsten", "nailsTitanium" ];
 
             tier = Math.Clamp(tier, 0, planks.Count - 1);
 

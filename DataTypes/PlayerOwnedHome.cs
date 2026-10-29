@@ -24,7 +24,7 @@ namespace WorldtreeNexus.DataTypes {
 
             foreach (var room in Rooms) {
                 foreach (var obj in room.BuiltObjects) {
-                    if (GameLoop.ZPO.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
+                    if (GameLoop.WTN.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
                         comfort += actual.ComfortAdded;
                     }
                 }

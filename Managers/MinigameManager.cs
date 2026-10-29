@@ -6,18 +6,10 @@ using WorldtreeNexus.Hardcodes;
 using WorldtreeNexus.UI;
 
 namespace WorldtreeNexus.Managers {
-    public static class MinigameManager {
-        public static int MTA_Count, MTA_Orbs, MTA_FruitCount, MTA_CoinCount, MTA_FreeAlch, MTA_TelePos, MTA_TeleWidth, MTA_MazeCount = 0;
-        public static string MTA_Special = "Icosahedron";
-        public static double MTA_Timer, MTA_BoneTimer = 0; 
-        public static List<string> MTA_Types = ["Icosahedron", "Cube", "Pentamid", "Cylinder"];
-        public static List<string> MTA_Bones = [ "mtaBone1", "mtaBone2", "mtaBone3", "mtaBone4" ];
-        public static List<string> MTA_Alchs = [ "mtaAlch1", "mtaAlch2", "mtaAlch3", "mtaAlch4", "mtaAlch5" ]; 
-        public static MTA_Map? MTA_TeleMap = null; 
-
+    public static class MinigameManager {  
         public static int MH_Tier = -1; 
         public static int MH_ScrollTop = 0;
-        public static List<string> MH_Planks = [ "plankPine", "plankOak", "plankWillow", "plankTeak", "plankMaple", "plankAcadia", "plankMahogany", "plankYew", "plankMagic", "plankElder" ];
+        public static List<string> MH_Planks = [ "plankPoplar", "plankElm", "plankWalnut", "plankHolly", "plankAcacia", "plankBirch", "plankHickory", "plankBloodwood", "plankCamatillo", "plankKatalox" ];
         
         public static int POH_ViewingRoom = 0;
         public static string POH_Menu = "Overview";
@@ -30,149 +22,14 @@ namespace WorldtreeNexus.Managers {
         
 
         public static void Draw(UI_EmbeddedMini mini, Player player, int resX, int resY) { 
-            if (GameLoop.ZPO.Atlas.TryGetValue(player.NavLoc, out Location? curr) && curr != null) {
+            if (GameLoop.WTN.Atlas.TryGetValue(player.NavLoc, out Location? curr) && curr != null) {
                 string minigame = curr.MinigameID;
-
-                if (minigame == "MageEnchanting") {
-                    mini.Con.Print(resX + 2, resY, "Pizazz: " + player.PizazzTelekinetic + "t " + player.PizazzGraveyard + "g " + player.PizazzEnchantment + "e " + player.PizazzAlchemist + "a");
-                    
-                    mini.Con.Print(resX + 2, resY + 2, "Current Shape: " + MTA_Special); 
-                    mini.Con.Print(resX + 2, resY + 4, "Enchant Streak: " + MTA_Count);
-                    mini.Con.Print(resX + 2, resY + 6, "Orb Count: " + MTA_Orbs); 
-
-                    return;
-                }
-
-                if (minigame == "MageGraveyard") {
-                    mini.Con.Print(resX + 2, resY, "Pizazz: " + player.PizazzTelekinetic + "t " + player.PizazzGraveyard + "g " + player.PizazzEnchantment + "e " + player.PizazzAlchemist + "a");
-                    
-                    mini.Con.Print(resX + 2, resY + 2, " Best Bone: " + GameLoop.ZPO.ResolveItemName(MTA_Bones[3]));
-                    mini.Con.Print(resX + 2, resY + 3, " Good Bone: " + GameLoop.ZPO.ResolveItemName(MTA_Bones[2]));
-                    mini.Con.Print(resX + 2, resY + 4, " Okay Bone: " + GameLoop.ZPO.ResolveItemName(MTA_Bones[1]));
-                    mini.Con.Print(resX + 2, resY + 5, "Worst Bone: " + GameLoop.ZPO.ResolveItemName(MTA_Bones[0])); 
-                    mini.Con.Print(resX + 2, resY + 7, "Fruit Count: " + MTA_FruitCount);
-
-                    return;
-                }
-
-                if (minigame == "MageAlchemist") {
-                    mini.Con.Print(resX + 2, resY, "Pizazz: " + player.PizazzTelekinetic + "t " + player.PizazzGraveyard + "g " + player.PizazzEnchantment + "e " + player.PizazzAlchemist + "a");
-                    
-                    mini.Con.Print(resX + 2, resY + 2, "30 gp: " + GameLoop.ZPO.ResolveItemName(MTA_Alchs[4]), MTA_FreeAlch == 4 ? Color.Lime : Color.White);
-                    mini.Con.Print(resX + 2, resY + 3, "15 gp: " + GameLoop.ZPO.ResolveItemName(MTA_Alchs[3]), MTA_FreeAlch == 3 ? Color.Lime : Color.White);
-                    mini.Con.Print(resX + 2, resY + 4, " 8 gp: " + GameLoop.ZPO.ResolveItemName(MTA_Alchs[2]), MTA_FreeAlch == 2 ? Color.Lime : Color.White);
-                    mini.Con.Print(resX + 2, resY + 5, " 5 gp: " + GameLoop.ZPO.ResolveItemName(MTA_Alchs[1]), MTA_FreeAlch == 1 ? Color.Lime : Color.White);
-                    mini.Con.Print(resX + 2, resY + 6, " 1 gp: " + GameLoop.ZPO.ResolveItemName(MTA_Alchs[0]), MTA_FreeAlch == 0 ? Color.Lime : Color.White);  
-                    mini.Con.Print(resX + 2, resY + 8, "Coin Count: " + MTA_CoinCount);
-
-                    mini.Con.Print(resX + 2, resY + 10, "Free to Alch: " + GameLoop.ZPO.ResolveItemName(MTA_Alchs[MTA_FreeAlch]));
-
-                    return;
-                }
-
-                if (minigame == "MageTelekinetic") { 
-                    mini.Con.Print(resX + 2, resY, "Pizazz: " + player.PizazzTelekinetic + "t " + player.PizazzGraveyard + "g " + player.PizazzEnchantment + "e " + player.PizazzAlchemist + "a");
-                    mini.Con.Print(resX + 2, resY + 2, "Mazes Solved: " + MTA_MazeCount); 
-
-                    if (MTA_TeleMap != null) {
-                        for(int i = 0; i < MTA_TeleMap.Map.Length; i++) {
-                            int x = i % MTA_TeleMap.Width;
-                            int y = i / MTA_TeleMap.Width;
-
-                            if (i == MTA_TelePos) {
-                                mini.Con.Print(resX + 2 + x, resY + 4 + y, "@", Color.Turquoise);
-                            } else {
-                                mini.Con.Print(resX + 2 + x, resY + 4 + y, MTA_TeleMap.Map[i].ToString(), i == MTA_TeleMap.GoalIdx ? Color.Lime : Color.DarkSlateGray);
-                            }
-                        }
-
-                        if (GameLoop.ZPO.SpellLibrary.TryGetValue("utilTelegrab", out Spell? telegrab) && telegrab != null) {
-                            if (MTA_TeleMap.TileAt(MTA_TelePos - MTA_TeleMap.Width) == "_" && player.CanCast(telegrab) == "") { 
-                                mini.Con.PrintClickable(resX + 14 , resY + 5, "Pull Statue North", () => {
-                                    telegrab.Cast(player, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
-
-                                    while (MTA_TeleMap.TileAt(MTA_TelePos - MTA_TeleMap.Width) == "_") {
-                                        MTA_TelePos -= MTA_TeleMap.Width;
-                                    }
-                                });
-                            } else {
-                                mini.Con.Print(resX + 14 , resY + 5, "Pull Statue North", Color.DarkSlateGray);
-                            }
-
-                            if (MTA_TeleMap.TileAt(MTA_TelePos + 1) == "_" && player.CanCast(telegrab) == "") { 
-                                mini.Con.PrintClickable(resX + 14 , resY + 7, "Pull Statue East", () => {
-                                    telegrab.Cast(player, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
-
-                                    while (MTA_TeleMap.TileAt(MTA_TelePos + 1) == "_") {
-                                        MTA_TelePos += 1;
-                                    }
-                                });
-                            } else {
-                                mini.Con.Print(resX + 14 , resY + 7, "Pull Statue East", Color.DarkSlateGray);
-                            }
-
-                            if (MTA_TeleMap.TileAt(MTA_TelePos - 1) == "_" && player.CanCast(telegrab) == "") { 
-                                mini.Con.PrintClickable(resX + 14 , resY + 9, "Pull Statue West", () => {
-                                    telegrab.Cast(player, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
-
-                                    while (MTA_TeleMap.TileAt(MTA_TelePos - 1) == "_") {
-                                        MTA_TelePos -= 1;
-                                    }
-                                });
-                            } else {
-                                mini.Con.Print(resX + 14 , resY + 9, "Pull Statue West", Color.DarkSlateGray);
-                            }
-
-                            if (MTA_TeleMap.TileAt(MTA_TelePos + MTA_TeleMap.Width) == "_" && player.CanCast(telegrab) == "") { 
-                                mini.Con.PrintClickable(resX + 14 , resY + 11, "Pull Statue South", () => {
-                                    telegrab.Cast(player, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
-
-                                    while (MTA_TeleMap.TileAt(MTA_TelePos + MTA_TeleMap.Width) == "_") {
-                                        MTA_TelePos += MTA_TeleMap.Width;
-                                    }
-                                });
-                            } else {
-                                mini.Con.Print(resX + 14 , resY + 11, "Pull Statue South", Color.DarkSlateGray);
-                            }
-                        } else { 
-                            mini.Con.Print(resX + 14 , resY + 5, "Pull Statue North", Color.DarkSlateGray);
-                            mini.Con.Print(resX + 14 , resY + 7, "Pull Statue East", Color.DarkSlateGray);
-                            mini.Con.Print(resX + 14 , resY + 9, "Pull Statue West", Color.DarkSlateGray);
-                            mini.Con.Print(resX + 14 , resY + 11, "Pull Statue South", Color.DarkSlateGray);
-                        } 
-
-                        mini.Con.PrintClickable(resX + 2 , resY + 15, "Reset Maze", () => { MTA_TelePos = MTA_TeleMap.StartIdx;  });
-                        mini.Con.PrintClickable(resX + 2 , resY + 17, "  New Maze", () => { MTA_SetupTeleMap(); });
-
-                        if (MTA_TelePos == MTA_TeleMap.GoalIdx) {
-                            MTA_MazeCount++;
-                            if (MTA_MazeCount >= 5) {
-                                GameLoop.ZPO.Log.AddMessage("You have completed five mazes and receive 10 Telekinetic Pizazz points, 1200 Magic Experience, and 10 law runes.", Color.Lime);
-                                player.TryGrantExp("Magic", 1200, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
-                                player.PizazzTelekinetic += 10;
-
-                                if (GameLoop.ZPO.ItemLibrary.TryGetValue("runeLaw", out Item? law) && law != null) {
-                                    player.TryPickup(new Item(law), 10);
-                                }
-                                MTA_MazeCount = 0;
-                            } else {
-                                GameLoop.ZPO.Log.AddMessage("You have moved the statue to the goal tile, and gain 2 Telekinetic Pizazz points and 200 Magic experience.", Color.Lime);
-                                player.TryGrantExp("Magic", 200, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
-                                player.PizazzTelekinetic += 2;
-                            }
-                            MTA_SetupTeleMap();
-                        }
-                    } else {
-                        MTA_SetupTeleMap();
-                    }
-
-                    return;
-                }
+                 
             
-                if (curr.ID == player.MahoganyDestID && player.MahoganyContractSpots.Count > 0) {
+                if (curr.ID == player.CozyDestID && player.CozyContractSpots.Count > 0) {
                     if (MH_Tier == -1) { MH_Tier = player.GetEffectiveSkillLevel("Construction") / 10; }
                     int level = Math.Clamp(MH_Tier * 10, 1, 90);
-                    mini.Con.Print(resX + 4, resY, (GameLoop.ZPO.ResolveItemName(MH_Planks[MH_Tier]) + " (" + level + " Con)").Align(HorizontalAlignment.Center, 31));
+                    mini.Con.Print(resX + 4, resY, (GameLoop.WTN.ResolveItemName(MH_Planks[MH_Tier]) + " (" + level + " Con)").Align(HorizontalAlignment.Center, 31));
                     mini.Con.PrintClickable(resX + 1, resY, new ColoredString("<--", MH_Tier > 0 ? Color.White : Color.DarkSlateGray, Color.Black), () => { MH_Tier = Math.Clamp(MH_Tier - 1, 0, 9); });
                     mini.Con.PrintClickable(resX + 35, resY, new ColoredString("-->", MH_Tier < 9 ? Color.White : Color.DarkSlateGray, Color.Black), () => { MH_Tier = Math.Clamp(MH_Tier + 1, 0, 9); });
                     
@@ -180,15 +37,15 @@ namespace WorldtreeNexus.Managers {
                     
                     int spaces = 34 - resY - 2;
 
-                    if (player.MahoganyContractSpots.Count > spaces) {
-                        if (Helper.ScrolledDown()) { MH_ScrollTop = Helper.QuantitySelector(MH_ScrollTop, player.MahoganyContractSpots.Count - spaces); }
-                        if (Helper.ScrolledUp()) { MH_ScrollTop = Helper.QuantitySelector(MH_ScrollTop, player.MahoganyContractSpots.Count - spaces, true); }
+                    if (player.CozyContractSpots.Count > spaces) {
+                        if (Helper.ScrolledDown()) { MH_ScrollTop = Helper.QuantitySelector(MH_ScrollTop, player.CozyContractSpots.Count - spaces); }
+                        if (Helper.ScrolledUp()) { MH_ScrollTop = Helper.QuantitySelector(MH_ScrollTop, player.CozyContractSpots.Count - spaces, true); }
                     } else {
                         MH_ScrollTop = 0;
                     }
                     
-                    for (int i = MH_ScrollTop; i < player.MahoganyContractSpots.Count && i < MH_ScrollTop + spaces; i++) {
-                        M_MahoganyHomesHotspot hot = player.MahoganyContractSpots[i];
+                    for (int i = MH_ScrollTop; i < player.CozyContractSpots.Count && i < MH_ScrollTop + spaces; i++) {
+                        M_CozyCottagesHotspot hot = player.CozyContractSpots[i];
                         List<string> mats = hot.NeededItems(MH_Tier);
 
                         mini.Con.Print(resX + 1, resY + (i - MH_ScrollTop) + 2, Helper.Checkmark(hot.Repaired));
@@ -204,12 +61,12 @@ namespace WorldtreeNexus.Managers {
                                     build += ", ";
                                 }
 
-                                build += split[1] + "x " + GameLoop.ZPO.ResolveItemName(split[0]);
+                                build += split[1] + "x " + GameLoop.WTN.ResolveItemName(split[0]);
                             }
 
                             build += ". Hammer, saw.";
                             
-                            GameLoop.ZPO.Log.AddMessage(build, Color.SandyBrown);
+                            GameLoop.WTN.Log.AddMessage(build, Color.SandyBrown);
                         });
 
                         if (!hot.Repaired) {
@@ -219,10 +76,10 @@ namespace WorldtreeNexus.Managers {
                                         player.ConsumeItems(mats);
                                         hot.Repaired = true;
                                     } else { 
-                                        GameLoop.ZPO.Log.AddMessage("You have all the materials, but need a hammer and saw to repair that.", Color.Crimson);
+                                        GameLoop.WTN.Log.AddMessage("You have all the materials, but need a hammer and saw to repair that.", Color.Crimson);
                                     }
                                 } else {
-                                    GameLoop.ZPO.Log.AddMessage("You are missing some materials to repair that.", Color.Crimson);
+                                    GameLoop.WTN.Log.AddMessage("You are missing some materials to repair that.", Color.Crimson);
                                 }
                             });
                         } else {
@@ -248,16 +105,16 @@ namespace WorldtreeNexus.Managers {
                                 int pObj = resY + 3;
 
                                 foreach (var obj in home.Rooms[POH_ViewingRoom].BuiltObjects) {
-                                    if (GameLoop.ZPO.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
+                                    if (GameLoop.WTN.POH_ObjectLib.TryGetValue(obj, out POH_Object? actual) && actual != null) {
                                         mini.Con.Print(resX + 2, pObj, "|");
                                         mini.Con.PrintClickable(resX + 1, pObj, new ColoredString("?", Color.MediumPurple, Color.Black), () => {
-                                            if (actual.Examine != "") { GameLoop.ZPO.Log.AddMessage(actual.Examine, Color.SandyBrown); }
-                                            else { GameLoop.ZPO.Log.AddMessage("Just a" + (Helper.VowelStart(actual.Name.ToLower()) ? "n " : " ") + actual.Name.ToLower(), Color.SandyBrown); }
+                                            if (actual.Examine != "") { GameLoop.WTN.Log.AddMessage(actual.Examine, Color.SandyBrown); }
+                                            else { GameLoop.WTN.Log.AddMessage("Just a" + (Helper.VowelStart(actual.Name.ToLower()) ? "n " : " ") + actual.Name.ToLower(), Color.SandyBrown); }
                                         });
 
                                         if (actual.ActivateText != "" || actual.Activation.Count > 0) {
                                             mini.Con.PrintClickable(resX + 4, pObj++, actual.GetName(), () => {
-                                                if (actual.ActivateText != "") { GameLoop.ZPO.Log.AddMessage(actual.ActivateText, Color.SandyBrown); }
+                                                if (actual.ActivateText != "") { GameLoop.WTN.Log.AddMessage(actual.ActivateText, Color.SandyBrown); }
 
                                                 foreach (var act in actual.Activation) { act.Execute(); }
                                             });
@@ -293,9 +150,9 @@ namespace WorldtreeNexus.Managers {
                                         bool shouldBreak = false;
                                         mini.Con.PrintClickable(resX + 1, roomY++, new ColoredString("X", Color.Crimson, Color.Black), () => {
                                             if (count == POH_ViewingRoom) {
-                                                GameLoop.ZPO.Log.AddMessage("You probably shouldn't destroy the room you're standing in.", Color.Crimson);
+                                                GameLoop.WTN.Log.AddMessage("You probably shouldn't destroy the room you're standing in.", Color.Crimson);
                                             } else if (home.Rooms.Count == 1) { 
-                                                GameLoop.ZPO.Log.AddMessage("You probably shouldn't destroy the last room in your home.", Color.Crimson);
+                                                GameLoop.WTN.Log.AddMessage("You probably shouldn't destroy the last room in your home.", Color.Crimson);
                                             } else {
                                                 if (Helper.KeyDown(SadConsole.Input.Keys.Space)) { // hold space to confirm
                                                     home.Rooms.RemoveAt(count); 
@@ -308,7 +165,7 @@ namespace WorldtreeNexus.Managers {
 
                                                     shouldBreak = true;
                                                 } else { 
-                                                    GameLoop.ZPO.Log.AddMessage("If you really want to destroy the room, hold SPACE. No resources or gold will be returned to you.", Color.Crimson);
+                                                    GameLoop.WTN.Log.AddMessage("If you really want to destroy the room, hold SPACE. No resources or gold will be returned to you.", Color.Crimson);
                                                 }
                                             }
                                         }); 
@@ -331,9 +188,9 @@ namespace WorldtreeNexus.Managers {
                                             if (canBuild) {
                                                 player.TakeGold(roomType.CostToBuy);
                                                 home.Rooms.Add(new(roomType));
-                                                GameLoop.ZPO.Log.AddMessage("You add a " + roomType.RoomType.ToLower() + " to your home.", Color.Lime);
+                                                GameLoop.WTN.Log.AddMessage("You add a " + roomType.RoomType.ToLower() + " to your home.", Color.Lime);
                                             } else {
-                                                GameLoop.ZPO.Log.AddMessage("Need " + roomType.LevelToBuy + " Construction, " + roomType.CostToBuy + "gp, and a room slot open to build that.", Color.Crimson);
+                                                GameLoop.WTN.Log.AddMessage("Need " + roomType.LevelToBuy + " Construction, " + roomType.CostToBuy + "gp, and a room slot open to build that.", Color.Crimson);
                                             }
                                         });
                                     }
@@ -348,7 +205,7 @@ namespace WorldtreeNexus.Managers {
 
                                     int roomY = resY + 3;
                                     for (int count = 0; count < room.BuiltObjects.Count; count++) {
-                                        if (GameLoop.ZPO.POH_ObjectLib.TryGetValue(room.BuiltObjects[count], out POH_Object? obj) && obj != null) {
+                                        if (GameLoop.WTN.POH_ObjectLib.TryGetValue(room.BuiltObjects[count], out POH_Object? obj) && obj != null) {
                                             hotspots.Remove(obj.HotspotType);
                                             mini.Con.Print(resX + 2, roomY, "| " + obj.GetName());
 
@@ -361,14 +218,14 @@ namespace WorldtreeNexus.Managers {
                                                             room.BuiltObjects.RemoveAt(count);
                                                             shouldBreak = true;
                                                         } else {
-                                                            GameLoop.ZPO.Log.AddMessage("There's something growing in that patch right now. You should clear it out or let it grow before destroying it.", Color.Crimson);
+                                                            GameLoop.WTN.Log.AddMessage("There's something growing in that patch right now. You should clear it out or let it grow before destroying it.", Color.Crimson);
                                                         }
                                                     } else { 
                                                         room.BuiltObjects.RemoveAt(count);
                                                         shouldBreak = true;
                                                     }
                                                 } else {
-                                                    GameLoop.ZPO.Log.AddMessage("If you really want to destroy the object, hold SPACE. No resources or gold will be returned to you.", Color.Crimson);
+                                                    GameLoop.WTN.Log.AddMessage("If you really want to destroy the object, hold SPACE. No resources or gold will be returned to you.", Color.Crimson);
                                                 }
                                             });
 
@@ -418,7 +275,7 @@ namespace WorldtreeNexus.Managers {
                                         mini.Con.PrintClickable(resX + 6, printY++, name, () => {
                                             if (meetsAllReqs) {
                                                 player.ConsumeItems(POH_PossibleObjs[ob].MaterialsNeeded);
-                                                player.TryGrantExp("Construction", POH_PossibleObjs[ob].ExpGiven, GameLoop.ZPO.Log, SidebarManager.RecentlyTrainedSkills);
+                                                player.TryGrantExp("Construction", POH_PossibleObjs[ob].ExpGiven, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
                                                 room.BuiltObjects.Add(POH_PossibleObjs[ob].Name);
 
                                                 if (POH_PossibleObjs[ob].SetsPatch != "") {
@@ -427,7 +284,7 @@ namespace WorldtreeNexus.Managers {
 
                                                 POH_Submenu = "";
 
-                                                GameLoop.ZPO.Log.AddMessage("You built a" + (Helper.VowelStart(POH_PossibleObjs[ob].Name.ToLower()) ? "n ": " ") + POH_PossibleObjs[ob].Name.ToLower() + ".", Color.SandyBrown);
+                                                GameLoop.WTN.Log.AddMessage("You built a" + (Helper.VowelStart(POH_PossibleObjs[ob].Name.ToLower()) ? "n ": " ") + POH_PossibleObjs[ob].Name.ToLower() + ".", Color.SandyBrown);
                                             } else {
                                                 POH_PrintReqs(POH_PossibleObjs[ob], hasMats, hasTools, meetsAllReqs);
                                             }
@@ -448,7 +305,7 @@ namespace WorldtreeNexus.Managers {
                             if (home.MaxFinishedRooms < finishCount) {
                                 home.MaxFinishedRooms++;
                                 int exp = (player.GetSkillTier("Construction") * 30) * 20;
-                                GameLoop.ZPO.Log.AddMessage("You have fully furnished " + finishCount + " rooms here, and are granted " + String.Format($"{exp:n0}") + " Construction experience.", Color.Lime); 
+                                GameLoop.WTN.Log.AddMessage("You have fully furnished " + finishCount + " rooms here, and are granted " + String.Format($"{exp:n0}") + " Construction experience.", Color.Lime); 
                             }
                         }
                     }
@@ -464,171 +321,29 @@ namespace WorldtreeNexus.Managers {
         }
 
         public static bool AnyMinigame(Player player) { 
-            if (GameLoop.ZPO.Atlas.TryGetValue(player.NavLoc, out Location? curr) && curr != null) {
+            if (GameLoop.WTN.Atlas.TryGetValue(player.NavLoc, out Location? curr) && curr != null) {
                 string minigame = curr.MinigameID;
 
                 if (minigame != "") { return true; } 
-                if (curr.ID == player.MahoganyDestID && player.MahoganyContractSpots.Count > 0) { return true; }
+                if (curr.ID == player.CozyDestID && player.CozyContractSpots.Count > 0) { return true; }
                 if (curr.PlayerHomeHere != "")  { return true; }
             }
 
             return false;
-        }
-
-        public static void MTA_SetupTeleMap(int force = -1) {
-            MTA_Map blank = new(10, 88, 81, 
-                "xxxxxxxxxx" + 
-                "x________x" + 
-                "x________x" +
-                "x________x" +
-                "x________x" +
-                "x________x" +
-                "x________x" +
-                "x________x" +
-                "x________x" +
-                "xxxxxxxxxx");
-            List<MTA_Map> Maps = new() {
-                new(10, 88, 81, 
-                "xxxxxxxxxx" + 
-                "x_x______x" + 
-                "x_____x__x" +
-                "x__x_____x" +
-                "x_x_____xx" +
-                "x_x__x___x" +
-                "x_xx_____x" +
-                "x_x______x" +
-                "x_x______x" +
-                "xxxxxxxxxx"),
-                new(10, 66, 23, 
-                "xxxxxxxxxx" + 
-                "x__x_____x" + 
-                "x________x" +
-                "x_______xx" +
-                "x___x____x" +
-                "x_x___x__x" +
-                "x____x___x" +
-                "xx__x____x" +
-                "x________x" +
-                "xxxxxxxxxx"),
-                new(10, 18, 11, 
-                "xxxxxxxxxx" + 
-                "x__x___x_x" + 
-                "x__x_x___x" +
-                "x_x____x_x" +
-                "x__x_____x" +
-                "x_x__x___x" +
-                "x__x___x_x" +
-                "x_x______x" +
-                "x____x___x" +
-                "xxxxxxxxxx"),
-                new(10, 44, 61, 
-                "xxxxxxxxxx" + 
-                "x________x" + 
-                "x_xx_xxx_x" +
-                "x_xx_x_x_x" +
-                "x____x_x_x" +
-                "xxxxxxxx_x" +
-                "x_xx_____x" +
-                "x_xx_xxxxx" +
-                "x____x___x" +
-                "xxxxxxxxxx"),
-                new(10, 34, 28, 
-                "xxxxxxxxxx" + 
-                "xx____xxxx" + 
-                "x______x_x" +
-                "x_x__x_x_x" +
-                "x_x__x_x_x" +
-                "x______x_x" +
-                "x__x_____x" +
-                "x________x" +
-                "xx_____xxx" +
-                "xxxxxxxxxx"),
-                new(10, 88, 11, 
-                "xxxxxxxxxx" + 
-                "x_x____x_x" + 
-                "x__x___x_x" +
-                "x______x_x" +
-                "x______x_x" +
-                "x_x______x" +
-                "xxxxxxx__x" +
-                "x_______xx" +
-                "x________x" +
-                "xxxxxxxxxx"),
-                new(10, 26, 87, 
-                "xxxxxxxxxx" + 
-                "x________x" + 
-                "x______x_x" +
-                "x__x_____x" +
-                "x_x___x_xx" +
-                "x________x" +
-                "xx__x__x_x" +
-                "x_x______x" +
-                "x_______xx" +
-                "xxxxxxxxxx"),
-                new(10, 48, 38, 
-                "xxxxxxxxxx" + 
-                "x_______xx" + 
-                "x___x__x_x" +
-                "xx___x___x" +
-                "x__x_____x" +
-                "x_x_____xx" +
-                "x____x___x" +
-                "x_______xx" +
-                "xx_______x" +
-                "xxxxxxxxxx"),
-                new(10, 81, 18, 
-                "xxxxxxxxxx" + 
-                "x________x" + 
-                "x_xxxxxxxx" +
-                "x________x" +
-                "x_xxxxx_xx" +
-                "x_x_____xx" +
-                "x_x______x" +
-                "xxxxxxxx_x" +
-                "x________x" +
-                "xxxxxxxxxx"),
-                new(10, 46, 83, 
-                "xxxxxxxxxx" + 
-                "x__xxxx__x" + 
-                "xx____x__x" +
-                "x_____x_xx" +
-                "x_x__x___x" +
-                "x________x" +
-                "x_x______x" +
-                "x__x_____x" +
-                "x___x_x__x" +
-                "xxxxxxxxxx"),
-                new(10, 14, 81, 
-                "xxxxxxxxxx" + 
-                "x__x_____x" + 
-                "x_______xx" +
-                "x___x____x" +
-                "x_x___xxxx" +
-                "x__x_____x" +
-                "xxxx___x_x" +
-                "x___xxxx_x" +
-                "x________x" +
-                "xxxxxxxxxx")
-            };
-
-            MTA_TeleMap = Maps[force != -1 ? force : GameLoop.rand.Next(Maps.Count)];
-            MTA_TelePos = MTA_TeleMap.StartIdx;
-            MTA_TeleWidth = MTA_TeleMap.Width;
-        }
-    
+        } 
         
         public static void MH_GetContract() {
-            if (GameLoop.ZPO.Atlas.TryGetValue(GameLoop.ZPO.player.NavLoc, out Location? curr)) { 
-                List<Location> possibleDestinations = GameLoop.ZPO.Atlas.Values.Where(o => (o.Region == curr.Region && o.MahoganyHomesHotspots.Count > 0)).ToList();
+            if (GameLoop.WTN.Atlas.TryGetValue(GameLoop.WTN.player.NavLoc, out Location? curr)) { 
+                List<Location> possibleDestinations = GameLoop.WTN.Atlas.Values.Where(o => (o.Region == curr.Region && o.CCHotspots.Count > 0)).ToList();
 
                 if (possibleDestinations.Count > 0) {
                     Location dest = possibleDestinations[0]; 
                     if (possibleDestinations.Count > 1) { dest = possibleDestinations[GameLoop.rand.Next(possibleDestinations.Count)]; }
 
-                    List<M_MahoganyHomesHotspot> possibleSpots = new();
+                    List<M_CozyCottagesHotspot> possibleSpots = new();
 
-                    foreach (var str in dest.MahoganyHomesHotspots) {
-                        if (GameLoop.ZPO.M_HotspotLib.TryGetValue(str, out M_MahoganyHomesHotspot? spot) && spot != null) {
+                    foreach (var str in dest.CCHotspots) {
+                        if (GameLoop.WTN.M_HotspotLib.TryGetValue(str, out M_CozyCottagesHotspot? spot) && spot != null) {
                             possibleSpots.Add(new(spot));
                         }
                     }
@@ -648,8 +363,8 @@ namespace WorldtreeNexus.Managers {
                     }
 
                     possibleSpots = possibleSpots.OrderBy(o => o.Name).ToList();
-                    GameLoop.ZPO.player.MahoganyContractSpots = possibleSpots;
-                    GameLoop.ZPO.player.MahoganyDestID = dest.ID;
+                    GameLoop.WTN.player.CozyContractSpots = possibleSpots;
+                    GameLoop.WTN.player.CozyDestID = dest.ID;
                 }
             } 
         }    
@@ -658,11 +373,11 @@ namespace WorldtreeNexus.Managers {
             if (POH_PossibleObjs == null) { POH_PossibleObjs = new(); }
             POH_PossibleObjs.Clear();
 
-            POH_PossibleObjs = GameLoop.ZPO.POH_ObjectLib.Values.Where(o => o.HotspotType == objType && (!POH_OnlyBuildable || o.CanBuild())).ToList(); 
+            POH_PossibleObjs = GameLoop.WTN.POH_ObjectLib.Values.Where(o => o.HotspotType == objType && (!POH_OnlyBuildable || o.CanBuild())).ToList(); 
         } 
         
         public static void POH_PrintReqs(POH_Object obj, bool hasMats, bool hasTools, bool meetsAll) {
-            GameLoop.ZPO.Log.AddMessage("Requirements to build " + obj.Name.ToLower() + ": ", meetsAll ? Color.Lime : Color.Crimson);
+            GameLoop.WTN.Log.AddMessage("Requirements to build " + obj.Name.ToLower() + ": ", meetsAll ? Color.Lime : Color.Crimson);
 
             string mats = "| Materials: "; 
             foreach (var mat in obj.MaterialsNeeded) {
@@ -670,10 +385,10 @@ namespace WorldtreeNexus.Managers {
 
                 if (mats != "| Materials: ") { mats += ", "; }
 
-                mats += (split.Length > 1 ? split[1] + "x " : " ") + GameLoop.ZPO.ResolveItemName(split[0]).ToLower();
+                mats += (split.Length > 1 ? split[1] + "x " : " ") + GameLoop.WTN.ResolveItemName(split[0]).ToLower();
             } 
             mats += "."; 
-            GameLoop.ZPO.Log.AddMessage(mats, hasMats ? Color.Lime : Color.Crimson);
+            GameLoop.WTN.Log.AddMessage(mats, hasMats ? Color.Lime : Color.Crimson);
 
             string tools = "| Tools: "; 
             foreach (var tool in obj.ToolsNeeded) {
@@ -681,13 +396,13 @@ namespace WorldtreeNexus.Managers {
 
                 if (tools != "| Tools: ") { tools += ", "; }
 
-                tools += (split.Length > 1 ? split[1] + "x " : " ") + GameLoop.ZPO.ResolveItemName(split[0]).ToLower();
+                tools += (split.Length > 1 ? split[1] + "x " : " ") + GameLoop.WTN.ResolveItemName(split[0]).ToLower();
             } 
             tools += "."; 
-            GameLoop.ZPO.Log.AddMessage(tools, hasTools ? Color.Lime : Color.Crimson);
+            GameLoop.WTN.Log.AddMessage(tools, hasTools ? Color.Lime : Color.Crimson);
 
             foreach (var req in obj.RequirementsToBuild) { 
-                GameLoop.ZPO.Log.AddMessage("| " + req.GetSummary(), req.CheckRequirement(GameLoop.ZPO.player, false) ? Color.Lime : Color.Crimson);
+                GameLoop.WTN.Log.AddMessage("| " + req.GetSummary(), req.CheckRequirement(GameLoop.WTN.player, false) ? Color.Lime : Color.Crimson);
             }
         }
         

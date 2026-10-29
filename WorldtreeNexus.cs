@@ -21,19 +21,20 @@ namespace WorldtreeNexus {
         public Dictionary<string, ProcessingStation> ProcessingStations = new();
         public Dictionary<TwoWayString, Recipe> UseRecipes = new();
         public Dictionary<string, NPC> NPCLibrary = new();
-        public Dictionary<string, AreaMonster> MonsterLibrary = new();
-        public Dictionary<string, Prayer> PrayerLibrary = new();
+        public Dictionary<string, AreaMonster> MonsterLibrary = new(); 
         public Dictionary<string, List<CraftRecipe>> CraftLib = new();
         public Dictionary<string, Spell> SpellLibrary = new();
-        public Dictionary<string, BossFight> BossLibrary = new();
-        public Dictionary<string, HunterCreature> HunterLibrary = new();
+        public Dictionary<string, BossFight> BossLibrary = new(); 
 
         public Dictionary<string, ClueStep> ClueStepLibrary = new();
         public Dictionary<string, Quest> QuestLibrary = new();
         public Dictionary<string, Book> BookLibrary = new();
         public Dictionary<string, Cutscene> CutsceneLibrary = new();
-        public Dictionary<string, M_MahoganyHomesHotspot> M_HotspotLib = new();
+        public Dictionary<string, M_CozyCottagesHotspot> M_HotspotLib = new();
         public Dictionary<string, POH_Object> POH_ObjectLib = new();
+        public Dictionary<string, PotionRecipe> PotionRecipeLibrary = new();
+        public Dictionary<string, string> TalismanLibrary = new();
+        public Dictionary<string, Prayer> PrayerLibrary = new();
 
         public MessageLog Log = new();
         public int LastPrinted = 0;
@@ -56,11 +57,11 @@ namespace WorldtreeNexus {
 
             RebuildLibraries();
 
-            TryAddSkills();
-            TryAddPrayers(); 
+            TryAddSkills(); 
             TryAddQuests();
 
             player.CurrentHP = 10;
+            player.CurrentPrayer = 10;
 
 
             Log.AddMessage(new ColoredString("Press F1 at any time to open the guidebook, or F2 to open the compendium.", Color.Turquoise, Color.Black));
@@ -76,14 +77,14 @@ namespace WorldtreeNexus {
                     home = tempHome;
                 }
 
-                if (curr.UPCsong != "") {
-                    if (!player.AllSongsUnlocked && !player.UnlockedSongs.Contains(curr.UPCsong)) { 
-                        player.UnlockedSongs.Add(curr.UPCsong); 
-                        Log.AddMessage("You have unlocked the song: " + curr.UPCsong, Color.Turquoise);
+                if (curr.SongHere != "") {
+                    if (!player.AllSongsUnlocked && !player.UnlockedSongs.Contains(curr.SongHere)) { 
+                        player.UnlockedSongs.Add(curr.SongHere); 
+                        Log.AddMessage("You have unlocked the song: " + curr.SongHere, Color.Turquoise);
                     }
 
-                    if (player.MusicMode == "Auto" && GameLoop.SoundManager.CurrentSong != curr.UPCsong && GameLoop.SoundManager.PlayingSounds.Count == 0) {
-                        GameLoop.SoundManager.PickMusic(curr.UPCsong);
+                    if (player.MusicMode == "Auto" && GameLoop.SoundManager.CurrentSong != curr.SongHere && GameLoop.SoundManager.PlayingSounds.Count == 0) {
+                        GameLoop.SoundManager.PickMusic(curr.SongHere);
                     }
                 }
 
@@ -134,10 +135,15 @@ namespace WorldtreeNexus {
                 mini.Con.Print(57, 0, dispName.Align(HorizontalAlignment.Center, 91));
                 mini.Con.DrawLine(new Point(56, 1), new Point(148, 1), 196); 
 
-                int descY = 3;
+                int descY = 2;
 
                 if (!curr.Dark || (curr.Dark && player.HasLightSource())) {
-                    descY = mini.Con.PrintMultiLine(57, 3, curr.Description, 92);
+                    foreach (var desc in curr.DescriptionBlocks) {
+                        if (desc.AllReqsMet()) {
+                            descY++;
+                            descY = mini.Con.PrintMultiLine(57, descY, desc.Description, 92);
+                        }
+                    }
                 } else {
                     descY = mini.Con.PrintMultiLine(57, 3, ("With a light source you could see more here.").Align(HorizontalAlignment.Center, 92) + " /n /n " + ("It is pitch black.").Align(HorizontalAlignment.Center, 92) + " /n /n " + ("You are likely to be eaten by a grue.").Align(HorizontalAlignment.Center, 92), 92);
                 }
@@ -287,9 +293,7 @@ namespace WorldtreeNexus {
                 mini.Con.Print(resourceX + 24, resourceY, "|");
                 mini.Con.PrintClickable(resourceX + 26, resourceY, new ColoredString("F", SelectedMenu == "Farming" ? Color.Yellow : curr.FarmingPatchesHere.Count > 0 || (home != null && home.Rooms[MinigameManager.POH_ViewingRoom].Patch.PatchType != "") ? Color.White : Color.DarkSlateGray, Color.Black), () => { SelectedMenu = "Farming"; });
                 mini.Con.Print(resourceX + 28, resourceY, "|");
-                mini.Con.PrintClickable(resourceX + 30, resourceY, new ColoredString("H", SelectedMenu == "Hunter" ? Color.Yellow : (curr.HunterSpots.Count > 0 || player.SpawnedCreatures.Count > 0) ? Color.White : Color.DarkSlateGray, Color.Black), () => { SelectedMenu = "Hunter"; });
-                mini.Con.Print(resourceX + 32, resourceY, "|");
-                mini.Con.PrintClickable(resourceX + 34, resourceY, new ColoredString("*", SelectedMenu == "Minigame" ? Color.Yellow : MinigameManager.AnyMinigame(player) ? Color.White : Color.DarkSlateGray, Color.Black), () => { SelectedMenu = "Minigame"; });
+                mini.Con.PrintClickable(resourceX + 30, resourceY, new ColoredString("*", SelectedMenu == "Minigame" ? Color.Yellow : MinigameManager.AnyMinigame(player) ? Color.White : Color.DarkSlateGray, Color.Black), () => { SelectedMenu = "Minigame"; });
 
                 resourceY++;
                 mini.Con.DrawLine(new Point(resourceX + 1, resourceY), new Point(148, resourceY), 196);
@@ -315,175 +319,9 @@ namespace WorldtreeNexus {
                 }
                 else if (SelectedMenu == "Farming") {
                     UI_LocFarming.DrawFarming(curr, player, mini, resourceX, resourceY, Log, home);
-                } 
-                else if (SelectedMenu == "Hunter") { 
-                    mini.Con.Print(resourceX + 2, resourceY++, "Hunter Creatures Here"); 
-
-                    if (curr.CreaturesHere.Count < curr.HunterSpots.Count) { 
-                        for (int i = 0; i < curr.HunterSpots.Count; i++) {
-                            if (HunterLibrary.TryGetValue(curr.HunterSpots[i], out HunterCreature? hunt) && hunt != null) {
-                                HunterCreature clone = Helper.Clone(hunt);
-                                clone.CurrentLane = GameLoop.rand.Next(10);
-                                clone.TimeSpawned = Helper.Time();
-                                curr.CreaturesHere.Add(clone);
-                            }
-                        }
-                    }
-
-                    int placedTraps = 0;
-
-                    if (curr.CreaturesHere.Count > 0) {
-                        List<HunterCreature> uniques = new();
-
-                        for (int i = 0; i < 10; i++) {
-                            if (!curr.TrapsDown.ContainsKey(i))
-                                curr.TrapsDown.Add(i, "");
-                            
-                            if (curr.TrapsDown[i] != "")
-                                placedTraps++;
-                        }
-
-                        for (int i = 0; i < 10; i++) {
-                            ColoredString line = new ColoredString("| ", Color.White, Color.Black);
-
-                            if (curr.TrapsDown[i] != "") {
-                                if (ItemLibrary.TryGetValue(curr.TrapsDown[i], out Item? trap)) {
-                                    line += new ColoredString(trap.Name + " ", Color.White, Color.Black);
-                                } else {
-                                    line += new ColoredString(curr.TrapsDown[i] + " ", Color.DarkSlateGray, Color.Black);
-                                }
-                            } else {
-                                line += new ColoredString("(no trap) ", Color.DarkSlateGray, Color.Black);
-                            }
-
-                            for (int j = 0; j < curr.CreaturesHere.Count; j++) {
-                                bool added = false;
-                                for (int checkToAdd = 0; checkToAdd < uniques.Count; checkToAdd++) {
-                                    if (uniques[checkToAdd].ID == curr.CreaturesHere[j].ID)
-                                        added = true;
-                                }
-                                if (!added)
-                                    uniques.Add(curr.CreaturesHere[j]);
-
-                                if (curr.CreaturesHere[j].TimeLastCaught != 0 && curr.CreaturesHere[j].TimeLastCaught + (curr.CreaturesHere[j].RespawnTime * 1000) > Helper.Time()) {
-                                    continue;
-                                }
-
-                                if (curr.CreaturesHere[j].TimeLastMoved + 1000 < Helper.Time()) {
-                                    int move = GameLoop.rand.Next(3);
-
-                                    if (move == 0) {
-                                        if (curr.CreaturesHere[j].CurrentLane > 0) {
-                                            curr.CreaturesHere[j].CurrentLane--;
-                                        } else {
-                                            curr.CreaturesHere[j].CurrentLane++;
-                                        }
-                                    } else if (move == 1) {
-                                        if (curr.CreaturesHere[j].CurrentLane < 9) {
-                                            curr.CreaturesHere[j].CurrentLane++;
-                                        } else {
-                                            curr.CreaturesHere[j].CurrentLane--;
-                                        }
-                                    }
-
-                                    curr.CreaturesHere[j].TimeLastMoved = Helper.Time();
-
-
-                                    if (curr.TrapsDown.TryGetValue(curr.CreaturesHere[j].CurrentLane, out string? trapID) && trapID != "") {
-                                        if (curr.CreaturesHere[j].CatchID == trapID) {
-                                            if (player.GetEffectiveSkillLevel("Hunter") >= curr.CreaturesHere[j].CatchLevel) {
-                                                int skillMod = player.GetEffectiveSkillLevel("Hunter") - curr.CreaturesHere[j].CatchLevel;
-
-                                                if (player.Equipment.TryGetValue("Ring", out ItemWrapper? eqp) && eqp != null && eqp.ID == "ringPursuit" && GameLoop.rand.Next(4) == 0) {
-                                                    eqp.Charges -= 1; 
-                                                    Log.AddMessage(new ColoredString("Your ring of pursuit empowered the trap!", Color.AntiqueWhite, Color.Black));
-
-                                                    if (eqp.Charges <= 0) { 
-                                                        Log.AddMessage(new ColoredString("Your ring of pursuit runs out of charge and shatters.", Color.Crimson, Color.Black));
-                                                        player.Equipment.Remove("Ring");
-                                                    }
-                                                    skillMod += 25;
-                                                }
-
-                                                int roll = GameLoop.rand.Next(100);
-
-                                                if (roll < 50 + skillMod) {
-                                                    player.TryGrantExp("Hunter", curr.CreaturesHere[j].CatchEXP, Log, SidebarManager.RecentlyTrainedSkills);
-                                                    
-                                                    foreach (var kv in curr.CreaturesHere[j].Drops) {
-                                                        kv.RollDrop(player, null);
-                                                    } 
-
-                                                    curr.CreaturesHere[j].TimeLastCaught = Helper.Time();
-                                                }
-
-                                                if (ItemLibrary.TryGetValue(trapID, out Item? trap) && trap != null) {
-                                                    player.TryPickup(new Item(trap), 1);
-                                                }
-
-                                                curr.TrapsDown[curr.CreaturesHere[j].CurrentLane] = "";
-                                            } else {
-                                                Log.AddMessage("You need " + curr.CreaturesHere[j].CatchLevel + " Hunter to catch these.", Color.Crimson);
-                                            }
-                                        }
-                                    } 
-                                }
-
-
-                                if (curr.CreaturesHere[j].CurrentLane == i) {
-                                    line += new ColoredString("*", curr.CreaturesHere[j].GetColor(), Color.Black);
-                                }
-                            }
-
-                            if (curr.TrapsDown[i] == "") {
-                                mini.Con.PrintClickable(resourceX + 2, resourceY++, line, () => {
-                                    if (ItemUseLogic.UsingSlot != -1) {
-                                        if (player.Inventory.Count > ItemUseLogic.UsingSlot) {
-                                            if (placedTraps < 3) {
-                                                curr.TrapsDown[i] = player.Inventory[ItemUseLogic.UsingSlot].ID;
-                                                player.Inventory.RemoveAt(ItemUseLogic.UsingSlot);
-                                                ItemUseLogic.UsingSlot = -1;
-                                            } else {
-                                                Log.AddMessage("You can only place up to 3 traps in a location.", Color.Crimson);
-                                            }
-                                        }
-                                    }
-                                });
-                            } else {
-                                mini.Con.PrintClickable(resourceX + 2, resourceY++, line, () => {
-                                    if (ItemLibrary.TryGetValue(curr.TrapsDown[i], out Item? trap) && trap != null) {
-                                        player.TryPickup(new Item(trap), 1);
-                                    }
-
-                                    curr.TrapsDown[i] = "";
-                                });
-                            }
-                        }
-
-                        for (int i = 0; i < uniques.Count; i++) {
-                            ColoredString line = new ColoredString("* " + uniques[i].Name + " [" + uniques[i].CatchLevel + ", " + ResolveItemName(uniques[i].CatchID) + "]", uniques[i].GetColor(), Color.Black);
-                            mini.Con.Print(resourceX + 2, 34 - i, line);
-                        }
-                    } else {
-                        mini.Con.Print(resourceX + 2, resourceY, "|");
-                        mini.Con.Print(resourceX + 4, resourceY++, "(no hunter creatures here)", Color.DarkSlateGray);
-                    }
-                }
+                }  
                 else if (SelectedMenu == "Minigame") {
                     MinigameManager.Draw(mini, player, resourceX, resourceY);
-                }
-
-                if (curr.MinigameID == "MageEnchanting") {
-                    if (MinigameManager.MTA_Timer + 60000 < Helper.Time()) { MinigameManager.MTA_Timer = Helper.Time(); MinigameManager.MTA_Special = MinigameManager.MTA_Types[GameLoop.rand.Next(MinigameManager.MTA_Types.Count)]; }
-                }
-
-                if (curr.MinigameID == "MageGraveyard") { 
-                    if (MinigameManager.MTA_Timer + 60000 < Helper.Time()) { MinigameManager.MTA_Timer = Helper.Time(); MinigameManager.MTA_Bones.Shuffle(); }
-                    if (MinigameManager.MTA_BoneTimer + 5000 < Helper.Time()) { MinigameManager.MTA_BoneTimer = Helper.Time(); player.TakeDamage(2, GameLoop.ZPO.Log); GameLoop.ZPO.Log.AddMessage("You take two damage from the falling bones!", Color.Crimson); }
-                } 
-
-                if (curr.MinigameID == "MageAlchemist") {
-                    if (MinigameManager.MTA_Timer + 60000 < Helper.Time()) { MinigameManager.MTA_Timer = Helper.Time(); MinigameManager.MTA_Alchs.Shuffle(); MinigameManager.MTA_FreeAlch = GameLoop.rand.Next(MinigameManager.MTA_Alchs.Count); }
                 }
             }
 
@@ -491,14 +329,14 @@ namespace WorldtreeNexus {
                 if (SidebarManager.LastPerformedRecipe == null) { 
                     mini.Con.Print(0, 35, "(no recent recipe)", Color.DarkSlateGray);
                 } else {
-                    if (GameLoop.ZPO.UseRecipes.TryGetValue(SidebarManager.LastPerformedRecipe, out Recipe? rec)) {
-                        if (GameLoop.ZPO.ResolveItem(rec.OutputItem) is Item output) {
+                    if (GameLoop.WTN.UseRecipes.TryGetValue(SidebarManager.LastPerformedRecipe, out Recipe? rec)) {
+                        if (GameLoop.WTN.ResolveItem(rec.OutputItem) is Item output) {
                             mini.Con.PrintClickable(0, 35, new ColoredString(236.AsString(), Color.MediumPurple, Color.Black), () => {
                                 bool anySuccess = false;
                                 while (ItemUseLogic.TryCombineItems(player, rec.FirstItem, rec.SecondItem)) { anySuccess = true; }
                                 
                                 if (!anySuccess)
-                                    GameLoop.ZPO.Log.AddMessage("You don't seem to have those items anymore.", Color.Crimson);    
+                                    GameLoop.WTN.Log.AddMessage("You don't seem to have those items anymore.", Color.Crimson);    
                             });
 
                             mini.Con.PrintClickable(2, 35, new ColoredString("?", Color.MediumPurple, Color.Black), () => { 
@@ -507,7 +345,7 @@ namespace WorldtreeNexus {
 
                             mini.Con.PrintClickable(4, 35, "Repeat Last Recipe", () => { 
                                 if (!ItemUseLogic.TryCombineItems(player, rec.FirstItem, rec.SecondItem)) {
-                                    GameLoop.ZPO.Log.AddMessage("You don't seem to have those items anymore.", Color.Crimson);    
+                                    GameLoop.WTN.Log.AddMessage("You don't seem to have those items anymore.", Color.Crimson);    
                                 }
                             });
                         } else {
@@ -518,14 +356,14 @@ namespace WorldtreeNexus {
                     }
                 }
 
-                 if (SidebarManager.LastFoundRecipe != null && GameLoop.ZPO.UseRecipes.TryGetValue(SidebarManager.LastFoundRecipe, out Recipe? rec2)) {
-                    if (GameLoop.ZPO.ResolveItem(rec2.OutputItem) is Item output) {
+                 if (SidebarManager.LastFoundRecipe != null && GameLoop.WTN.UseRecipes.TryGetValue(SidebarManager.LastFoundRecipe, out Recipe? rec2)) { 
+                    if (GameLoop.WTN.ResolveItem(rec2.OutputItem) is Item output) {
                         mini.Con.PrintClickable(33, 35, new ColoredString(236.AsString(), Color.MediumPurple, Color.Black), () => {
                                 bool anySuccess = false;
                                 while (ItemUseLogic.TryCombineItems(player, rec2.FirstItem, rec2.SecondItem)) { anySuccess = true; }
                                 
                                 if (!anySuccess)
-                                    GameLoop.ZPO.Log.AddMessage("You don't seem to have those items anymore.", Color.Crimson);
+                                    GameLoop.WTN.Log.AddMessage("You don't seem to have those items anymore.", Color.Crimson);
                             });
 
                             mini.Con.PrintClickable(35, 35, new ColoredString("?", Color.MediumPurple, Color.Black), () => { 
@@ -534,11 +372,11 @@ namespace WorldtreeNexus {
 
                             mini.Con.PrintClickable(37, 35, "First Found Recipe", () => { 
                                 if (!ItemUseLogic.TryCombineItems(player, rec2.FirstItem, rec2.SecondItem)) {
-                                    GameLoop.ZPO.Log.AddMessage("You don't seem to have those items anymore.", Color.Crimson);
+                                    GameLoop.WTN.Log.AddMessage("You don't seem to have those items anymore.", Color.Crimson);
                                 }    
                             });
                     } else {
-                        mini.Con.Print(40, 35, "(recipe broken)", Color.DarkSlateGray);
+                        mini.Con.Print(40, 35, "(recipe broken)", Color.DarkSlateGray); 
                     }
                 } else {
                     mini.Con.Print(37, 35, "(no recipes found)", Color.DarkSlateGray);
@@ -629,59 +467,30 @@ namespace WorldtreeNexus {
             LogDraw(mini);
             LocationDraw(mini);  
 
-            if (ExtraWindows.CollectionLog.IsVisible)
-                ExtraWindows.CollectionLogDraw();
+            if (ExtraWindows.CollectionLog.IsVisible) { ExtraWindows.CollectionLogDraw(); }  
+            if (ExtraWindows.Guide.IsVisible) {  ExtraWindows.GuideDraw(); } 
+            if (ExtraWindows.CraftingMenu.IsVisible) { ExtraWindows.CraftingMenuDraw(); } 
+            if (ExtraWindows.Quests.IsVisible) { ExtraWindows.QuestDraw(); } 
+            if (ExtraWindows.Compendium.IsVisible) { ExtraWindows.CompendiumDraw(); }
 
-            if (ExtraWindows.Guide.IsVisible)
-                ExtraWindows.GuideDraw();
-             
-            if (ExtraWindows.CraftingMenu.IsVisible)
-                ExtraWindows.CraftingMenuDraw();
+            if (ExtraWindows.Map.IsVisible) { ExtraWindows.MapDraw(); } 
+            if (ExtraWindows.Debug.IsVisible) { ExtraWindows.DebugDraw(); } 
+            if (ExtraWindows.Clue.IsVisible) { ExtraWindows.ClueDraw(); } 
+            if (ExtraWindows.Teleport.IsVisible) { ExtraWindows.TeleportDraw(); } 
+            if (ExtraWindows.InventoryContainer.IsVisible) { ExtraWindows.InventoryContainerDraw(); } 
+            if (ExtraWindows.Book.IsVisible) { ExtraWindows.BookDraw(); } 
+            if (ExtraWindows.Cutscene.IsVisible) { ExtraWindows.CutsceneDraw(); } 
+            if (ExtraWindows.Shop.IsVisible) { ExtraWindows.ShopDraw(); }
 
-            if (ExtraWindows.Quests.IsVisible)
-                ExtraWindows.QuestDraw();
-            
-            if (ExtraWindows.Compendium.IsVisible)
-                ExtraWindows.CompendiumDraw();
+            if (ExtraWindows.LampMenu.IsVisible) { ExtraWindows.LampDraw(); } 
+            if (ExtraWindows.TradeHall.IsVisible) { ExtraWindows.TradeHallDraw(); }
 
-            if (ExtraWindows.Map.IsVisible)
-                ExtraWindows.MapDraw();
+            if (ExtraWindows.CatMenu.IsVisible) { ExtraWindows.CatDraw(); } 
+            if (ExtraWindows.HouseMenu.IsVisible) { ExtraWindows.HouseDraw(); }
 
-            if (ExtraWindows.Debug.IsVisible)
-                ExtraWindows.DebugDraw();
-
-            if (ExtraWindows.Clue.IsVisible)
-                ExtraWindows.ClueDraw();
-
-            if (ExtraWindows.Teleport.IsVisible)
-                ExtraWindows.TeleportDraw();
-
-            if (ExtraWindows.InventoryContainer.IsVisible)
-                ExtraWindows.InventoryContainerDraw();
-
-            if (ExtraWindows.Book.IsVisible)
-                ExtraWindows.BookDraw();
-
-            if (ExtraWindows.Cutscene.IsVisible)
-                ExtraWindows.CutsceneDraw();
-
-            if (ExtraWindows.Shop.IsVisible)
-                ExtraWindows.ShopDraw();
-
-            if (ExtraWindows.LampMenu.IsVisible)
-                ExtraWindows.LampDraw();
-
-            if (ExtraWindows.GrandExchange.IsVisible)
-                ExtraWindows.GrandExchangeDraw();
-
-            if (ExtraWindows.CatMenu.IsVisible)
-                ExtraWindows.CatDraw();
-
-            if (ExtraWindows.HouseMenu.IsVisible)
-                ExtraWindows.HouseDraw();
-
-            if (ExtraWindows.Compass.IsVisible)
-                ExtraWindows.CompassDraw();
+            if (ExtraWindows.Compass.IsVisible) { ExtraWindows.CompassDraw(); } 
+            if (ExtraWindows.Alchemy.IsVisible) { ExtraWindows.AlchemyDraw(); } 
+            if (ExtraWindows.Talisman.IsVisible) { ExtraWindows.TalismanDraw(); }
 
             if (TimeLastTicked + 1000 < Helper.Time()) {
                 TickTime();
@@ -801,24 +610,27 @@ namespace WorldtreeNexus {
 
                 //player.GiveGold(10000);
 
-                //Item knives = new Item(ItemLibrary["knivesBronze"]);
+                //Item knives = new Item(ItemLibrary["knivesCopper"]);
                 //knives.Quantity = 500;
                 //player.TryPickup(new Item(ItemLibrary["potionRestore"]), 1);
                 //player.TryPickup(new Item(ItemLibrary["fleshRotten"]), 5);
                 //player.TryPickup(new Item(ItemLibrary["beadYellow"]), 1);
                 //player.TryPickup(new Item(ItemLibrary["beadBlack"]), 1);
-                //player.TryPickup(new Item(ItemLibrary["hatchetBronze"]), 1);
+                //player.TryPickup(new Item(ItemLibrary["hatchetCopper"]), 1);
                  //player.TryPickup(new Item(ItemLibrary["staffAir"]), 1);
                  //player.TryPickup(new Item(ItemLibrary["pouchRune"]), 1);                       
                 
-               // player.TryPickup(new Item(ItemLibrary["wizardBlueRobeG"]), 1); 
-
-               //player.TryPickup(new Item(ItemLibrary["tabstrikeWind"]) { Quantity = 5}, 5);   
+               // player.TryPickup(new Item(ItemLibrary["vialWater"]), 2);  
+               // player.TryPickup(new Item(ItemLibrary["cleanNeela"]), 1);  
+              //  player.TryPickup(new Item(ItemLibrary["inkNoviceMetal"]), 20);  
+              //  player.TryPickup(new Item(ItemLibrary["inkNoviceImbued"]), 20); 
                 
 
               //  player.CurrentClueBeginner = "B_CharlieMining";
                 //player.TryPickup(new Item(ItemLibrary["vialWater"]), 1);  
-                //player.TryPickup(new Item(ItemLibrary["cadava"]), 1);  
+                
+                player.TryPickup(new Item(ItemLibrary["talismanMetal"]), 100);  
+                player.TryPickup(new Item(ItemLibrary["talismanDestruction"]), 100);  
                 
 
                 //player.NavLoc = "MIST_VarrockPalaceBailey";
@@ -828,8 +640,8 @@ namespace WorldtreeNexus {
 
 
                // player.TryPickup(new Item(ItemLibrary["tiaraWater"]), 1);   
-               //   player.TryPickup(new Item(ItemLibrary["logPine"]), 1);   
-               // player.TryGrantExp("Runecrafting", 10000, Log, SidebarManager.RecentlyTrainedSkills);
+               //   player.TryPickup(new Item(ItemLibrary["wandAcacia"]), 1);   
+                //player.TryGrantExp("Magic", 190_000, Log, SidebarManager.RecentlyTrainedSkills);
 
                 //player.TryGrantExp("Agility", 1000, Log, SidebarManager.RecentlyTrainedSkills);
 
@@ -900,9 +712,7 @@ namespace WorldtreeNexus {
                         }
                     }
                 }
-            }
-
-
+            } 
 
             for (int i = player.ActivePotions.Count - 1; i >= 0; i--) {
                 if (player.ActivePotions[i].Stat != "Well Rested") {
@@ -920,14 +730,6 @@ namespace WorldtreeNexus {
                             player.ActivePotions.RemoveAt(i);
                         }
                     }
-                }
-            }
-
-            if (player.TotalActivePrayers() > player.GetEffectiveSkillLevel("Prayer")) {
-                List<Prayer> Active = player.Prayers.Values.Where(o => o.Active).OrderBy(o => o.Level).ToList();
-                
-                if (Active.Count > 0) {
-                    Active[0].Active = false;
                 }
             }
 
@@ -976,7 +778,7 @@ namespace WorldtreeNexus {
 
             if (player.Inventory.Count > 1) { 
                 bool found = false;
-                foreach (var kv in UseRecipes) {
+                foreach (var kv in UseRecipes.Where(o => !o.Value.OutputItem.Contains("_")).ToList()) {
                     if (player.HasAllItems(new() { kv.Value.FirstItem + "," + Math.Max(1, kv.Value.FirstQty), kv.Value.SecondItem + "," + Math.Max(1, kv.Value.SecondQty)})) {
                         if (kv.Value.NeededTool == "" || player.HasAllItems([kv.Value.NeededTool + ",1"])) {
                             SidebarManager.LastFoundRecipe = new(kv.Key.first, kv.Key.second); 
@@ -990,24 +792,16 @@ namespace WorldtreeNexus {
                     SidebarManager.LastFoundRecipe = null;
             }
 
-            if (player.QuestLog.TryGetValue("MI_ShieldOfArrav", out QuestStatus? arrav) && arrav.CurrentStage != 50 && arrav.CurrentStage != -1) {
-                if (arrav.CurrentStage < 20 && !player.HasAllItems(["arravShieldLeft,1", "arravShieldRight,1"]) && (player.HasAllItems(["arravShieldLeft,1"]) || player.HasAllItems(["arravShieldRight,1"]))) {
-                    player.TryProgressQuest("MI_ShieldOfArrav", 20);
-                } 
-                if (arrav.CurrentStage < 30 && player.HasAllItems(["arravShieldLeft,1", "arravShieldRight,1"])) { player.TryProgressQuest("MI_ShieldOfArrav", 30); } 
-                if (arrav.CurrentStage < 40 && player.HasAllItems(["arravShield,1"])) { player.TryProgressQuest("MI_ShieldOfArrav", 40); }
-            }
-
-            if (player.ActiveGE.Count > 0) {
-                foreach (var ge in player.ActiveGE) {
+            if (player.ActiveTH.Count > 0) {
+                foreach (var ge in player.ActiveTH) {
                     if (!ge.Resolved) {
                         if (ge.PerSecondDenom() > 0) {
                             if (GameLoop.rand.Next(ge.PerSecondDenom()) == 0) {
                                 ge.Resolved = true;
                                 if (ge.Buying) {
-                                    Log.AddMessage("Grand Exchange: Bought " + ge.Wrap.Quantity + "x " + ResolveItemName(ge.Wrap.ID) + " for " + (ge.Wrap.Quantity * ge.ListPrice) + "gp.", Color.Lime);
+                                    Log.AddMessage("Trade Hall: Bought " + ge.Wrap.Quantity + "x " + ResolveItemName(ge.Wrap.ID) + " for " + (ge.Wrap.Quantity * ge.ListPrice) + "gp.", Color.Lime);
                                 } else {
-                                    Log.AddMessage("Grand Exchange: Sold " + ge.Wrap.Quantity + "x " + ResolveItemName(ge.Wrap.ID) + " for " + (ge.Wrap.Quantity * ge.ListPrice) + "gp.", Color.Lime);
+                                    Log.AddMessage("Trade Hall: Sold " + ge.Wrap.Quantity + "x " + ResolveItemName(ge.Wrap.ID) + " for " + (ge.Wrap.Quantity * ge.ListPrice) + "gp.", Color.Lime);
                                 }
                             }
                         }
@@ -1015,26 +809,26 @@ namespace WorldtreeNexus {
                 }
             }
 
-            if (player.MahoganyDestID != "" ) {
-                if (Atlas.TryGetValue(player.MahoganyDestID, out Location? dest) && dest != null) {
+            if (player.CozyDestID != "" ) {
+                if (Atlas.TryGetValue(player.CozyDestID, out Location? dest) && dest != null) {
                     if (Atlas.TryGetValue(player.NavLoc, out Location? curr) && curr != null) {
-                        if (dest.MahoganyTown == "Tutorial Island" && curr.Region != "Tutorial Island") { // If they had a contract active when they left tutorial island, clear it
-                            player.MahoganyDestID = "";
-                            player.MahoganyContractSpots.Clear();
+                        if (dest.CozyTown == "Tutorial Island" && curr.Region != "Tutorial Island") { // If they had a contract active when they left Tutorial Island, clear it
+                            player.CozyDestID = "";
+                            player.CozyContractSpots.Clear();
                         }
 
-                        if (player.MahoganyContractSpots.Count > 0 && player.MahoganyContractSpots.Where(o => !o.Repaired).ToList().Count == 0) { // All spots are repaired, resolve contract
-                            double avg = player.MahoganyConstructionTotal / 5.0; // get average level spent on each spot, in case the player didn't do the same level across the board for some reason
+                        if (player.CozyContractSpots.Count > 0 && player.CozyContractSpots.Where(o => !o.Repaired).ToList().Count == 0) { // All spots are repaired, resolve contract
+                            double avg = player.CozyPointTotal / 5.0; // get average level spent on each spot, in case the player didn't do the same level across the board for some reason
                             avg = avg / 10.0; // turn it into a tier;
                             avg = Math.Floor(avg) + 1; // floor it and add 1. Level 1 at this point is now worth 1, Level 10 worth 2, up to Level 90 materials worth 10.
 
                             player.TryGrantExp("Construction", (int) avg * 450, Log, SidebarManager.RecentlyTrainedSkills); // Grant 450 exp per tier of resource spent
-                            player.MahoganyDestID = ""; // Clear the destination ID
-                            player.MahoganyContractSpots.Clear(); // Clear their hotspot list so a new contract can be taken
+                            player.CozyDestID = ""; // Clear the destination ID
+                            player.CozyContractSpots.Clear(); // Clear their hotspot list so a new contract can be taken
 
-                            player.MahoganyPoints += ((int) avg + 1); // Gain reward points equal to tier plus 1.
+                            player.CozyRewardPoints += ((int) avg + 1); // Gain reward points equal to tier plus 1.
 
-                            Log.AddMessage("You finished your Mahogany Homes contract, earning " + ((int) avg * 450) + " Construction experience and " + (int) avg + " reward points.", Color.Green);
+                            Log.AddMessage("You finished your Cozy Cottages contract, earning " + ((int) avg * 450) + " Construction experience and " + (int) avg + " reward points.", Color.Green);
                         }
                     }
                 } 
@@ -1051,108 +845,17 @@ namespace WorldtreeNexus {
 
                 Log.AddMessage("You no longer feel quite as well rested.", Color.Crimson);
             }
-
-            if (player.TimeLastStar == 0 || player.TimeLastStar + 5400 < player.SecondsPlayed) { // At the start and every 90 minutes played, crumble the old star (if it exists) and drop a new one.
-                if (player.CurrentStarLoc != "") { // Star already exists, check if a notif is needed and then wipe it
-                    if (player.CurrentStarLoc == player.NavLoc) {
-                        Log.AddMessage("The crashed star crumbles away to dust, leaving nothing behind.", Color.Turquoise);
-                        player.CurrentStarLoc = ""; 
-                    }
-                }
-
-                List<string> PossibleLandingSites = [ // TODO: Add more shooting star lands as the regions are added
-                    "DES_AlKharidMine",
-                    "DES_AlKharidBank",
-                    //"DES_UzerMine",
-                    //"DES_DesertQuarry",
-                    //"DES_AgilityPyramidMine",
-                    //"DES_Nardah", 
-                    "DES_AlKharidMineOutside",
-
-                    "MIST_LumbridgeSwamp23",
-                    "MIST_LumbridgeSwamp18",
-                    "MIST_DraynorOutskirtsSouth",
-                    "MIST_VarrockSouthEast",
-                    "MIST_VarrockMineEast",
-                    "MIST_VarrockMineWest"
-                ];
-
-                player.CurrentStarLoc = PossibleLandingSites[GameLoop.rand.Next(PossibleLandingSites.Count)];
-                player.CurrentStarTier = 0;
-                player.TimeLastStar = player.SecondsPlayed;
-
-                if (player.CurrentStarLoc == player.NavLoc) {
-                    Log.AddMessage("You hear a dull roar from above, then a small explosion as a shooting star crashes into the ground nearby.", Color.Turquoise);
-                }
-            }
-
-            if (player.CurrentStarLoc != "") {
-                int secondsToNext = (player.TimeLastStar + 4200) - player.SecondsPlayed;
-
-                int oldTier = player.CurrentStarTier;
-                player.CurrentStarTier = 10 - (int) Math.Round(secondsToNext / 420.0); // This will hopefully result in tier 0 when it falls, down to tier 10 at less than 6 minutes left
-
-                if (oldTier != player.CurrentStarTier && player.CurrentStarLoc == player.NavLoc) {
-                    if (oldTier <= 10) {
-                        Log.AddMessage("The outermost layer of the crashed star crumbles away, exposing a harder layer.", Color.Yellow);
-                    } else { 
-                        Log.AddMessage("The crashed star crumbles away to dust, leaving nothing behind.", Color.Turquoise);
-                        player.CurrentStarLoc = "";  
-                    }
-                }
-            }
-
-            if (player.CurrentStarLoc != "" && player.CurrentStarLoc == player.NavLoc) {
-                if (player.MiningStar) {
-                    int currLevel = (player.CurrentStarTier == 0 ? 1 : player.CurrentStarTier * 10);
-
-                    bool hasPick = false;
-                    foreach (var kv in player.Equipment) {
-                        if (kv.Value.GetRef() is Item eqp && eqp.MiscString == "Pickaxe") {
-                            if (eqp.EquipLevel <= player.GetEffectiveSkillLevel("Mining")) { 
-                                hasPick = true;
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < player.Inventory.Count; i++) {
-                        if (player.Inventory[i].GetRef() is Item inv && inv.MiscString == "Pickaxe") {
-                            if (inv.EquipLevel <= player.GetEffectiveSkillLevel("Mining")) {
-                                hasPick = true;
-                            }
-                        }
-                    } 
-
-                    if (!hasPick) {
-                        Log.AddMessage("You need a pickaxe to keep mining the crashed star.", Color.Crimson);
-                        player.MiningStar = false;
-                    }
-
-                    if (player.GetEffectiveSkillLevel("Mining") < currLevel) { 
-                        Log.AddMessage("You need level " + currLevel + " Mining to keep mining the crashed star.", Color.Crimson);
-                        player.MiningStar = false;
-                    }
-
-                    if (player.MiningStar) {
-                        if (GameLoop.rand.Next(100) < 30 + (player.GetEffectiveSkillLevel("Mining") / 6)) {
-                            player.TryGrantExp("Mining", 32, Log, SidebarManager.RecentlyTrainedSkills);
-                            Log.AddMessage("You get a bit of stardust from the crashed star.", Color.Crimson);
-                            
-                            if (ResolveItem("stardust") is Item stardust) {
-                                player.TryPickup(stardust, 1);
-                            }
-                        }
-                    }
-                }
+            
+            if (player.Clock != null) {
+                player.Clock.Tick();
             } else {
-                player.MiningStar = false;
+                player.Clock = new();
             }
         }
 
         public void HardResetPlayer() {
             player = new();
-            TryAddSkills();
-            TryAddPrayers(); 
+            TryAddSkills(); 
             player.CurrentHP = 10;
 
             TrySetupLogs();
@@ -1168,9 +871,7 @@ namespace WorldtreeNexus {
             player.Equipment.Clear();
 
             player.Skills.Clear();
-            TryAddSkills();
-            player.Prayers.Clear();
-            TryAddPrayers(); 
+            TryAddSkills(); 
             player.CurrentHP = 10;
 
 
@@ -1186,11 +887,7 @@ namespace WorldtreeNexus {
             
             foreach (var patch in player.FarmingPatches) {
                 patch.Value.ClearPatch();
-            }
-
-            foreach (var prayer in player.Prayers) {
-                prayer.Value.Active = false;
-            }
+            } 
              
             Log.AddMessage(new ColoredString("Character soft-reset complete.", Color.Turquoise, Color.Black));
         }
@@ -1223,18 +920,19 @@ namespace WorldtreeNexus {
             UseRecipes.Clear();
             MonsterLibrary.Clear();
             Atlas.Clear();
-            NPCLibrary.Clear();
-            PrayerLibrary.Clear();
+            NPCLibrary.Clear(); 
             player.FarmingPatches.Clear();
             ClueStepLibrary.Clear();
             CraftLib.Clear();
             QuestLibrary.Clear();
-            BossLibrary.Clear();
-            HunterLibrary.Clear();
+            BossLibrary.Clear(); 
             BookLibrary.Clear();
             CutsceneLibrary.Clear();
             M_HotspotLib.Clear();
             POH_ObjectLib.Clear();
+            PotionRecipeLibrary.Clear();
+            TalismanLibrary.Clear();
+            PrayerLibrary.Clear();
              
             SpellLibrary.Clear();
             HardcodedSpells.InitSpells(SpellLibrary);
@@ -1249,6 +947,9 @@ namespace WorldtreeNexus {
             HardcodedItemsMinigames.InitItems(ItemLibrary);
             HardcodedItemsHoliday.InitItems(ItemLibrary);
             HardcodedItemsPets.InitItems(ItemLibrary);
+            ItemsAlchemy.InitItems(ItemLibrary);
+            ItemsMagic.InitItems(ItemLibrary, SpellLibrary);
+            ItemsPrayer.InitItems(ItemLibrary);
 
 
             HardcodedGathering.InitGathers(GatherSpots);
@@ -1257,30 +958,25 @@ namespace WorldtreeNexus {
             HardcodedMonsters.InitMonsters(MonsterLibrary);
 
             HardcodedLocations.InitLocs(Atlas, GatherSpots, MonsterLibrary);
-            HardcodedLocationsTutorial.InitLocs(Atlas, GatherSpots, MonsterLibrary);
-            LocationsDesert.InitLocs(Atlas, GatherSpots, MonsterLibrary);
-            LocationsVarrock.InitLocs(Atlas, GatherSpots, MonsterLibrary);
-            LocationsLumbridge.InitLocs(Atlas, GatherSpots, MonsterLibrary);
-            LocationsDraynor.InitLocs(Atlas, GatherSpots, MonsterLibrary);
+            LocationsTutorial.InitLocs(Atlas, GatherSpots, MonsterLibrary);
 
             HardcodedNPCs.InitNPCs(NPCLibrary);
-            HardcodedNPCsLumbridgeDraynor.InitNPCs(NPCLibrary);
-            HardcodedNPCsVarrock.InitNPCs(NPCLibrary);
-            HardcodedNPCsAlKharid.InitNPCs(NPCLibrary);
-            HardcodedNPCsTutorial.InitNPCs(NPCLibrary);
-
-            HardcodedPrayers.InitPrayers(PrayerLibrary);
+            TutorialNPCs.InitNPCs(NPCLibrary);
+             
             HardcodedFarmPatches.InitPatches(player.FarmingPatches);
             HardcodedClueSteps.InitClues(ClueStepLibrary);
             HardcodedCraftRecipes.InitCrafts(CraftLib, SpellLibrary);
             HardcodedQuests.InitQuests(QuestLibrary);
-            HardcodedBosses.InitBosses(BossLibrary);
-            HardcodedHunter.InitHunter(HunterLibrary);
+            HardcodedBosses.InitBosses(BossLibrary); 
             HardcodedBooks.InitBooks(BookLibrary);
             HardcodedCutscenes.InitCutscenes(CutsceneLibrary);
 
-            HardcodedMahoganyHotspots.InitSpots(M_HotspotLib);
+            CozyCottagesHotspots.InitSpots(M_HotspotLib);
             HardcodedPOHObjects.InitPOHObjects(POH_ObjectLib, SpellLibrary, Atlas);
+
+            PotionRecipes.InitRecipes(PotionRecipeLibrary);
+            Talismans.InitTalismans(TalismanLibrary);
+            Prayers.InitPrayers(PrayerLibrary);
         }
 
         public Item? ResolveItem(string ID) {
@@ -1352,7 +1048,8 @@ namespace WorldtreeNexus {
                 if (wrap.GetRef() is Item item) {
                     bool found = false;
                     for (int i = 0; i < curr.ItemsHere.Count; i++) {
-                        if (curr.ItemsHere[i].ID == wrap.ID && wrap.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].Inaccessible == wrap.Inaccessible) {
+                        if (curr.ItemsHere[i].ID == wrap.ID && wrap.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].Inaccessible == wrap.Inaccessible
+                            && (curr.ItemsHere[i].Alchemy == null || item.Alchemy == null || (curr.ItemsHere[i].Alchemy.CheckMatch(item.Alchemy)))) {
                             curr.ItemsHere[i].Quantity += wrap.Quantity;
                             found = true;
                             break;
@@ -1387,37 +1084,35 @@ namespace WorldtreeNexus {
         }
 
          public void TryAddSkills() {
-            player.Skills.TryAdd("Woodcutting", new Skill("Woodcutting"));
-            player.Skills.TryAdd("Mining", new Skill("Mining"));
-            player.Skills.TryAdd("Smithing", new Skill("Smithing"));
-            player.Skills.TryAdd("Thieving", new Skill("Thieving"));
-            player.Skills.TryAdd("Cooking", new Skill("Cooking"));
-            player.Skills.TryAdd("Fishing", new Skill("Fishing"));
-            player.Skills.TryAdd("Runecrafting", new Skill("Runecrafting"));
-            player.Skills.TryAdd("Crafting", new Skill("Crafting"));
-            player.Skills.TryAdd("Farming", new Skill("Farming"));
-            player.Skills.TryAdd("Herblore", new Skill("Herblore"));
             player.Skills.TryAdd("Agility", new Skill("Agility"));
-            player.Skills.TryAdd("Firemaking", new Skill("Firemaking"));
-            player.Skills.TryAdd("Fletching", new Skill("Fletching"));
-            player.Skills.TryAdd("Dungeoneering", new Skill("Dungeoneering"));
-            player.Skills.TryAdd("Hunter", new Skill("Hunter"));
-            player.Skills.TryAdd("Slayer", new Skill("Slayer"));
+            player.Skills.TryAdd("Alchemy", new Skill("Alchemy")); 
+            player.Skills.TryAdd("Attack", new Skill("Attack")); 
+            
             player.Skills.TryAdd("Construction", new Skill("Construction"));
+            player.Skills.TryAdd("Cooking", new Skill("Cooking"));  
+            player.Skills.TryAdd("Crafting", new Skill("Crafting"));
 
-            player.Skills.TryAdd("Constitution", new Skill("Constitution") { Level = 10, Exp = 1155 });
-            player.Skills.TryAdd("Attack", new Skill("Attack"));
-            player.Skills.TryAdd("Strength", new Skill("Strength"));
-            player.Skills.TryAdd("Defense", new Skill("Defense"));
-            player.Skills.TryAdd("Prayer", new Skill("Prayer"));
-            player.Skills.TryAdd("Ranged", new Skill("Ranged"));
-            player.Skills.TryAdd("Magic", new Skill("Magic"));
-        }
+            player.Skills.TryAdd("Defense", new Skill("Defense")); 
+            
+            player.Skills.TryAdd("Hitpoints", new Skill("Hitpoints") { Level = 10, Exp = 787 });
 
-        public void TryAddPrayers() { 
-            foreach (var kv in PrayerLibrary) {
-                player.Prayers.TryAdd(kv.Key, kv.Value);
-            }
+            player.Skills.TryAdd("Farming", new Skill("Farming")); 
+            player.Skills.TryAdd("Fishing", new Skill("Fishing")); 
+            player.Skills.TryAdd("Fletching", new Skill("Fletching"));
+
+            player.Skills.TryAdd("Magic", new Skill("Magic")); 
+            player.Skills.TryAdd("Mining", new Skill("Mining")); 
+            
+            player.Skills.TryAdd("Prayer", new Skill("Prayer")); 
+            
+            player.Skills.TryAdd("Ranged", new Skill("Ranged"));  
+
+            player.Skills.TryAdd("Smithing", new Skill("Smithing")); 
+            player.Skills.TryAdd("Strength", new Skill("Strength"));  
+
+            player.Skills.TryAdd("Thieving", new Skill("Thieving"));  
+
+            player.Skills.TryAdd("Woodcutting", new Skill("Woodcutting"));  
         } 
 
         public void TrySetupLogs() { 

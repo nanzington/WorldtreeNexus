@@ -11,7 +11,7 @@
         public bool CheckReq() {
             if (Reqs != null) {
                 foreach (var kv in Reqs) {
-                    if (!kv.CheckRequirement(GameLoop.ZPO.player, false, true)) {
+                    if (!kv.CheckRequirement(GameLoop.WTN.player, false, true)) {
                         return false;
                     }
                 } 
