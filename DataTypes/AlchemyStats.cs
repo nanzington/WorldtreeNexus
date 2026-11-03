@@ -8,18 +8,22 @@ namespace WorldtreeNexus.DataTypes {
         public int White = 0;
         public int Level = 0;
 
+        public string ReturnID = ""; // If set to something, when used as an ingredient, gives back one of this item ID. For vials of things etc
+
         public List<string> ActionsTaken = new();
         public List<string> Ingredients = new();
 
         [JsonConstructor]
         public AlchemyStats() {}
 
-        public AlchemyStats(int r, int b, int y, int w, int lev) {
+        public AlchemyStats(int r, int b, int y, int w, int lev, string ret = "") {
             Red = r;
             Black = b;
             Yellow = y;
             White = w;
             Level = lev;
+
+            ReturnID = ret;
         }
 
         public AlchemyStats(AlchemyStats other) {
@@ -28,6 +32,8 @@ namespace WorldtreeNexus.DataTypes {
             Yellow = other.Yellow;
             White = other.White;
             Level = other.Level;
+
+            ReturnID = other.ReturnID;
 
             ActionsTaken = new(other.ActionsTaken);
             Ingredients = new(other.Ingredients);
@@ -61,6 +67,10 @@ namespace WorldtreeNexus.DataTypes {
             };
 
             return output;
+        }
+
+        public int Total() {
+            return Math.Abs(Red) + Math.Abs(Black) + Math.Abs(Yellow) + Math.Abs(White);
         }
     }
 }

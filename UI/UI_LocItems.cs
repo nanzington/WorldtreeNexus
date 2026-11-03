@@ -47,9 +47,7 @@ namespace WorldtreeNexus.UI {
 
                             name += item.Quantity > 1 ? " x" + item.Quantity : "";
 
-                            if (item.Noted) {
-                                name += " (n)";
-                            }
+                            if (item.Noted) { name += " (n)"; } 
 
                             if (item.Name.Contains("potion") && item.UseInt4 != 0) {
                                 name += " (" + item.UseInt4 + " doses)";
@@ -58,7 +56,7 @@ namespace WorldtreeNexus.UI {
                             bool picked = false;
 
                             mini.Con.Print(resourceX + 2, resourceY, "|");
-                            mini.Con.PrintClickable(resourceX + 4, resourceY, new ColoredString(name, item.GetColor(), item.ColorSum() < 50 ? Color.White : Color.Black), () => { 
+                            mini.Con.PrintClickable(resourceX + 4, resourceY, item.GetNameCS(player.BankedItems[i].Quantity, 0, player.BankedItems[i].Charges, player.BankedItems[i].Noted, player.BankedItems[i]), () => { 
                                 int qty = 1;
 
                                 if (Helper.EitherShift())
@@ -179,7 +177,7 @@ namespace WorldtreeNexus.UI {
                             }
                         }
 
-                        mini.Con.PrintClickable(resourceX + 4, resourceY, new ColoredString(name, item.GetColor(), item.ColorSum() < 50 ? Color.White : Color.Black), () => { 
+                        mini.Con.PrintClickable(resourceX + 4, resourceY, item.GetNameCS(curr.ItemsHere[i].Quantity, 0, curr.ItemsHere[i].UseInt4, curr.ItemsHere[i].Noted), () => { 
                             int qty = 1;
 
                             if (Helper.EitherShift())

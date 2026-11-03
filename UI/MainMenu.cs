@@ -528,7 +528,7 @@ namespace WorldtreeNexus.UI {
             }
 
             if (!loading && SkippingTutorialIsland == 0) {
-                GameLoop.WTN.Log.AddMessage("Welcome, adventurer! To get started, click the (N)PC tab on the right side of your screen and click Tutorial Guy to speak to him.", Color.Yellow);
+                GameLoop.WTN.Log.AddMessage("Welcome, adventurer! To get started, click 'Tutorial Guy' on the right side of your screen to speak to him.", Color.Yellow);
             }
 
             GameLoop.UIManager.mainMenu.Win.IsVisible = false;

@@ -115,7 +115,7 @@ namespace WorldtreeNexus.DataTypes {
         public List<M_CozyCottagesHotspot> CozyContractSpots = new(); // The contract spots
         public string CozyDestID = ""; // The map they have to go to
         public int CozyPointTotal = 0; // For resolving exp reward after a contract
-        public int CozyRewardPoints = 0; // For reward shop
+        public int CozyCredits = 0; // For reward shop
 
         public Dictionary<string, PlayerOwnedHome> Homes = new();
 
@@ -150,7 +150,7 @@ namespace WorldtreeNexus.DataTypes {
 
         public string GetDamageDice(bool spellBuilder = false) {
             double max = SimplerDamageDice(spellBuilder);
-            if (IsMaging() || spellBuilder) {
+            if (IsMaging() || spellBuilder) { 
                 if (spellBuilder && CombatViewing != null) {  
                     if (CombatViewing.Speed == 1.5) { max = Math.Clamp(Math.Ceiling(max * 1.5), max + 2, int.MaxValue); }
                     if (CombatViewing.Speed == 1.25) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
@@ -162,11 +162,11 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 if (CombatCasting != null) {   
-                    if (CombatCasting.Speed == 1.5) { Math.Clamp(Math.Ceiling(max * 1.25), max + 2, int.MaxValue); }
-                    if (CombatCasting.Speed == 1.25) { Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
+                    if (CombatCasting.Speed == 1.5) { max = Math.Clamp(Math.Ceiling(max * 1.5), max + 2, int.MaxValue); }
+                    if (CombatCasting.Speed == 1.25) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
                     if (CombatCasting.Speed == 0.75) { max = Math.Clamp(Math.Ceiling(max * 0.75), 1, Math.Clamp(max - 1, 1, max)); }
                     if (CombatCasting.Speed == 0.5) { max = Math.Clamp(Math.Ceiling(max * 0.5), 1, Math.Clamp(max - 2, 1, max)); } 
-                    if (CombatCasting.Empowered) { Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
+                    if (CombatCasting.Empowered) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
 
                     return "1d" + (int) max;
                 }
@@ -434,11 +434,13 @@ namespace WorldtreeNexus.DataTypes {
 
             if (GameLoop.WTN.Atlas.TryGetValue(NavLoc, out Location? curr)) {
                 ItemWrapper clone = new(wrap) { Quantity = qty };
-                if (!alreadyOwned) {
+                if (!alreadyOwned) { 
+                    TryProgressQuest("PickupItem", wrap.ID);
+
                     if (!ItemsEverObtained.Contains(wrap.ID)) { ItemsEverObtained.Add(wrap.ID); }
 
                     for (int i = 0; i < Inventory.Count; i++) { 
-                        if (Inventory[i].ID == wrap.ID && (Inventory[i].GetRef() is Item inv && (inv.Stackable || (noted && Inventory[i].Noted)))) {  
+                        if (Inventory[i].StacksWith(wrap)) { 
                             Inventory[i].Quantity += qty; 
                             if (!shop)
                                 wrap.Quantity -= qty;
@@ -495,8 +497,7 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 for (int i = 0; i < curr.ItemsHere.Count; i++) {
-                    if (curr.ItemsHere[i].ID == wrap.ID && wrap.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].UseInt4 == wrap.Charges
-                        && (curr.ItemsHere[i].Alchemy == null || wrap.Alchemy == null || (curr.ItemsHere[i].Alchemy.CheckMatch(wrap.Alchemy)))) {
+                    if (wrap.StacksWith(curr.ItemsHere[i])) { 
                         curr.ItemsHere[i].Quantity += qty; 
                         return true; 
                     }
@@ -518,16 +519,18 @@ namespace WorldtreeNexus.DataTypes {
                     GameLoop.WTN.Log.AddMessage("You already own one of those (in inventory, bank, or equipped) and can't pick up another.", Color.Crimson);
                     alreadyOwned = true;
                 }
-            }
+            } 
 
             if (GameLoop.WTN.Atlas.TryGetValue(NavLoc, out Location? curr)) { 
                 Item clone = new(item) { Quantity = qty };
 
-                if (!alreadyOwned) { 
+                if (!alreadyOwned) {  
+                    TryProgressQuest("PickupItem", item.ID);
+
                     if (!ItemsEverObtained.Contains(item.ID)) { ItemsEverObtained.Add(item.ID); }
 
                     for (int i = 0; i < Inventory.Count; i++) { 
-                        if (Inventory[i].GetRef() is Item wrap && wrap.ID == item.ID && (wrap.Stackable || (noted && Inventory[i].Noted))) {
+                        if (Inventory[i].StacksWith(item)) { 
                             Inventory[i].Quantity += qty;
                             if (!shop)
                                 item.Quantity -= qty;
@@ -576,9 +579,8 @@ namespace WorldtreeNexus.DataTypes {
                     return true;
                 }
 
-                for (int i = 0; i < curr.ItemsHere.Count; i++) {
-                    if (curr.ItemsHere[i].ID == item.ID && item.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].UseInt4 == item.UseInt4 
-                        && (curr.ItemsHere[i].Alchemy == null || item.Alchemy == null || (curr.ItemsHere[i].Alchemy.CheckMatch(item.Alchemy)))) {
+                for (int i = 0; i < curr.ItemsHere.Count; i++) { 
+                    if (curr.ItemsHere[i].StacksWith(item)) { 
                         curr.ItemsHere[i].Quantity += qty; 
                         return true; 
                     }
@@ -651,18 +653,18 @@ namespace WorldtreeNexus.DataTypes {
                             } else {
                                 bool found = false;
                                 for (int j = 0; j < curr.ItemsHere.Count; j++) {
-                                    if (curr.ItemsHere[j].ID == Inventory[i].ID && curr.ItemsHere[j].Noted == Inventory[i].Noted && curr.ItemsHere[j].UseInt4 == Inventory[i].Charges
-                                        && (curr.ItemsHere[j].Alchemy == null || Inventory[i].Alchemy == null || (curr.ItemsHere[j].Alchemy.CheckMatch(Inventory[i].Alchemy)))) {
+                                    if (Inventory[i].StacksWith(curr.ItemsHere[j])) {
                                         curr.ItemsHere[j].Quantity += qty;
                                         Inventory[i].Quantity -= qty;
                                         found = true;
                                         break;
-                                    }
+                                    } 
                                 }
 
                                 if (!found) {
                                     Item clone = new(toDrop);
                                     clone.Quantity = qty;
+                                    clone.Stolen = toDrop.Stolen;
 
                                     if (Inventory[i].Containing.Count > 0) {
                                         foreach (var con in Inventory[i].Containing) {
@@ -682,22 +684,26 @@ namespace WorldtreeNexus.DataTypes {
                                 if (Inventory[i].ID == "coins") { 
                                     GameLoop.WTN.Log.AddMessage("It is inadvisable to sell coins, as you're unlikely to get the better end of that deal.", Color.Crimson);
                                 } else {
-                                    int sellValue = toDrop.Value;
+                                    if (Inventory[i].Stolen && !curr.Fence) { 
+                                        GameLoop.WTN.Log.AddMessage("That item is stolen. No reputable merchant will buy stolen goods.", Color.Crimson);
+                                    } else {
+                                        int sellValue = toDrop.Value;
 
-                                    if (Inventory[i].Charges != 0 && toDrop.UseString == "Potion") {
-                                        sellValue *= Inventory[i].Charges;
-                                    } 
+                                        if (Inventory[i].Charges != 0 && toDrop.UseString == "Potion") {
+                                            sellValue *= Inventory[i].Charges;
+                                        } 
 
-                                    if (curr.ShopPriceMultiplier < 1.0) {
-                                        sellValue = (int) (sellValue * curr.ShopPriceMultiplier);
-                                    }
+                                        if (curr.ShopPriceMultiplier < 1.0) {
+                                            sellValue = (int) (sellValue * curr.ShopPriceMultiplier);
+                                        }
                                         
-                                    if (!ShopsAlwaysFullPrice && !curr.ShopItemsHere.Contains(Inventory[i].ID)) {
-                                        sellValue = (int) (Math.Floor(sellValue / 2.0));
-                                    }
+                                        if (!ShopsAlwaysFullPrice && !curr.ShopItemsHere.Contains(Inventory[i].ID)) {
+                                            sellValue = (int) (Math.Floor(sellValue / 2.0));
+                                        }
 
-                                    GiveGold(sellValue * qty);
-                                    Inventory[i].Quantity -= qty;
+                                        GiveGold(sellValue * qty);
+                                        Inventory[i].Quantity -= qty;
+                                    }
                                 }
                             }
                         }
@@ -1091,6 +1097,7 @@ namespace WorldtreeNexus.DataTypes {
             } 
 
             List<string> EquipClear = new();
+             
 
             // Check for items that count as the item but aren't the item (for example, elemental staves) and have infinite charge
             for (int i = 0; i < Inventory.Count; i++) {
@@ -1099,7 +1106,7 @@ namespace WorldtreeNexus.DataTypes {
                         if (CountsLeft.ContainsKey(comp.CountsAsIDs[j])) {
                             if (!Inventory[i].Noted || (Inventory[i].Noted && notedOkay)) {
                                 if (Inventory[i].Charges == -1) {
-                                    CountsLeft[comp.CountsAsIDs[j]] = 0;
+                                    CountsLeft[comp.CountsAsIDs[j]] = 0; 
                                 }
                             }
                         }
@@ -1172,15 +1179,15 @@ namespace WorldtreeNexus.DataTypes {
                                     if (comp.Stackable) {
                                         if (Inventory[i].Quantity > CountsLeft[comp.CountsAsIDs[j]]) {
                                             highestUsed = Math.Max(highestUsed, CountsLeft[comp.CountsAsIDs[j]]);
-                                            CountsLeft[comp.CountsAsIDs[j]] = 0; 
+                                            CountsLeft[comp.CountsAsIDs[j]] = 0;   
                                         } else {
                                             CountsLeft[comp.CountsAsIDs[j]] -= Inventory[i].Quantity;
                                             highestUsed = Math.Max(highestUsed, Inventory[i].Quantity); 
                                         }
-                                    } else {
+                                    } else { 
                                         if (Inventory[i].Charges > CountsLeft[comp.CountsAsIDs[j]]) {
                                             highestUsed = Math.Max(highestUsed, CountsLeft[comp.CountsAsIDs[j]]);
-                                            CountsLeft[comp.CountsAsIDs[j]] = 0; 
+                                            CountsLeft[comp.CountsAsIDs[j]] = 0;  
                                         } else {
                                             CountsLeft[comp.CountsAsIDs[j]] -= Inventory[i].Charges;
                                             highestUsed = Math.Max(highestUsed, Inventory[i].Charges);
@@ -1198,7 +1205,7 @@ namespace WorldtreeNexus.DataTypes {
                                 Inventory.RemoveAt(i); 
                                 continue;
                             }
-                        } else {
+                        } else { 
                             Inventory[i].Charges -= highestUsed;
                             if (Inventory[i].Charges <= 0 && comp.ShattersAtZeroCharges) {
                                 Inventory.RemoveAt(i); 
@@ -1206,7 +1213,7 @@ namespace WorldtreeNexus.DataTypes {
                             } 
                         }
                     }
-
+                    /*
                     if (CountsLeft.ContainsKey(Inventory[i].ID)) {
                         if (!Inventory[i].Noted || (Inventory[i].Noted && notedOkay)) {
                             if (Inventory[i].Charges == -1) {
@@ -1225,7 +1232,7 @@ namespace WorldtreeNexus.DataTypes {
                                 } else {
                                     if (Inventory[i].Charges > CountsLeft[Inventory[i].ID]) {
                                         Inventory[i].Charges -= CountsLeft[Inventory[i].ID];
-                                        CountsLeft[Inventory[i].ID] = 0; 
+                                        CountsLeft[Inventory[i].ID] = 0;  
                                     } else {
                                         CountsLeft[Inventory[i].ID] -= Inventory[i].Charges;
                                         Inventory[i].Charges = 0;
@@ -1234,6 +1241,7 @@ namespace WorldtreeNexus.DataTypes {
                             }
                         }
                     }
+                    */
                 }
 
                 if (Inventory[i].Containing.Count > 0) {
@@ -1317,7 +1325,7 @@ namespace WorldtreeNexus.DataTypes {
                                 } 
                             }
                         }
-
+                        /*
                         if (CountsLeft.ContainsKey(kv.Value.ID)) {
                             if (!kv.Value.Noted || (kv.Value.Noted && notedOkay)) {
                                 if (kv.Value.Charges == -1) {
@@ -1347,6 +1355,7 @@ namespace WorldtreeNexus.DataTypes {
                                 }
                             }
                         }
+                        */
                     }
                     
                     if (kv.Value.Containing.Count > 0) {
@@ -1392,9 +1401,9 @@ namespace WorldtreeNexus.DataTypes {
                             CountsLeft[Inventory[i].ID] -= Inventory[i].Quantity;
                             Inventory.RemoveAt(i); 
                             continue;
-                        } else { 
+                        } else {  
                             Inventory[i].Quantity -= CountsLeft[Inventory[i].ID];
-                            CountsLeft[Inventory[i].ID] = 0;
+                            CountsLeft[Inventory[i].ID] = 0;  
 
                             if (Inventory[i].Quantity <= 0) {
                                 Inventory.RemoveAt(i); 
@@ -1757,13 +1766,20 @@ namespace WorldtreeNexus.DataTypes {
                 if (QuestLog.TryGetValue(ID, out QuestStatus? status)) {
                     if (status.CurrentStage < stage) {
                         status.CurrentStage = stage;
+                        
                         if (status.CurrentStage == quest.CompleteStage) { 
-                            GameLoop.WTN.Log.AddMessage(new ColoredString("You have completed " + quest.Name + "!", Color.Lime, Color.Black));
+                            GameLoop.WTN.Log.AddMessage("You have completed " + quest.Name + "!", Color.Lime);
                             quest.ProcessRewards(this);
+                        } else {
+                            if (quest.Stages.TryGetValue(status.CurrentStage, out QuestStage? newStage) && newStage != null && newStage.ReachedLog != "") {
+                                GameLoop.WTN.Log.AddMessage(newStage.ReachedLog, Color.Yellow);
+                            } else { 
+                                GameLoop.WTN.QueuedLogs.Add(new(quest.Name + " has been updated.", Color.Turquoise, Color.Black));
+                            } 
                         }
 
                         if (status.CurrentStage == 0) {
-                            GameLoop.WTN.Log.AddMessage(new ColoredString("You have started the quest: " + quest.Name + ".", Color.Yellow, Color.Black));
+                            GameLoop.WTN.Log.AddMessage("You have started the quest: " + quest.Name + ".", Color.Yellow);
                         }
                     }
                 }
@@ -1781,9 +1797,15 @@ namespace WorldtreeNexus.DataTypes {
                                 status.CurrentStage = quest.Value.Stages[status.CurrentStage].LeadsToStage;
                                 status.NumTracker = 0; 
 
-                                if (status.CurrentStage == quest.Value.CompleteStage) {
-                                    GameLoop.WTN.Log.AddMessage(new ColoredString("You have completed " + quest.Value.Name + "!", Color.Lime, Color.Black));
+                                if (status.CurrentStage == quest.Value.CompleteStage) { 
+                                    GameLoop.WTN.Log.AddMessage("You have completed " + quest.Value.Name + "!", Color.Lime);
                                     quest.Value.ProcessRewards(GameLoop.WTN.player);
+                                } else {
+                                    if (quest.Value.Stages.TryGetValue(status.CurrentStage, out QuestStage? stage) && stage != null && stage.ReachedLog != "") {
+                                        GameLoop.WTN.Log.AddMessage(stage.ReachedLog, Color.Yellow);
+                                    } else { 
+                                        GameLoop.WTN.QueuedLogs.Add(new(quest.Value.Name + " has been updated.", Color.Turquoise, Color.Black));
+                                    }
                                 }
                             }
                         }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SadConsole;
 using SadRogue.Primitives;
+using System.Runtime.InteropServices;
 
 namespace WorldtreeNexus.DataTypes {
     public class Item {
@@ -74,6 +75,7 @@ namespace WorldtreeNexus.DataTypes {
         public List<string> ContainableIDs = new(); 
 
         public AlchemyStats Alchemy = null;
+        public bool Stolen = false;
 
         [JsonIgnore]
         public bool Inaccessible = false;
@@ -148,13 +150,8 @@ namespace WorldtreeNexus.DataTypes {
 
             if (other.DropTable != null && other.DropTable.Count > 0) {
                 DropTable = new();
-                foreach (var d in other.DropTable) {
-                    Requirement? req = null;
-                    if (d.Requirement != null) {
-                        req = new(d.Requirement.RequirementType, d.Requirement.MiscInt, d.Requirement.MiscString, d.Requirement.ConsumeItem, d.Requirement.MiscString2, d.Requirement.CustomSummary);
-                    }
-
-                    DropTable.Add(new(d.ItemID, d.DropX, d.InY, d.QuantityMin, d.QuantityMax, d.Noted, d.EvenAt0x, req, d.AltLog));
+                foreach (var d in other.DropTable) { 
+                    DropTable.Add(new(d.ItemID, d.DropX, d.InY, d.QuantityMin, d.QuantityMax, d.Noted, d.EvenAt0x, [ ..d.Requirements], d.AltLog));
                 }
             } 
 
@@ -202,6 +199,8 @@ namespace WorldtreeNexus.DataTypes {
             if (other.Alchemy != null) {
                 Alchemy = new(other.Alchemy);
             }
+
+            Stolen = other.Stolen;
         }
 
         public int ColorSum() {
@@ -225,6 +224,16 @@ namespace WorldtreeNexus.DataTypes {
                 return EquipReq.CheckRequirement(p, false);
             }
 
+            return true;
+        }
+
+        public bool StacksWith(Item other) { 
+            if (ID != other.ID) { return false; }
+            if (Alchemy != null && other.Alchemy != null && !Alchemy.CheckMatch(other.Alchemy)) { return false; }
+            if (UseInt4 != other.UseInt4) { return false; }
+             
+            if (!Stackable) { return false; } 
+            
             return true;
         }
 
@@ -282,6 +291,10 @@ namespace WorldtreeNexus.DataTypes {
                 build += new ColoredString(" (n)", Color.Khaki, Color.Black);
             }
 
+            if ((held != null && held.Stolen) || Stolen) {
+                build += new ColoredString(" (!)", Color.Crimson, Color.Black);
+            }
+
             if (shop > 0) { 
                 int sellValue = Value;
 
@@ -303,7 +316,7 @@ namespace WorldtreeNexus.DataTypes {
             return build;
         }
 
-        public string GetName(int qty = 1, int shop = 0, int charges = 0, bool noted = false) {
+        public string GetName(int qty = 1, int shop = 0, int charges = 0, bool noted = false, bool stolen = false) {
             string build = qty > 1 ? qty + "x " : "";
             build += Name;
              
@@ -325,6 +338,10 @@ namespace WorldtreeNexus.DataTypes {
 
             if (noted) {
                 build += " (n)";
+            }
+
+            if (stolen) {
+                build += "(!)";
             }
 
             if (shop > 0) { 

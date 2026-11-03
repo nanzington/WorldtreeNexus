@@ -67,6 +67,11 @@ Pirate World
 Victorian London
 - Works: Sherlock Holmes, Picture of Dorian Grey, Journey to the Center of the Earth?, The Time Machine / Connecticut Yankee in King Arthurs Court -> Arthurian legends and Robin Hood
 
+Cyberpunk
+- No fuckin idea, I just want a cyberpunk world. Maybe you can get cybernetic augments here for permanent buffs for a lot of gold
+- Leans more Shadowrun with magic present
+- Maybe player can either be a runner (anti-corp) or corpo, possibly rep with each megacorp/faction individually and you can do runner jobs as long as they don't interfere with your corp alignment
+
 Cyberspace?
 - Explore a sort of virtual world area
 - Arcade: maybe access workshop-uploaded minigames made via some kind of scripting setup
@@ -79,6 +84,7 @@ Delving Worlds (Can't take items in, random layouts each game day
 - Daily Grind office? See about permission for that
 - BOTW Eventide Island (also temporarily reset skill levels)
 - One based on the depiction of Hell in Dante's Inferno?
+- Maybe a prison escape thing of some kind
 
 Zombie Apocalypse World
 - Starts out regular modern city, after entering a series of events starts that leads to apocalypse happening and then it's zombies forever on that save
@@ -92,3 +98,4 @@ Xianxia World
 
 Time Travel-y thing
 - Set of worlds that are connected and things in the past-world affect the future-worlds
+- One could be a prehistoric dinosaur world 

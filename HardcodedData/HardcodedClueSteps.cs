@@ -16,6 +16,12 @@ namespace WorldtreeNexus.Hardcodes {
             toAdd.Add(new ClueStep("T_AnagramTutorialGuy", "Tutorial", "Anagram", "TI_StartHut", "The anagram reveals who to speak to next: TRY A GUI, LOUT", "guyTutorial"));
             toAdd.Add(new ClueStep("T_GatherCrates", "Tutorial", "Gather", "TI_GeneralStore", "Am I allowed to rummage through these? I guess there's no employee around to stop me!", "clueCrates"));
             toAdd.Add(new ClueStep("T_GatherMinnow", "Tutorial", "Gather", "TI_Docks", "Look for a really strange minnow.", "fishPondShallow"));
+            
+            toAdd.Add(new ClueStep("T_ItemCopperBar", "Tutorial", "Item", "TI_GeneralStore", "Speak to Treasure Guy in the General Store to find out what item he needs.", "guyTreasure", "barCopper")); 
+            toAdd.Add(new ClueStep("T_ItemIllusionTalisman", "Tutorial", "Item", "TI_GeneralStore", "Speak to Treasure Guy in the General Store to find out what item he needs.", "guyTreasure", "talismanIllusion"));
+            toAdd.Add(new ClueStep("T_ItemAttackPotion", "Tutorial", "Item", "TI_GeneralStore", "Speak to Treasure Guy in the General Store to find out what item he needs.", "guyTreasure", "potionAttack"));
+            toAdd.Add(new ClueStep("T_ItemCleansedBones", "Tutorial", "Item", "TI_GeneralStore", "Speak to Treasure Guy in the General Store to find out what item he needs.", "guyTreasure", "bonesRegularCleansed"));
+            toAdd.Add(new ClueStep("T_ItemShortbow", "Tutorial", "Item", "TI_GeneralStore", "Speak to Treasure Guy in the General Store to find out what item he needs.", "guyTreasure", "hookCopper"));  
 
             // Beginner Steps, all take place in the Worldtree Nexus
             toAdd.Add(new ClueStep("B_SpeakWizard", "Beginner", "Speak", "TI_WizardHut", "What do you think he's smoking in that pipe?", "tiWizardAtrel"));

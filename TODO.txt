@@ -1,77 +1,58 @@
-New Tutorial:
-- Speak to Tutorial Guy to start the new tutorial quest (introduces NPC dialogue)
-- Catch a minnow (indicates player should speak to the old fisherman for a rod, then introduces gathering spots)
-- Cook the minnow (introduces using processing stations and possibly that they can fail)
-- Go to caverns, pick up pickaxe and hammer on ground, mine copper, smelt into bars (introduces picking up items on ground)
-- Craft a copper sword then equip it (introduces crafting menus and equipment)
-- Kill a cuy for eye (introduces combat)
-- Collect a piece of seaweed, a bucket of sand, cook the seaweed into soda ash, and then make molten glass at a furnace. Turn the glass into a vial.
-- Alchemy Guy gives a mortar and pestle, tells player to grind bones and add them to a vial of water with a clean midori leaf, then add another vial of water before using a brazier to turn it into ink. (Introduces alchemy)
-- Talk to Talisman Guy, get instructions for how to make paper the long way but have an option to just skip it and receive some paper. Then do the same for the talisman drawing
-
-List of items to complete tutorial quest:
-- Poplar shortbow (strung) (demonstrates woodcutting and fletching)
-- Copper bar (demonstrates mining and smithing)
-- Illusion talisman (demonstrates alchemy and crafting)
-- Attack Potion (alchemy for sure, agility to get herbs, combat to get cuy eye)
-- Potato w/ minnow (fishing, farming, cooking, multi-step process)
-- Item from Cozy Cottage Reward shop for 1 point
+To-do for new launch:
+- Ideally want at least 20 ingredients per tier 
+- - (Ideal   4 herb + 2 mushroom + 1 ash + 1 metal + 1 ground bone 
+- - (Current 2 herb + 2 mushroom + 1 ash + 
+- - (Extra not as part of the base outline: monster secretions/blood, collected by killing specific things with an empty vial in inventory. basically every monster (+boss?) should have one)
+- Set recipes for all potions, poisons, inks, and oils
+- Cloth and leather tiers for mage and ranged armor
+- Rework and implement hunting in some form (possibly bug catching in "outside" maps, along with setting small traps that take a while to resolve (maybe only rolls to see if it succeeded at midnight)
+- Farming: Two or three more sets of herbs maybe, higher tier allotment, at least 1 per tier for flowers, bushes, and fruit trees, fabric plants (these maybe just also go in allotments)
+- Beginner, Easy, Medium clue steps and rewards
+- Make a decent number of spells to use
+- FILL OUT GUIDE THIS TIME
 
 
-Skills left:
-- Prayer 
-- Thieving
+Random thoughts
+- "Extraction kit", use on specific nonhostile monsters to gather resources from them?
+- Beehives to get honey and wax, buildable in POH or found in world
+- Music clue steps, one in Nexus with the music from inside the Nexus Portal (have to teleport out and reach the NPC without touching the plaza)
+- "Shoplift" button, like thieving from a stall but it generates the loot table dynamically from current shop item selection. 
+- - Failure damage and odds of success based on item value vs thieving experience
+- - Doesn't count as shop use, so players who can't use shops could still do it
+- - Item selected is random. Pool value of all items, each item chance is inversely proportional to how much of the total it is (1 in (total - value) / total)
 
 
 Still need to prune/remake:
 - Ranged armor
-- Mage robes
+- - 1 Leather (cow), 10 Hardleather (minotaur), 20 Xornhide (xorn, may need better name), 30 Drakehide (at least desert drake),  40 Fiendskin (from fiends like rakshasa)
+- - 50 Wormscale (giant scaled worms), 60 Jotunheid (jotun / frost giants), 
 - Skilling pets
-- Prayers with the point drain system (equipment giving prayer bonus slows down how fast points are drained, otherwise probably straight 1 prayer = 1 point per second
 
 Current Projects:
 - Debug menu option for simulating constructed combat blocks at will
-- Debug menu, alchemy array thing, add a random ingredient selector from all current items with alchemy stats
-- Update boss combat code to be the same as new regular combat code
-- Check to make sure magic combat is fully up and running
 - Rework the rest of the spells
-- Combat simulator setup for player vs monster or monster vs monster
-- Combat spell builder menu
-- Reimplement Prayer with the drain system
 - Hunger and thirst mechanics?
 
-Bone/Prayer Notes
-- Bones give certain amount of exp
-- Cleansing at churches in holy water basin gives slightly more exp (+10% but essentially free other than having to go and do it)
-- Oil can be made with Alchemy (tiered), each tier gives 20% extra exp, but anointed bones must be burned instead of buried
-- 
 
-Magic System
-- Spells require talismans to cast (either an array of flavored ones that basically work like runes, or a specialized one like that spell tablet idea)
-- Talismans are drawn through a lil pixel art minigame using the mouse. Requires ink and talisman paper
-- Inks made with alchemy, has 100 tiles worth of usage. Basic ink 1x multiplier, generically imbued 2x, specific elemental ink 5x if it matches
-- Talisman types: air, fire, earth, water
-- Parchment processing
-- - Hardest: hatchet + log = wood chips, pot of water + ashes = pot of lye, wood chips + lye = pot of wood chips + heat = 5 wood pulp, . wood pulp + sheetform = 2 paper, activate wood pulp to shape manually into 1 paper
-- - Medium: log + mortar+pestle = 1 wood pulp, sheetform for 2 paper or manual activation
-- - Easiest: log + coins at papermill for 5 sheets per log
-
+"Living" NPCs
+- Not directly listed in location definitions, instead they have an attached list of places they'll be if certain requirements are met
+  
 Spell ideas
 - Teleports to nearest of a type of place? Like nearest bank, nearest farm plot, nearest bar, nearest temple/church. Maybe default to a random one in your current world if none connected, or Nexus as fallback
 - Teleport to Nexus Plaza, maybe world-specific teleports only visible if you're in the related world or it'll get messy
-- Combat spell for each element at each tier
 - Healing spells (ideally one elemental talisman that empowers your current attunement, plus two restoration. if can't find a way to do variable cost)
 - Doors that can be lockpicked, and spell to unlock them
 
 
-Damage / Combat changes
-- Monsters are attuned to an element of the wuxing, maybe some way for the player to attune as well? protection prayers?
-- Maybe player can change their attunement freely in the nexus, but not in worlds themselves. Praying same as your element gives complete negation of damage, half for praying neutrals, normal damage vs your weakness
-- Entities take +50% damage from the element that overcomes their element, but half damage from the element that nourishes their element (metal is empowered by earth but overcome by fire)
-- Empowering: Wood -> Fire -> Earth -> Metal -> Water -> Wood
-- Overcoming: Wood -> Earth -> Water -> Fire -> Metal -> Wood
+Arcade Games 
+- Stack 'em
+- Lights out maybe
+- Zelda archery range type thing, try to hit moving targets
 
-
+Job minigames? Some places might have it as an option to make some money by playing the minigame
+- Bartending slidey minigame thing (maybe gold increases with agility level)
+- Mow grass maybe
+- Factory line, bunch of letters or whatever going from left to right and you have to click the bad ones to remove them (points for good ones reaching right, lose points for bads)
 
 Casino Games
 - Blackjack
@@ -81,6 +62,7 @@ Casino Games
 - Slot machines
 - Pachinko?
 - Monster Arena (Bet on monsters fighting, or step into the ring to fight them yourself, maybe you fighting is a series of mostly preset waves like fable tlc)
+- Some kind of horse race equivalent but maybe not horses
 
 Crossroads Inn Games? 
 - Some kind of CCG
@@ -93,32 +75,30 @@ Crossroads Inn Games?
 - Hit and Blow aka Mastermind 
 - Yacht Dice
 - Could Golf and Bowling be made to work in an interesting way?
-
 - Social deduction thing / two rooms and a boom basically
 
 
 Bugs to fix / immediate tasks and such
-- Create the combat test system for any two arbitrary stat blocks (player vs monster/boss, monster vs monster, etc) to display odds that first wins
 - Romeo and Juliet: tweak it so the player takes the brittle sword directly to Tybalt instead of returning it to the sword shop, maybe he's at the Leptoc estate
 - Combat auto-retaliate, and make aggressive enemies not aggressive after the AFK timer lapses
-- Compass option to ignore traversability and just show shortest route
-- Forgot to make the Mahogany Homes reward shop lmao, needs the plank box and the outfit, the equipable saw, and i guess the pointless waste of points supply crate
-- Find a way to fix damage because players do way too much right now
 
 Worldtree Nexus Layout
 - Plaza
-- - Has the portal(s) to various worlds, maybe start as just normal connections and then when that becomes too cumbersome move them into a selection system 
+- x Has the portal(s) to various worlds, maybe start as just normal connections and then when that becomes too cumbersome move them into a selection system 
 - - - (ie just one connection to like, "Place Between Worlds", then it has connections to different genres/tones and back to plaza, then each genre thing is a location connectibg to specific worlds)
-- - Newspaper Stand (just store set at plaza with newspapers listed by date that have patch notes / update summaries)
-- - Backseat Guides (name pending, tl;dr a shop that offers "strategy guides" giving some information about specific worlds, resources and places in them, hints about quests there)
+- x Newspaper Stand (just store set at plaza with newspapers listed by date that have patch notes / update summaries)
+- x Prim's Primers (a shop that offers "strategy guides" giving some information about specific worlds, resources and places in them, hints about quests there)
 - - Crossroads Inn (drinking spot, romeo goes here during R&J exile, other various NPCs from each world can be found here but have different dialogue than normal, not just a copy)
 - Commercial District
-- - Casino (needs a fun name, has gambling minigames like poker and blackjack etc)
-- - Arcade (needs a fun name, has arcade games like skeeball, maybe bowling/minigolf, but also electronic ones like stack'em. get tickets for doing well, buy prizes with tickets)
+- - Cozener's Casino (gambling minigames like poker and blackjack etc)
+- - Gelos' Games (has arcade games like skeeball, maybe bowling/minigolf, but also electronic ones like stack'em. get tickets for doing well, buy prizes with tickets)
 - - Medieval equipment shop (needs name, sells equipment suitable for adventuring in a medieval fantasy world like metal armor/weapons, bows, etc)
 - - General adventuring shop (sells gear that is largely time/setting agnostic. rope, compass, tinderbox, copper hatchet and pickaxe maybe, etc)
 - - Sneed's Feed and Seed (sells a variety of low level seeds split across types, also any tools for farming like plant pots)
-
+- - Theater, uses the dynamic location blocks to show a story progressively over the course of 5-6 minutes
+- - Butcher (buy meats)
+- Guild District (each guild requires level 30ish to enter the main hall, but has a reception area you can enter before that
+- Undercity (accessible somewhere out of the way, contains black market and such)
 
 
 Everafter Quest Possibilities
@@ -145,7 +125,6 @@ Random Ideas
 - - Can set menu, must find an array that satisfies your current clientele
 - - Have to manage restaurant inventory, but it can only hold so many total things before needing to be upgraded
 - Ego Items? Small chance for equipment to have a random enchantment that improves it in some way a la angband
-- Weapon poison, maybe a poison equipment slot that applies to any melee or ranged attack?
 
 Immediately important stuff to get working:
 - An achievement tracking thing where performing an action can check to see if doing it progresses an achievement/task, also have a screen to show all achieves with some sort options
@@ -167,6 +146,7 @@ Character Modifier options?
 
 
 Difficulty things
+- Asocial? Can't talk to NPCs, this would make quests essentially impossible unless some special system for detecting if you can progress a quest is added to do quests without actually viewing dialogue
 - No trading (once multiplayer is added, maybe just fold it into the no GE thing) 
 - Disable exp gain on skills selectively
 - RNG Item Lock? Can only use items you've unlocked, unlock a configurable random number of items per level gained. Optionally draft items via pick 1 of 3 for each unlock
@@ -193,11 +173,8 @@ Future Skills to work on:
 - Proxy combat skill of some kind (ex necromancy, summoning, taming, something like that)
 - Some kind of skill to enchant weapons/armor somehow maybe?
 - Sailing, massive Maze Area to sail around to different ports
+- Cultivation, main benefit is multipliers on health and damage at breakthrough points (20, 40, 60, 80, 100)
 
-Multiplayer?
-- See eachother walking around in the world, possibly also see players in adjacent locations somehow
-- Friends list to message eachother from afar?
-- Type in chat and display to players in the same location
 
 Archipelago Support?
 - Receive options: Locations, Gathering Spots, CraftRecipes (by main item or craftType perhaps), Processing Stations, Ability to equip each tier armor/weapon
@@ -205,29 +182,15 @@ Archipelago Support?
 - Maybe just location lock mode, complete a location to sends a check, receive loc points and can use them freely
 
 
-
-
-Material Tiers/Levels
-1 - Copper, Poplar, Leather, Cloth
-10 - Bronze, Elm, Hard Leather, 
-20 - Iron, Walnut, Studded Leather
-30 - Silver, Holly, Carapace
-40 - Gold, Acacia, Green Dhide
-50 - Platinum, Birch, Blue Dhide 
-60 - Steel, Hickory, Black Dhide
-70 - Cobalt, Bloodwood, ???
-80 - Tungsten, Camatillo, ???
-90 - Titanium, Katalox, ??? 
-
-
 Clue Step Notes
-- Tutorial should only require level 1s at most.
-- Beginner only up to level 10
+- Tutorial should only require level 1s at most. All take place on Tutorial Island
+- Beginner only up to level 10. All take place in the Nexus
 - Easy only up to level 20, may require novice quests
 - Medium only up to level 40, may require up to intermediate quests
 - Hard only up to level 60, may require up to experienced quests
 - Elite only up to level 80, may require up to master quests
 - Master up to 99, may require up to grandmaster quests
+- At least 10 regular steps per tier per world, plus 5 more to hand in items gathered in the world to an NPC there
 
 - - Music Steps? Play a specific music track while talking to an NPC, maybe on higher clue step difficulties require that you be on auto and manage to keep the song playing from its trigger location (so you have to puzzle out a route to get from the trigger spot to the NPC without it changing)
 - - House Steps: Must buy a house, build a specific type of furniture/hotspot, then activate it. Gated by level by having the hotspots be in higher tier rooms, or requiring a set minimum level to build (ex, beginner could require searching a bookshelf in a parlor)

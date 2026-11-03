@@ -108,7 +108,10 @@ namespace WorldtreeNexus.Managers {
                                 }
                             }
 
-                            SidebarManager.SidebarScrollTop = Math.Clamp(scrollTop, 0, songs.Count - 18);
+                            if (songs.Count >= 18)
+                                SidebarManager.SidebarScrollTop = Math.Clamp(scrollTop, 0, songs.Count - 18);
+                            else
+                                SidebarManager.SidebarScrollTop = scrollTop;
                         }
                     }
                 }

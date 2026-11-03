@@ -9,35 +9,49 @@ namespace WorldtreeNexus.Hardcodes {
 
             itemsToAdd.Add(new Item("Copper ore", "A pile of copper ore nuggets.", "oreCopper", ColorLib.Copper, 5));
             itemsToAdd.Add(new Item("Copper bar", "It's a bar of copper.", "barCopper", ColorLib.Copper, 10));
+            itemsToAdd.Add(new Item("Copper shavings", "A pile of copper shavings", "shavingsCopper", ColorLib.Copper, 10) { Alchemy = new(-6, -9, -7, 8, 1) });
 
             itemsToAdd.Add(new Item("Tin ore", "A pile of tin ore nuggets.", "oreTin", Color.DarkGray, 15)); 
             itemsToAdd.Add(new Item("Bronze ore mix", "A mix of copper and tin ore nuggets.", "oreMixBronze", ColorLib.Bronze, 20)); 
             itemsToAdd.Add(new Item("Bronze bar", "It's a bar of bronze.", "barBronze", ColorLib.Bronze, 30));
+            itemsToAdd.Add(new Item("Bronze shavings", "A pile of bronze shavings", "shavingsBronze", ColorLib.Bronze, 30) { Alchemy = new(4, 11, 8, -6, 10) });
 
             itemsToAdd.Add(new Item("Iron ore", "A pile of iron ore nuggets.", "oreIron", ColorLib.Bronze, 50)); 
             itemsToAdd.Add(new Item("Iron bar", "It's a bar of iron.", "barIron", ColorLib.Iron, 60));
+            itemsToAdd.Add(new Item("Iron shavings", "A pile of iron shavings", "shavingsIron", ColorLib.Iron, 60) { Alchemy = new(4, 7, -7, -10, 20) });
             
             itemsToAdd.Add(new Item("Silver ore", "A pile of silver ore nuggets.", "oreSilver", ColorLib.Silver, 110)); 
             itemsToAdd.Add(new Item("Silver bar", "It's a bar of silver.", "barSilver", ColorLib.Silver, 120));
+            itemsToAdd.Add(new Item("Silver shavings", "A pile of silver shavings", "shavingsSilver", ColorLib.Silver, 120) { Alchemy = new(8, -6, 7, -6, 30) });
             
             itemsToAdd.Add(new Item("Gold ore", "A pile of gold ore nuggets.", "oreGold", ColorLib.Gold, 230)); 
             itemsToAdd.Add(new Item("Gold bar", "It's a bar of gold.", "barGold", ColorLib.Gold, 240));
+            itemsToAdd.Add(new Item("Gold shavings", "A pile of gold shavings", "shavingsGold", ColorLib.Gold, 240) { Alchemy = new(9, -4, -6, 7, 40) });
              
             itemsToAdd.Add(new Item("Platinum ore", "A pile of platinum ore nuggets.", "orePlatinum", ColorLib.Platinum, 470)); 
             itemsToAdd.Add(new Item("Platinum bar", "It's a bar of platinum.", "barPlatinum", ColorLib.Platinum, 480));
+            itemsToAdd.Add(new Item("Platinum shavings", "A pile of platinum shavings", "shavingsPlatinum", ColorLib.Platinum, 480) { Alchemy = new(-4, 4, 9, 8, 50) });
 
             itemsToAdd.Add(new Item("Coal", "A lump of raw coal.", "oreCoal", Color.DimGray, 940)); 
             itemsToAdd.Add(new Item("Steel ore mix", "A mix of iron ore nuggets and coal.", "oreMixSteel", ColorLib.Steel, 990)); 
-            itemsToAdd.Add(new Item("Steel bar", "It's a bar of iron.", "barSteel", ColorLib.Steel, 1000)); 
+            itemsToAdd.Add(new Item("Steel bar", "It's a bar of steel.", "barSteel", ColorLib.Steel, 1000)); 
+            itemsToAdd.Add(new Item("Steel shavings", "A pile of steel shavings", "shavingsSteel", ColorLib.Steel, 1000) { Alchemy = new(-3, -8, -10, 3, 60) });
             
             itemsToAdd.Add(new Item("Cobalt ore", "A pile of cobalt ore nuggets.", "oreCobalt", ColorLib.Cobalt, 1990)); 
             itemsToAdd.Add(new Item("Cobalt bar", "It's a bar of cobalt.", "barCobalt", ColorLib.Cobalt, 2000)); 
+            itemsToAdd.Add(new Item("Cobalt shavings", "A pile of cobalt shavings", "shavingsCobalt", ColorLib.Cobalt, 2000) { Alchemy = new(8, 0, -7, 8, 70) });
 
             itemsToAdd.Add(new Item("Tungsten ore", "A pile of tungsten ore nuggets.", "oreTungsten", ColorLib.Tungsten, 3990)); 
             itemsToAdd.Add(new Item("Tungsten bar", "It's a bar of tungsten.", "barTungsten", ColorLib.Tungsten, 4000)); 
+            itemsToAdd.Add(new Item("Tungsten shavings", "A pile of tungsten shavings", "shavingsTungsten", ColorLib.Tungsten, 4000) { Alchemy = new(-6, -7, -3, -6, 80) });
             
             itemsToAdd.Add(new Item("Titanium ore", "A pile of titanium ore nuggets.", "oreTitanium", ColorLib.Titanium, 7990)); 
             itemsToAdd.Add(new Item("Titanium bar", "It's a bar of titanium.", "barTitanium", ColorLib.Titanium, 8000));
+            itemsToAdd.Add(new Item("Titanium shavings", "A pile of titanium shavings", "shavingsTitanium", ColorLib.Titanium, 8000) { Alchemy = new(6, 6, -5, -4, 90) });
+
+            itemsToAdd.Add(new Item("Yggrdasite ore", "A pile of yggdrasite ore nuggets.", "oreYggdrasite", ColorLib.Yggdrasite, 15990)); 
+            itemsToAdd.Add(new Item("Yggrdasite bar", "It's a bar of yggdrasite.", "barYggdrasite", ColorLib.Yggdrasite, 16000));
+            itemsToAdd.Add(new Item("Yggrdasite shavings", "A pile of yggdrasite shavings", "shavingsYggdrasite", ColorLib.Yggdrasite, 16000) { Alchemy = new(-6, 4, 4, 6, 100) });
 
             // Smithing Factory
             List<MaterialDef> Metals = new(Materials.Metals) {

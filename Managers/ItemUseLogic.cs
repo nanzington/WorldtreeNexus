@@ -130,16 +130,7 @@ namespace WorldtreeNexus.Managers {
                                         foundPlantSpot = true;
                                         GameLoop.WTN.Log.AddMessage(new ColoredString("You plant the " + item.Name.ToLowerInvariant() + ".", Color.Goldenrod, Color.Black));
 
-                                        if (player.Equipment.TryGetValue("Amulet", out ItemWrapper? eqp) && eqp != null && eqp.ID == "amuletBounty" && GameLoop.rand.Next(4) == 0) {
-                                            eqp.Charges -= 1; 
-                                            GameLoop.WTN.Log.AddMessage(new ColoredString("Your amulet of bounty saves you a seed!", Color.AntiqueWhite, Color.Black));
-
-                                            if (eqp.Charges <= 0) { 
-                                                GameLoop.WTN.Log.AddMessage(new ColoredString("Your amulet of bounty runs out of charge and shatters.", Color.Crimson, Color.Black));
-                                                player.Equipment.Remove("Amulet");
-                                            }
-                                            return false;
-                                        }
+                                        player.TryProgressQuest("PlantSeed", item.ID);
 
                                         if (item.Name.Contains("Plant pot")) {
                                             if (GameLoop.WTN.ItemLibrary.TryGetValue("plantPotEmpty", out Item? newPot) && newPot != null) {
@@ -320,6 +311,10 @@ namespace WorldtreeNexus.Managers {
                     ExtraWindows.Book.IsVisible = true;
                     ExtraWindows.BookID = item.UseString2;
                     ExtraWindows.LeftPage = 0;
+                } else if (item.UseString == "Newspaper") {
+                    ExtraWindows.Newspaper.IsVisible = true;
+                    ExtraWindows.NewspaperID = item.UseString2;
+                    ExtraWindows.NewspaperPage = 0;
                 } else if (item.UseString == "SecondExamine") {
                     GameLoop.WTN.Log.AddMessage(new ColoredString(item.MiscString, Color.SandyBrown, Color.Black));
 
@@ -448,6 +443,29 @@ namespace WorldtreeNexus.Managers {
                     }
 
                     return false;
+                } else if (item.UseString == "TeleportCC") {
+                    if (player.CozyDestID != "") {
+                        if (GameLoop.WTN.Atlas.ContainsKey(player.CozyDestID)) {
+                            GameLoop.WTN.Log.AddMessage("You teleport to your Cozy Cottages contract destination.", Color.MediumPurple);
+                            player.NavLoc = player.CozyDestID;
+                            return true;
+                        }
+                    } else {
+                        string pRegion = player.GetRegion();
+                        List<Location> agents = GameLoop.WTN.Atlas.Values.Where(o => o.Region == pRegion && o.NPCsHere.Contains("estateAgent")).ToList();
+
+                        if (agents.Count > 1) { 
+                            GameLoop.WTN.Log.AddMessage("You teleport to an Estate Agent for this region.", Color.MediumPurple);
+                            player.NavLoc = agents[GameLoop.rand.Next(agents.Count)].ID;
+                            return true;
+                        } else if (agents.Count == 1) {
+                            GameLoop.WTN.Log.AddMessage("You teleport to the Estate Agent for this region.", Color.MediumPurple);
+                            player.NavLoc = agents[0].ID;
+                            return true;
+                        }
+                    } 
+
+                    return false;
                 } else if (item.UseString == "ItemPack") {
                     if (GameLoop.WTN.ResolveItem(item.UseString2) is Item unpacked) {
                         unpacked.Quantity = item.UseInt;
@@ -511,6 +529,7 @@ namespace WorldtreeNexus.Managers {
                     return false;
                 } else if (item.UseString == "CompassMenu") {
                     ExtraWindows.Compass.IsVisible = true;
+                    ExtraWindows.CompassUpdate();
                     return false;
                 } else if (item.UseString == "HouseTele") { 
                     ExtraWindows.HouseMenu.IsVisible = true;
@@ -869,6 +888,10 @@ namespace WorldtreeNexus.Managers {
                                 
                                     GameLoop.WTN.Log.AddMessage("You add " + firstAlch.Name.ToLower() + " to the mixture.", Color.Turquoise);
                                     player.ConsumeItems([first + ",1"]);
+
+                                    if (firstAlch.Alchemy.ReturnID != "" && GameLoop.WTN.ResolveItem(firstAlch.Alchemy.ReturnID) is Item returned) {
+                                        player.TryPickup(returned, 1);
+                                    }
                                     return true;
                                 } else { 
                                     GameLoop.WTN.Log.AddMessage("Your alchemy level is too low to use " + firstAlch.Name.ToLower() + ", need level " + firstAlchWrap.Alchemy.Level + ".", Color.Crimson);
@@ -936,6 +959,10 @@ namespace WorldtreeNexus.Managers {
                                             mix.Alchemy.Ingredients.Add(second);
 
                                             player.TryPickup(mix, 1);
+
+                                            if (secondAlchWrap.Alchemy.ReturnID != "" && GameLoop.WTN.ResolveItem(secondAlchWrap.Alchemy.ReturnID) is Item returned) {
+                                                player.TryPickup(returned, 1);
+                                            }
                                  
                                             GameLoop.WTN.Log.AddMessage(new ColoredString("You start a new alchemical mixture.", Color.Turquoise, Color.Black));
                                             return true;

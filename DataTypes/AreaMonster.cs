@@ -27,7 +27,7 @@ namespace WorldtreeNexus.DataTypes {
         public string WeakType = "Slash";
         public string Element = "Earth";
         public string DamageType = "Typeless";
-        public double AttackSpeedSeconds = 2.4;
+        public double AttackSpeedSeconds = 1.0;
         
         public int PoisonSeverity = 0;
 
@@ -43,6 +43,7 @@ namespace WorldtreeNexus.DataTypes {
         public string SpecialCategory = "";
         public string KillItem = "";
         public int KillItemCount = 0;
+        public string AlchemySecretionID = ""; // Usually blood, venom, slime, etc. Get with extraction kit on nonhostile, or automatically after buying upgrade
 
         public bool Temporary = false; // If temporary, when this is killed remove it from the list
         
@@ -54,7 +55,7 @@ namespace WorldtreeNexus.DataTypes {
         [JsonIgnore]
         public double TimeLastAttacked = 0;
 
-        public AreaMonster(string n, string id, int lv, int hp, int dr, int atk, int def, bool aggro, int maxhit, string weakness, string element, int respawn, string dtype, double atkSpeed = 2.4, List<Requirement>? reqs = null, bool seeAnyways = true, bool inaccessible = false, string specialCat = "", bool proper = false, bool temp = false) {
+        public AreaMonster(string n, string id, int lv, int hp, int dr, int atk, int def, bool aggro, int maxhit, string weakness, string element, int respawn, string dtype, double atkSpeed = 1.0, List<Requirement>? reqs = null, bool seeAnyways = true, bool inaccessible = false, string specialCat = "", bool proper = false, bool temp = false) {
             Name = n;
             ID = id;
             Level = lv;
@@ -116,7 +117,7 @@ namespace WorldtreeNexus.DataTypes {
         }
 
         public CombatSim GetSimBlock() {
-            return new CombatSim(MaxHP, AttackLv, DefenseLv, MaxHit, DamageType, Element, AttackSpeedSeconds * 2000, DamageReduction, WeakType, Element);
+            return new CombatSim(MaxHP, AttackLv, DefenseLv, MaxHit, DamageType, Element, (int) (AttackSpeedSeconds * 2000), DamageReduction, WeakType, Element);
         }
     }
 }

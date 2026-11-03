@@ -145,7 +145,7 @@ namespace WorldtreeNexus.UI {
 
                         if (player.IsMaging() && bossType == "Melee") {
                             safespotting = true;
-                        }
+                        }       
 
                         if (boss.UsingMove != -1 && boss.Phases[boss.CurrentPhase].Specials.Count > boss.UsingMove && boss.Phases[boss.CurrentPhase].Specials[boss.UsingMove].SummonID != "") {
                             if (GameLoop.WTN.MonsterLibrary.TryGetValue(boss.Phases[boss.CurrentPhase].Specials[boss.UsingMove].SummonID, out AreaMonster? summon) && summon != null) {
@@ -166,6 +166,9 @@ namespace WorldtreeNexus.UI {
                         } 
 
                         if (!safespotting) {
+                            if (Materials.ElementalWeaknesses.TryGetValue(player.ElementalAttunement, out string? weak) && weak != null && weak == boss.Phases[boss.CurrentPhase].Element) { hitChance = (int) Math.Ceiling(hitChance * 1.25); }
+                            if (Materials.ElementalStrengths.TryGetValue(player.ElementalAttunement, out string? strong) && strong != null && strong == boss.Phases[boss.CurrentPhase].Element) { hitChance = (int) Math.Floor(hitChance * 0.75); }
+                                  
                             if (hitChance < 25 + (player.GetEffectiveSkillLevel("Defense") / 4.0)) {
                                 Log.AddMessage(new ColoredString(boss.Phases[boss.CurrentPhase].Name + " tried to hit you but missed!", Color.Yellow, Color.Black));
                             } else {
@@ -238,17 +241,11 @@ namespace WorldtreeNexus.UI {
                         }
 
                     }
-                }
-
-                double attackSpeed = 1.0;
-                     
-                if (player.Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrap) && wepWrap.GetRef() is Item wep) { 
-                    attackSpeed = wep.AttackSpeed;
-                }
+                } 
 
                 int ammo = 0;
 
-                if (LastHitTime + (1000 * attackSpeed) < Helper.Time() && boss.Phases[boss.CurrentPhase].CurrentHP > 0 && AttackingBoss) {
+                if (LastHitTime + player.GetAttackSpeed() < Helper.Time() && boss.Phases[boss.CurrentPhase].CurrentHP > 0 && AttackingBoss) {
                     LastHitTime = Helper.Time();
                     boss.AttackingPlayer = true;
 
@@ -274,6 +271,11 @@ namespace WorldtreeNexus.UI {
                             }
                         }
 
+                        if (player.GetDamageType() == boss.Phases[boss.CurrentPhase].WeakType) { hitChance = (int)Math.Ceiling(hitChance * 1.25f); }
+                        if (Materials.ElementalWeaknesses.TryGetValue(boss.Phases[boss.CurrentPhase].Element, out string? weak) && weak != null && weak == player.GetDamageElement()) { hitChance = (int) Math.Ceiling(hitChance * 1.25); }
+                        if (Materials.ElementalStrengths.TryGetValue(boss.Phases[boss.CurrentPhase].Element, out string? strong) && strong != null && strong == player.GetDamageElement()) { hitChance = (int) Math.Floor(hitChance * 0.75); }
+                             
+
                         if (curr.Dark && !player.HasLightSource()) { 
                             Log.AddMessage(new ColoredString("You can't see well enough to land an attack!", Color.Crimson, Color.Black));
                             hitChance = 999;
@@ -283,11 +285,6 @@ namespace WorldtreeNexus.UI {
                             Log.AddMessage(new ColoredString("You tried to hit the " + boss.Phases[boss.CurrentPhase].Name + " but missed!", Color.Crimson, Color.Black));
                         } else {
                             int pdmg = GameLoop.rand.Next(player.MaxDamage()); 
-
-                            if (player.GetDamageType() == boss.Phases[boss.CurrentPhase].WeakType) { pdmg = (int)Math.Ceiling(pdmg * 1.5f); }
-                            if (Materials.ElementalWeaknesses.TryGetValue(boss.Phases[boss.CurrentPhase].Element, out string? weak) && weak != null && weak == player.GetDamageElement()) { pdmg = (int) Math.Ceiling(pdmg * 1.5); }
-                            if (Materials.ElementalStrengths.TryGetValue(boss.Phases[boss.CurrentPhase].Element, out string? strong) && strong != null && strong == player.GetDamageElement()) { pdmg = (int) Math.Floor(pdmg * 0.5); }
-                                     
 
                             if (boss.Phases[boss.CurrentPhase].ImmuneTypes.Contains(player.GetDamageType())) { pdmg = 0; } 
 
@@ -476,14 +473,16 @@ namespace WorldtreeNexus.UI {
                             int modified = dmg;
                               
                             if (!player.Safespotting(thisOne.DamageType, thisOne.Inaccessible)) {
-                                if (GameLoop.rand.Next(100) + (thisOne.AttackLv / 4) < 25 + (player.GetEffectiveSkillLevel("Defense") / 4.0)) {
+                                int hitChance = GameLoop.rand.Next(100);
+
+                                if (Materials.ElementalWeaknesses.TryGetValue(player.ElementalAttunement, out string? weak) && weak != null && weak == thisOne.Element) { hitChance = (int) Math.Ceiling(hitChance * 1.25); }
+                                if (Materials.ElementalStrengths.TryGetValue(player.ElementalAttunement, out string? strong) && strong != null && strong == thisOne.Element) { hitChance = (int) Math.Floor(hitChance * 0.75); }
+                                     
+                                if (hitChance + (thisOne.AttackLv / 4) < 25 + (player.GetEffectiveSkillLevel("Defense") / 4.0)) {
                                     Log.AddMessage(new ColoredString(thisOne.Name + " tried to hit you but missed!", Color.Yellow, Color.Black));
                                 } else {
                                     modified -= player.TotalArmorValue(thisOne.DamageType); 
-
-                                    if (Materials.ElementalWeaknesses.TryGetValue(player.ElementalAttunement, out string? weak) && weak != null && weak == thisOne.Element) { modified = (int) Math.Ceiling(modified * 1.5); }
-                                    if (Materials.ElementalStrengths.TryGetValue(player.ElementalAttunement, out string? strong) && strong != null && strong == thisOne.Element) { modified = (int) Math.Floor(modified * 0.5); }
-                                          
+  
                                     if (dmg != modified) {
                                         if (modified <= 0) {
                                             Log.AddMessage(new ColoredString(thisOne.Name + " hit you for " + dmg + ", but you took no damage!", Color.DarkRed, Color.Black));
@@ -519,14 +518,10 @@ namespace WorldtreeNexus.UI {
                             }
                         }
                     }
-
-                    double attackSpeed = 1.0;
-
-                    if (player.Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrap) && wepWrap.GetRef() is Item wep) { attackSpeed = wep.AttackSpeed; }
-
+                     
                     int ammo = 0;
 
-                    if (AttackingMonster != null && LastHitTime + (2000 * attackSpeed) < Helper.Time() && AttackingMonster.CurrentHP > 0) {
+                    if (AttackingMonster != null && LastHitTime + player.GetAttackSpeed() < Helper.Time() && AttackingMonster.CurrentHP > 0) {
                         LastHitTime = Helper.Time();
                         AttackingMonster.AttackingPlayer = true;
 
@@ -556,6 +551,12 @@ namespace WorldtreeNexus.UI {
                                     }
                                 }
                             }
+                            
+                            if (player.GetDamageType() == AttackingMonster.WeakType) { hitChance = (int)Math.Ceiling(hitChance * 1.25f); }
+                            Materials.ElementalWeaknesses.TryGetValue(AttackingMonster.Element, out string? weak);
+                            if (weak != null && weak != "" && player.GetDamageElement() == weak) { hitChance = (int)Math.Ceiling(hitChance * 1.25f); }
+                            Materials.ElementalStrengths.TryGetValue(AttackingMonster.Element, out string? strong);
+                            if (strong != null && strong != "" && player.GetDamageElement() == strong) { hitChance = (int)Math.Ceiling(hitChance * 0.75f); }
 
                             string dmgType = player.GetDamageType();
                             if (AttackingMonster.Inaccessible && (dmgType == "Crush" || dmgType == "Stab" || dmgType == "Slash")) {
@@ -570,13 +571,6 @@ namespace WorldtreeNexus.UI {
                                     Log.AddMessage(new ColoredString("You tried to hit " + (AttackingMonster.ProperName ? "" : "the ") + AttackingMonster.Name + " but missed!", Color.Crimson, Color.Black));
                                 } else {
                                     int pdmg = GameLoop.rand.Next(player.MaxDamage() + 1);
-
-                                    if (player.GetDamageType() == AttackingMonster.WeakType) { pdmg = (int)Math.Ceiling(pdmg * 1.5f); }
-                                    Materials.ElementalWeaknesses.TryGetValue(AttackingMonster.Element, out string? weak);
-                                    if (weak != null && weak != "" && player.GetDamageElement() == weak) { pdmg = (int)Math.Ceiling(pdmg * 1.5f); }
-                                    Materials.ElementalStrengths.TryGetValue(AttackingMonster.Element, out string? strong);
-                                    if (strong != null && strong != "" && player.GetDamageElement() == strong) { pdmg = (int)Math.Ceiling(pdmg * 0.5f); }
-
                                          
                                     bool eitherDamageSpecial = AttackingMonster.SpecialCategory != "" && (player.GetDamageType() == AttackingMonster.SpecialCategory || player.GetSecondaryDamageType() == AttackingMonster.SpecialCategory);
 
@@ -647,7 +641,7 @@ namespace WorldtreeNexus.UI {
                     
                     if (printY < 35) {
                         mini.Con.PrintClickable(56, printY, new ColoredString(20.AsString(), Color.Crimson, Color.Black), () => {
-                            int wins = Helper.CombatSimulator(player.GetSimBlock(curr.MonstersHere[i].DamageType), curr.MonstersHere[i].GetSimBlock(), 100);
+                            int wins = Helper.CombatSimulator(player.GetSimBlock(curr.MonstersHere[i].DamageType), curr.MonstersHere[i].GetSimBlock(), 1000);
 
                             Color col = Color.White;
 
@@ -656,7 +650,7 @@ namespace WorldtreeNexus.UI {
                             else if (wins < 20) { col = Color.Crimson; }
                             else if (wins < 40) { col = Color.Yellow; }
 
-                            Log.AddMessage("Approximate odds of success against " + curr.MonstersHere[i].Name + " (with no food or prayer): " + wins + "%", col);  
+                            Log.AddMessage("Approximate odds of success against " + curr.MonstersHere[i].Name + " (with no food or prayer): " + (wins / 10) + "%", col);  
                         });
 
                         mini.Con.Print(57, printY, "|");

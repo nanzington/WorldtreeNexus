@@ -167,13 +167,16 @@
 
             if (RequirementType == "TimeBetween") { 
                 bool twelve = GameLoop.WTN.player.Clock != null ? GameLoop.WTN.player.Clock.TwelveHour : true; 
-                return "Must be between " + Helper.ConvertTime(MiscInt, twelve) + " and " + Helper.ConvertTime(MiscInt2, twelve);
+                return "Time must be between " + Helper.ConvertTime(MiscInt, twelve) + " and " + Helper.ConvertTime(MiscInt2, twelve);
             }
 
             if (RequirementType == "TimeOutside") { 
                 bool twelve = GameLoop.WTN.player.Clock != null ? GameLoop.WTN.player.Clock.TwelveHour : true; 
-                return "Must NOT be between " + Helper.ConvertTime(MiscInt, twelve) + " and " + Helper.ConvertTime(MiscInt2, twelve);
+                return "Time must NOT be between " + Helper.ConvertTime(MiscInt, twelve) + " and " + Helper.ConvertTime(MiscInt2, twelve);
             }
+
+            if (RequirementType == "CozyCredits") { return "Must have at least " + MiscInt + " Cozy Credits."; }
+
 
             return "";
         }
@@ -415,6 +418,10 @@
                 if (count > MiscInt) {
                     return true;
                 }
+            }
+
+            if (RequirementType == "CozyCredits") {
+                if (GameLoop.WTN.player.CozyCredits >= MiscInt) { return true; }
             }
 
             if (RequirementType == "TimeBetween") {

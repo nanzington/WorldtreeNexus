@@ -29,6 +29,7 @@ namespace WorldtreeNexus {
         public Dictionary<string, ClueStep> ClueStepLibrary = new();
         public Dictionary<string, Quest> QuestLibrary = new();
         public Dictionary<string, Book> BookLibrary = new();
+        public Dictionary<string, Newspaper> NewspaperLibrary = new();
         public Dictionary<string, Cutscene> CutsceneLibrary = new();
         public Dictionary<string, M_CozyCottagesHotspot> M_HotspotLib = new();
         public Dictionary<string, POH_Object> POH_ObjectLib = new();
@@ -39,7 +40,7 @@ namespace WorldtreeNexus {
         public MessageLog Log = new();
         public int LastPrinted = 0;
         
-        public string SelectedMenu = "Resources";
+        public string SelectedMenu = "NPCs";
 
 
         public int SecondsSinceAutosave = 0;
@@ -49,6 +50,7 @@ namespace WorldtreeNexus {
         public Rectangle ActivityRect = new Rectangle(new Point(111, 10), new Point(147, 34));
         public int ActivityItemTop = 0;
 
+        public List<ColoredString> QueuedLogs = new();
 
         public WorldtreeNexus() {
             ExtraWindows.SetupWindows();
@@ -153,11 +155,6 @@ namespace WorldtreeNexus {
 
                 mini.Con.DrawLine(new Point(56, printY), new Point(148, printY++), 196);
 
-                mini.Con.Print(57, printY, "Other Players Here: ");
-                mini.Con.Print(77, printY++, "(none)", Color.DarkSlateGray);
-
-                mini.Con.DrawLine(new Point(56, printY), new Point(148, printY++), 196);
-
                 int resourceY = printY;
                  
                 if (curr.ConnectedLocations.Count > 0) {
@@ -201,7 +198,7 @@ namespace WorldtreeNexus {
                                 }
                             }
 
-                            mini.Con.PrintClickable(57, printY++, new ColoredString("| " + name, conns[i].CanTraverse(player) ? (ExtraWindows.CompassRoute.FirstOrDefault() == conns[i].Destination ? Color.Turquoise : Color.White) : Color.Crimson, Color.Black), () => {
+                            mini.Con.PrintClickable(57, printY++, new ColoredString("| " + name, conns[i].CanTraverse(player) ? (ExtraWindows.CompassRoute.FirstOrDefault() == conns[i].Destination ? Color.Turquoise : Color.White) : (ExtraWindows.CompassRoute.FirstOrDefault() == conns[i].Destination ? Color.Orange : Color.Crimson), Color.Black), () => {
                                 if (conns[i].CanTraverse(player)) {
                                     conns[i].Traverse(player); 
                                     UI_LocCombat.GraceTimeStart = Helper.Time();
@@ -462,10 +459,10 @@ namespace WorldtreeNexus {
             mini.Win.Clear();
             Helper.DrawBox(mini.Win, 0, 0, 148, 48);
 
-              
-            SidebarManager.Draw(mini, player); 
-            LogDraw(mini);
-            LocationDraw(mini);  
+            foreach (var msg in QueuedLogs) {
+                Log.AddMessage(msg);
+            }
+            QueuedLogs.Clear();
 
             if (ExtraWindows.CollectionLog.IsVisible) { ExtraWindows.CollectionLogDraw(); }  
             if (ExtraWindows.Guide.IsVisible) {  ExtraWindows.GuideDraw(); } 
@@ -479,6 +476,7 @@ namespace WorldtreeNexus {
             if (ExtraWindows.Teleport.IsVisible) { ExtraWindows.TeleportDraw(); } 
             if (ExtraWindows.InventoryContainer.IsVisible) { ExtraWindows.InventoryContainerDraw(); } 
             if (ExtraWindows.Book.IsVisible) { ExtraWindows.BookDraw(); } 
+            if (ExtraWindows.Newspaper.IsVisible) { ExtraWindows.NewspaperDraw(); } 
             if (ExtraWindows.Cutscene.IsVisible) { ExtraWindows.CutsceneDraw(); } 
             if (ExtraWindows.Shop.IsVisible) { ExtraWindows.ShopDraw(); }
 
@@ -491,6 +489,10 @@ namespace WorldtreeNexus {
             if (ExtraWindows.Compass.IsVisible) { ExtraWindows.CompassDraw(); } 
             if (ExtraWindows.Alchemy.IsVisible) { ExtraWindows.AlchemyDraw(); } 
             if (ExtraWindows.Talisman.IsVisible) { ExtraWindows.TalismanDraw(); }
+             
+            SidebarManager.Draw(mini, player); 
+            LogDraw(mini);
+            LocationDraw(mini);  
 
             if (TimeLastTicked + 1000 < Helper.Time()) {
                 TickTime();
@@ -564,13 +566,20 @@ namespace WorldtreeNexus {
                     ExtraWindows.Compendium.IsVisible = true; 
                 }
             }
-            
+             
+            if (Helper.HotkeyDown(Key.F11)) {
+                RebuildLibraries();
+                ExtraWindows.HideAll();
+                ExtraWindows.SetupWindows();
+            }
+
             if (Helper.HotkeyDown(Key.F12) && !ExtraWindows.AnyVisible("Debug")) {
                 if (ExtraWindows.Debug.IsVisible) { 
                     ExtraWindows.Debug.IsVisible = false; 
                 } else {
                     ExtraWindows.HideAll();
                     ExtraWindows.Debug.IsVisible = true; 
+                    ExtraWindows.DebugAlchemyCounts();
                 }
             }
 
@@ -629,12 +638,12 @@ namespace WorldtreeNexus {
               //  player.CurrentClueBeginner = "B_CharlieMining";
                 //player.TryPickup(new Item(ItemLibrary["vialWater"]), 1);  
                 
-                player.TryPickup(new Item(ItemLibrary["talismanMetal"]), 100);  
-                player.TryPickup(new Item(ItemLibrary["talismanDestruction"]), 100);  
-                
-
-                //player.NavLoc = "MIST_VarrockPalaceBailey";
-                //player.TryPickup(new Item(ItemLibrary["tabteleHome"]), 1);
+                //player.TryPickup(new Item(ItemLibrary["talismanMetal"]), 100);  
+                //player.TryPickup(new Item(ItemLibrary["ashesPoplar"]), 1); 
+                //player.TryPickup(new Item(ItemLibrary["cleanMidori"]), 1);    
+                 
+                player.TryPickup(new Item(ItemLibrary["coinPouchSmall"]), 1);
+                //player.NavLoc = "TI_Main";
                 //player.TryGrantExp("Magic", 50000, Log, SidebarManager.RecentlyTrainedSkills);
 
 
@@ -654,6 +663,7 @@ namespace WorldtreeNexus {
 
                     Log.AddMessage(cask.Name + " log completed in average " + (totalCycles / simCount) + " opens over " + simCount + " simulations.");
                 }*/ 
+                 
 
                 ItemUseLogic.UsingSlot = -1;
             }
@@ -820,15 +830,15 @@ namespace WorldtreeNexus {
                         if (player.CozyContractSpots.Count > 0 && player.CozyContractSpots.Where(o => !o.Repaired).ToList().Count == 0) { // All spots are repaired, resolve contract
                             double avg = player.CozyPointTotal / 5.0; // get average level spent on each spot, in case the player didn't do the same level across the board for some reason
                             avg = avg / 10.0; // turn it into a tier;
-                            avg = Math.Floor(avg) + 1; // floor it and add 1. Level 1 at this point is now worth 1, Level 10 worth 2, up to Level 90 materials worth 10.
+                            avg = Math.Floor(avg); // floor it. Level 1 at this point is now worth 1, Level 10 worth 2, up to Level 90 materials worth 10.
 
                             player.TryGrantExp("Construction", (int) avg * 450, Log, SidebarManager.RecentlyTrainedSkills); // Grant 450 exp per tier of resource spent
                             player.CozyDestID = ""; // Clear the destination ID
                             player.CozyContractSpots.Clear(); // Clear their hotspot list so a new contract can be taken
 
-                            player.CozyRewardPoints += ((int) avg + 1); // Gain reward points equal to tier plus 1.
+                            player.CozyCredits += ((int) avg + 1); // Gain reward points equal to tier plus 1.
 
-                            Log.AddMessage("You finished your Cozy Cottages contract, earning " + ((int) avg * 450) + " Construction experience and " + (int) avg + " reward points.", Color.Green);
+                            Log.AddMessage("You finished your Cozy Cottages contract, earning " + ((int) avg * 450) + " Construction experience and " + (int) avg + " Cozy Credits.", Color.Green);
                         }
                     }
                 } 
@@ -927,6 +937,7 @@ namespace WorldtreeNexus {
             QuestLibrary.Clear();
             BossLibrary.Clear(); 
             BookLibrary.Clear();
+            NewspaperLibrary.Clear();
             CutsceneLibrary.Clear();
             M_HotspotLib.Clear();
             POH_ObjectLib.Clear();
@@ -940,9 +951,9 @@ namespace WorldtreeNexus {
             HardcodedItems.InitItems(ItemLibrary, SpellLibrary);
             HardcodedItemsCooking.InitItems(ItemLibrary);
             HardcodedItemsClues.InitItems(ItemLibrary);
-            HardcodedItemsFarming.InitItems(ItemLibrary);
+            ItemsFarming.InitItems(ItemLibrary);
             HardcodedItemsCrafting.InitItems(ItemLibrary);
-            HardcodedItemsQuests.InitItems(ItemLibrary);
+            ItemsQuests.InitItems(ItemLibrary);
             HardcodedItemsSmithing.InitItems(ItemLibrary);
             HardcodedItemsMinigames.InitItems(ItemLibrary);
             HardcodedItemsHoliday.InitItems(ItemLibrary);
@@ -959,6 +970,7 @@ namespace WorldtreeNexus {
 
             HardcodedLocations.InitLocs(Atlas, GatherSpots, MonsterLibrary);
             LocationsTutorial.InitLocs(Atlas, GatherSpots, MonsterLibrary);
+            LocationsNexus.InitLocs(Atlas, GatherSpots, MonsterLibrary);
 
             HardcodedNPCs.InitNPCs(NPCLibrary);
             TutorialNPCs.InitNPCs(NPCLibrary);
@@ -968,7 +980,10 @@ namespace WorldtreeNexus {
             HardcodedCraftRecipes.InitCrafts(CraftLib, SpellLibrary);
             HardcodedQuests.InitQuests(QuestLibrary);
             HardcodedBosses.InitBosses(BossLibrary); 
+
             HardcodedBooks.InitBooks(BookLibrary);
+            Newspapers.InitNewspapers(NewspaperLibrary);
+
             HardcodedCutscenes.InitCutscenes(CutsceneLibrary);
 
             CozyCottagesHotspots.InitSpots(M_HotspotLib);
@@ -1048,8 +1063,7 @@ namespace WorldtreeNexus {
                 if (wrap.GetRef() is Item item) {
                     bool found = false;
                     for (int i = 0; i < curr.ItemsHere.Count; i++) {
-                        if (curr.ItemsHere[i].ID == wrap.ID && wrap.Noted == curr.ItemsHere[i].Noted && curr.ItemsHere[i].Inaccessible == wrap.Inaccessible
-                            && (curr.ItemsHere[i].Alchemy == null || item.Alchemy == null || (curr.ItemsHere[i].Alchemy.CheckMatch(item.Alchemy)))) {
+                        if (wrap.StacksWith(curr.ItemsHere[i])) {
                             curr.ItemsHere[i].Quantity += wrap.Quantity;
                             found = true;
                             break;
@@ -1070,6 +1084,7 @@ namespace WorldtreeNexus {
                         }
 
                         item.Noted = wrap.Noted;
+                        item.Stolen = wrap.Stolen;
 
                         curr.ItemsHere.Add(item);
                     }

@@ -11,6 +11,7 @@
         public static Color Cobalt = new Color(4, 61, 156, 255);
         public static Color Tungsten = new Color(181, 172, 159, 255);
         public static Color Titanium = new Color(145, 32, 100, 255);
+        public static Color Yggdrasite = new Color(34, 139, 34, 255); 
 
         // Logs 
         
@@ -24,6 +25,7 @@
         public static Color Bloodwood = new Color(175, 63, 51, 255);
         public static Color Camatillo = new Color(74, 46, 67, 255);
         public static Color Katalox = new Color(68, 58, 52, 255);
+        public static Color Worldtree = new Color(207, 181, 59, 255);
 
         // Pastels
         public static Color PastelYellow = new Color(253, 253, 150);

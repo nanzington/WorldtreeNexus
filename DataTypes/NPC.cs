@@ -54,6 +54,7 @@ namespace WorldtreeNexus.DataTypes {
                             rolled = rolled.OrderBy(o => o.UseInt3).Reverse().ToList();
 
                             if (rolled.Count > 0) {
+                                rolled[0].Stolen = true;
                                 p.TryPickup(rolled[0], rolled[0].Quantity);
                             }
                         } 

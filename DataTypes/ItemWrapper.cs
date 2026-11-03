@@ -16,6 +16,7 @@ namespace WorldtreeNexus.DataTypes {
         public AlchemyStats Alchemy = null;
 
         public string MiscString = "";
+        public bool Stolen = false;
 
         [JsonIgnore]
         public Item? Library = null; 
@@ -39,6 +40,8 @@ namespace WorldtreeNexus.DataTypes {
             MiscInt2 = wrap.UseInt2;
             MiscInt3 = wrap.UseInt3;
             MiscString = wrap.MiscString;
+
+            Stolen = wrap.Stolen;
 
             if (wrap.Alchemy != null) {
                 Alchemy = new(wrap.Alchemy);
@@ -71,6 +74,8 @@ namespace WorldtreeNexus.DataTypes {
             MiscInt3 = other.MiscInt3;
             MiscString = other.MiscString;
 
+            Stolen = other.Stolen;
+
             if (other.Alchemy != null) {
                 Alchemy = new(other.Alchemy);
             }
@@ -89,6 +94,7 @@ namespace WorldtreeNexus.DataTypes {
                     clone.UseInt4 = Charges;
 
                     clone.Alchemy = Alchemy;
+                    clone.Stolen = Stolen;
 
 
                     return clone;
@@ -97,6 +103,24 @@ namespace WorldtreeNexus.DataTypes {
             if (Library != null)
                 return new(Library);
             return null;
+        }
+
+        public bool StacksWith(ItemWrapper otherWrap) {
+            if (ID != otherWrap.ID) { return false; }
+            if (Alchemy != null && otherWrap.Alchemy != null && !Alchemy.CheckMatch(otherWrap.Alchemy)) { return false; }
+            if (Charges != otherWrap.Charges) { return false; }
+            if (Noted != otherWrap.Noted) { return false; }
+            if (Stolen != otherWrap.Stolen) { return false; }
+
+            if (GetRef() is Item self && otherWrap.GetRef() is Item other) {
+                if (!self.Stackable) { return false; }
+            } 
+            
+            return true;
+        }
+
+        public bool StacksWith(Item other) {
+            return StacksWith(new ItemWrapper(other));
         }
 
         public void TryConsume() {

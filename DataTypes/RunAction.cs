@@ -173,6 +173,11 @@ namespace WorldtreeNexus.DataTypes {
                         } else {
                             GameLoop.WTN.Log.AddMessage("You do not currently have a Cozy Cottages contract.", Color.Crimson);
                         }
+                    } else if (MiscString == "CheckCozyCredits") { 
+                        GameLoop.WTN.Log.AddMessage("You currently have " + player.CozyCredits + " Cozy Credits.", Color.Yellow);
+                    } else if (MiscString == "SpendCozyCredits") {
+                        player.CozyCredits -= MiscInt; 
+                        GameLoop.WTN.Log.AddMessage("You buy " + MiscString2 + " for " + MiscInt + " Cozy Credits, and have " + player.CozyCredits + " remaining.", Color.Yellow);
                     }
                 }
 
@@ -218,8 +223,23 @@ namespace WorldtreeNexus.DataTypes {
 
                 if (ActionID == "Teleport") { 
                     if (player.GetRegion() == "Tutorial Island") { 
-                        player.NavLoc = "TI_Main";
-                        GameLoop.WTN.Log.AddMessage("The pull of the island distorts your magic and you appear in the center of Tutorial Island.", Color.MediumPurple);
+                        if (player.QuestCompleted("TI_OnTheJobTraining")) {
+                            if (GameLoop.WTN.Atlas.TryGetValue(MiscString, out Location? dest)) { 
+                                player.NavLoc = MiscString;
+
+                                // TODO: Add an achievement for doing this
+
+                                if (MiscInt != 1)
+                                    GameLoop.WTN.Log.AddMessage("You escape the pull of Tutorial Island and teleport to " + dest.DisplayName + ".", Color.MediumPurple);
+                                else
+                                    GameLoop.WTN.Log.AddMessage("You travel to " + dest.DisplayName + ".", Color.MediumPurple);
+                            }  else {
+                                GameLoop.WTN.Log.AddMessage("Destination does not exist.", Color.Crimson);
+                            } 
+                        } else {
+                            player.NavLoc = "TI_Main";
+                            GameLoop.WTN.Log.AddMessage("The pull of the island distorts your magic and you appear in the center of Tutorial Island.", Color.MediumPurple);
+                        }
                     } else {
                         if (GameLoop.WTN.Atlas.TryGetValue(MiscString, out Location? dest)) { 
                             player.NavLoc = MiscString;

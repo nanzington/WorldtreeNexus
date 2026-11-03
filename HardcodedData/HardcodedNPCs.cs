@@ -8,9 +8,9 @@ namespace WorldtreeNexus.Hardcodes {
 
             List<NPC> toAdd = new();
             
-            toAdd.Add(new("Man", "man", new() { { 0, new("Lovely day for it!", new() { byeThen }) } }, 1, 10) { PickpocketLoot = new() { new("coins", 1, 1, 5, 5) } });
-            toAdd.Add(new("Woman", "woman", new() { { 0, new("Lovely day for it!", new() { byeThen }) } }, 1, 10) { PickpocketLoot = new() { new("coins", 1, 1, 5, 5) } });
-            toAdd.Add(new("Guard", "guard", new() { { 0, new("Keep it moving, adventurer.", new() { byeThen }) } }, 20, 20) { PickpocketLoot = new() { new("coins", 1, 1, 30, 30) } });
+            toAdd.Add(new("Man", "man", new() { { 0, new("Lovely day for it!", new() { byeThen }) } }, 1, 10) { PickpocketLoot = new() { new("coinPouchSmall", 1, 1, 1, 1) } });
+            toAdd.Add(new("Woman", "woman", new() { { 0, new("Lovely day for it!", new() { byeThen }) } }, 1, 10) { PickpocketLoot = new() { new("coinPouchSmall", 1, 1, 1, 1) } });
+            toAdd.Add(new("Guard", "guard", new() { { 0, new("Keep it moving, adventurer.", new() { byeThen }) } }, 20, 20) { PickpocketLoot = new() { new("coinPouchMedium", 1, 1, 1, 1) } });
             
 
             toAdd.Add(new("Estate Agent", "estateAgent", new() { 
@@ -21,11 +21,11 @@ namespace WorldtreeNexus.Hardcodes {
                     byeThen 
                 }) },
                 // Cozy Cottages explanation
-                { 1, new("Why, Cozy Cottages, of course!", new() { new("What's Cozy Cottages?", 2), new("Give me a contract!", 7), new("What was my contract again?", 8), new("Could I have a contract scroll?", 9), byeThen }) },
+                { 1, new("Why, Cozy Cottages, of course!", new() { new("What's Cozy Cottages?", 2), new("Give me a contract!", 7), new("What was my contract again?", 8), new("Could I have a contract scroll?", 9), new("Could I look at the Reward Shop?", 25), byeThen }) },
                 { 2, new("Quite simple, my friend! People's homes need repairs, and you could do it for them!", new() { new("Is there any kind of reward?", 3), new("What do I need?", 10), new("How do I do it?", 13), new("(BACK)", 1, silent: true), byeThen }) },
                 { 3, new("Is the satisfaction of a job well done not reward enough?", new() { new("You know what, you're right!", 4), new("...No.", 5), byeThen }) },
                 { 4, new("That's the spirit!", new() { new("(BACK)", 1, silent: true), byeThen }) },
-                { 5, new("Well, you'll also get some Construction experience and points to spend in the rewards shop. Enticed yet?", new() { new("(BACK)", 1, silent: true), new("...No.", 6), byeThen }) },
+                { 5, new("Well, you'll also get some Construction experience and credits to spend in the rewards shop. Enticed yet?", new() { new("(BACK)", 1, silent: true), new("...No.", 6), byeThen }) },
                 { 6, new("Suit yourself. I'll be here if you change your mind.", new() { byeThen }) },
                 { 7, new("Coming right up!", new() { byeThen }, acts: [ new("Minigame", "GetCozyContract", "", 0) ]) },
                 { 8, new("You know, if you had a contract scroll you wouldn't need to ask! Now let me see...", new() { byeThen }, acts: [ new("Minigame", "ViewCozyContract", "", 0) ]) },
@@ -38,6 +38,29 @@ namespace WorldtreeNexus.Hardcodes {
                 { 15, new("Things that need repairing will have a red x, and you can click the question mark to get a list of materials needed to repair that spot.", new() { new("(NEXT)", 16), byeThen }) },
                 { 16, new("If you have everything to repair a spot, the name will be green. Otherwise it will be red, or if it's already repaired then white.", new() { new("(NEXT)", 17), byeThen }) },
                 { 17, new("Simply click the green spots and the items to repair them will be taken, repairing it. Once all spots are repaired the contract will automatically complete.", new() { new("(BACK)", 2, silent: true), byeThen }) },
+                
+                { 25, new("Certainly! See anything that catches your eye?", new() { 
+                    new("What are all these?", 40), 
+                    new("- Cozy Cottages teleport (2)", 26, [ new("CozyCredits", 2) ], true), 
+                    new("- Equippable Saw (500)", 27, [ new("CozyCredits", 500) ], true),
+                    new("- Equippable Hammer (500)", 28, [ new("CozyCredits", 500) ], true),
+                    new("- Plank Box (200)", 29, [ new("CozyCredits", 200) ], true),
+                    new("(BACK)", 2, silent: true), 
+                    byeThen 
+                }, acts: [ new("Minigame", "CheckCozyCredits", "", 1) ]) },
+                
+                { 26, new("", new() { new("(BACK)", 25, silent: true), byeThen }, items: [ "teleportCozyCottages,1" ], acts: [ new("Minigame", "SpendCozyCredits", "Cozy Cottages teleport", 2) ]) },
+                { 27, new("", new() { new("(BACK)", 25, silent: true), byeThen }, items: [ "hammerEquippable,1" ], acts: [ new("Minigame", "SpendCozyCredits", "John Henry's Hammer", 500) ]) },
+                { 28, new("", new() { new("(BACK)", 25, silent: true), byeThen }, items: [ "sawEquippable,1" ], acts: [ new("Minigame", "SpendCozyCredits", "Lu Ban's Saw", 500) ]) },
+                { 29, new("", new() { new("(BACK)", 25, silent: true), byeThen }, items: [ "boxPlank,1" ], acts: [ new("Minigame", "SpendCozyCredits", "Plank box", 200) ]) },
+                
+                { 40, new("In parentheses after each item is the cost in points.", new() { new("(NEXT)", 41), byeThen }) },
+                { 41, new("Cozy Cottages teleport scrolls will teleport you to your active contract destination if you have one, or to the local Estate Agent if not.", new() { new("(NEXT)", 42), byeThen }) },
+                { 42, new("The equippable saw can be equipped in your offhand, freeing up an inventory slot.", new() { new("(NEXT)", 43), byeThen }) },
+                { 43, new("The equippable hammer can be equipped in your main hand, freeing up an inventory slot.", new() { new("(NEXT)", 44), byeThen }) },
+                { 44, new("The plank box can hold up to 25 of each plank at once.", new() { new("(NEXT)", 45), byeThen }) },
+                { 45, new("Take note that any planks in your box may be lost when upgrading them, and you can only own ", new() { new("(BACK)", 25, silent: true), byeThen }) },
+                
                 // Open the POH management menu
                 { 50, new("You got it. Let me know if you need anything.", new() { new("(BACK)", 0, silent: true), byeThen }, acts: [ new("OpenUI", "ManagePOH", "", 0)]) },
                 // Nexus house purchases

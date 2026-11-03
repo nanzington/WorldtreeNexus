@@ -503,13 +503,13 @@ namespace WorldtreeNexus {
 
             if (width > 0) {
                 instance.Print(x, y, "-", mousePos == minusPos ? Color.Yellow : Color.White);
-                instance.Print(x + 2, y, target.ToString().PadLeft(width));
+                instance.Print(x + 2, y, target.ToString().PadLeft(width), Color.White);
                 instance.Print(x + 3 + width, y, "+", mousePos == plusPos ? Color.Yellow : Color.White);
             }
             else {
                 plusPos = new Point(x + 3 + target.ToString().Length, y);
                 instance.Print(x, y, "-", mousePos == minusPos ? Color.Yellow : Color.White);
-                instance.Print(x + 2, y, target.ToString());
+                instance.Print(x + 2, y, target.ToString(), Color.White);
                 instance.Print(x + 3 + target.ToString().Length, y, "+", mousePos == plusPos ? Color.Yellow : Color.White);
             }
 
@@ -537,13 +537,13 @@ namespace WorldtreeNexus {
 
             if (width > 0) {
                 instance.Print(x, y, "-", mousePos == minusPos ? Color.Yellow : Color.White);
-                instance.Print(x + 2, y, target.ToString().PadLeft(width));
+                instance.Print(x + 2, y, target.ToString().PadLeft(width), Color.White);
                 instance.Print(x + 3 + width, y, "+", mousePos == plusPos ? Color.Yellow : Color.White);
             }
             else {
                 plusPos = new Point(x + 3 + target.ToString().Length, y);
                 instance.Print(x, y, "-", mousePos == minusPos ? Color.Yellow : Color.White);
-                instance.Print(x + 2, y, target.ToString());
+                instance.Print(x + 2, y, target.ToString(), Color.White);
                 instance.Print(x + 3 + target.ToString().Length, y, "+", mousePos == plusPos ? Color.Yellow : Color.White);
             }
 
@@ -630,6 +630,7 @@ namespace WorldtreeNexus {
                 || (ExtraWindows.Compass.IsVisible && instance != ExtraWindows.Compass)
                 || (ExtraWindows.Alchemy.IsVisible && instance != ExtraWindows.Alchemy)
                 || (ExtraWindows.Talisman.IsVisible && instance != ExtraWindows.Talisman)
+                || (ExtraWindows.Newspaper.IsVisible && instance != ExtraWindows.Newspaper)
                 || (ExtraWindows.Map.IsVisible && instance != ExtraWindows.Map && (mousePos.X < 55 || mousePos.X > 108))) {
                 return;
             }
@@ -874,6 +875,7 @@ namespace WorldtreeNexus {
                 || (ExtraWindows.Compass.IsVisible && instance != ExtraWindows.Compass)
                 || (ExtraWindows.Alchemy.IsVisible && instance != ExtraWindows.Alchemy)
                 || (ExtraWindows.Talisman.IsVisible && instance != ExtraWindows.Talisman)
+                || (ExtraWindows.Newspaper.IsVisible && instance != ExtraWindows.Newspaper)
                 || (ExtraWindows.Map.IsVisible && instance != ExtraWindows.Map && (mousePos.X < 55 || mousePos.X > 108))) {
                 return y;
             }
@@ -1038,6 +1040,7 @@ namespace WorldtreeNexus {
                 || (ExtraWindows.Compass.IsVisible && instance != ExtraWindows.Compass)
                 || (ExtraWindows.Alchemy.IsVisible && instance != ExtraWindows.Alchemy)
                 || (ExtraWindows.Talisman.IsVisible && instance != ExtraWindows.Talisman)
+                || (ExtraWindows.Newspaper.IsVisible && instance != ExtraWindows.Newspaper)
                 || (ExtraWindows.Map.IsVisible && instance != ExtraWindows.Map && (mousePos.X < 55 || mousePos.X > 108))) {
                 return y;
             }
@@ -1253,6 +1256,21 @@ namespace WorldtreeNexus {
             return output;
         }
 
+        public static bool AllMet(this List<Requirement> instance, bool onlyOne = false, bool notedOkay = false, bool equippedOkay = false) {
+            bool allMet = true;
+            bool anyMet = false;
+            foreach (var req in instance) {
+                if (!req.CheckRequirement(GameLoop.WTN.player, notedOkay, equippedOkay)) {
+                    allMet = false;
+                } else {
+                    anyMet = true;
+                }
+            }
+
+            if (onlyOne) { if (anyMet) { return true; } }
+            return allMet;
+        }
+
         public static bool Requirement(string type, int miscint, string misc1, string misc2 = "", bool consume = false, bool notes = false, bool equipped = true) {
             Requirement req = new(type, miscint, misc1, consume, misc2);
             return req.CheckRequirement(GameLoop.WTN.player, notes, equipped);
@@ -1276,6 +1294,21 @@ namespace WorldtreeNexus {
             int secondWins = 0;
             int draws = 0;
 
+            if (first.MaxDamage < second.DRvsStyle && second.MaxDamage > first.DRvsStyle) { // If first can't hit second but second can hit first, second wins by default
+                secondWins = rounds;
+                return (returnWhich == "first" ? firstWins : returnWhich == "second" ? secondWins : draws);
+            }
+            if (second.MaxDamage < first.DRvsStyle && first.MaxDamage > second.DRvsStyle) { // If second can't hit first but first can hit second, first wins by default
+                firstWins = rounds;
+                return (returnWhich == "first" ? firstWins : returnWhich == "second" ? secondWins : draws);
+            }
+
+            if (first.MaxDamage < second.DRvsStyle && second.MaxDamage < first.DRvsStyle) { // If they can't hit eachother, guaranteed draw
+                draws = rounds;
+                return (returnWhich == "first" ? firstWins : returnWhich == "second" ? secondWins : draws);
+            }
+
+
             for (int i = 0; i < rounds; i++) {
                 first.CurrentHP = first.MaxHP;
                 second.CurrentHP = second.MaxHP;
@@ -1286,18 +1319,22 @@ namespace WorldtreeNexus {
                 bool someoneWon = false;
 
                 for (int time = 0; time < 600_000; time += 100) {
-                    if (second.LastAttackTime + second.AttackSpeedInMS <= time) { // Second can attack, happens first like player vs monster normally works
-                        if (GameLoop.rand.Next(100) + (second.AttackLv / 4) >= 25 + (first.DefenseLv / 4)) {
-                            int dmg = GameLoop.rand.Next(second.MaxDamage + 1);  
-                            Materials.ElementalWeaknesses.TryGetValue(first.Element, out string? weakElement);
+                    if (second.LastAttackTime + second.AttackSpeedInMS <= time) { // Second can attack, happens first like player vs monster normally works 
+                        int hitChance = GameLoop.rand.Next(100);
+                        
+                        Materials.ElementalWeaknesses.TryGetValue(first.Element, out string? weakElement); 
+                        if (weakElement == null || weakElement == "") { weakElement = "Wood"; }
+                        Materials.ElementalWeaknesses.TryGetValue(first.Element, out string? strongElement); 
+                        if (strongElement == null || strongElement == "") { strongElement = "Wood"; }
+                        
+                        if (second.DamageElement == weakElement) { hitChance = (int) Math.Ceiling(hitChance * 1.25); }
+                        if (second.DamageType == first.WeakType) { hitChance = (int) Math.Ceiling(hitChance * 1.25); }
+                        if (second.DamageType == strongElement) { hitChance = (int) Math.Ceiling(hitChance * 0.75); }
 
-                            if (weakElement == null || weakElement == "") { weakElement = "Wood"; }
+                        if (hitChance + (second.AttackLv / 4) >= 25 + (first.DefenseLv / 4)) {
+                            int dmg = GameLoop.rand.Next(second.MaxDamage + 1);    
 
-                            if (first.DRvsStyle > 0) { dmg -= first.DRvsStyle; }
-
-                            if (second.DamageElement == weakElement) { dmg = (int) Math.Ceiling(dmg * 1.5); }
-                            if (second.DamageType == first.WeakType) { dmg = (int) Math.Ceiling(dmg * 1.5); }
-
+                            if (first.DRvsStyle > 0) { dmg -= first.DRvsStyle; }  
                             first.CurrentHP -= dmg;
 
                             if (first.CurrentHP <= 0) { someoneWon = true; secondWins++; break;}
@@ -1305,17 +1342,21 @@ namespace WorldtreeNexus {
                     }
 
                     if (first.LastAttackTime + first.AttackSpeedInMS <= time) { // First can attack
-                        if (GameLoop.rand.Next(100) + (first.AttackLv / 4) >= 25 + (second.DefenseLv / 4)) {
-                            int dmg = GameLoop.rand.Next(first.MaxDamage + 1);  
-                            Materials.ElementalWeaknesses.TryGetValue(second.Element, out string? weakElement);
+                        int hitChance = GameLoop.rand.Next(100);
+                        
+                        Materials.ElementalWeaknesses.TryGetValue(second.Element, out string? weakElement); 
+                        if (weakElement == null || weakElement == "") { weakElement = "Wood"; }
+                        Materials.ElementalWeaknesses.TryGetValue(second.Element, out string? strongElement); 
+                        if (strongElement == null || strongElement == "") { strongElement = "Wood"; }
+                        
+                        if (first.DamageElement == weakElement) { hitChance = (int) Math.Ceiling(hitChance * 1.25); }
+                        if (first.DamageType == second.WeakType) { hitChance = (int) Math.Ceiling(hitChance * 1.25); }
+                        if (first.DamageType == strongElement) { hitChance = (int) Math.Ceiling(hitChance * 0.75); }
 
-                            if (weakElement == null || weakElement == "") { weakElement = "Wood"; }
+                        if (hitChance + (first.AttackLv / 4) >= 25 + (second.DefenseLv / 4)) {
+                            int dmg = GameLoop.rand.Next(first.MaxDamage + 1);   
 
-                            if (second.DRvsStyle > 0) { dmg -= second.DRvsStyle; }
-
-                            if (first.DamageElement == weakElement) { dmg = (int) Math.Ceiling(dmg * 1.5); }
-                            if (first.DamageType == second.WeakType) { dmg = (int) Math.Ceiling(dmg * 1.5); }
-
+                            if (second.DRvsStyle > 0) { dmg -= second.DRvsStyle; }  
                             second.CurrentHP -= dmg;
 
                             if (second.CurrentHP <= 0) { someoneWon = true; firstWins++; break;}
@@ -1327,8 +1368,8 @@ namespace WorldtreeNexus {
                     draws++;
                 }
             }
-
-            return firstWins;
+            
+            return (returnWhich == "first" ? firstWins : returnWhich == "second" ? secondWins : draws);
         }
 
         public static string ConvertTime(int Minutes, bool twelve) {
@@ -1339,6 +1380,8 @@ namespace WorldtreeNexus {
             if (twelve) {
                 bool pm = Hour >= 12;
                 int adjHour = pm ? (Hour > 12 ? Hour - 12 : 12) : Hour;
+
+                if (adjHour == 0) { adjHour = 12; }
 
                 return adjHour.ToString().Align(HorizontalAlignment.Right, 2) + ":" + Minute.ToString().Align(HorizontalAlignment.Right, 2, '0') + (pm ? " pm" : " am");
             } else { 

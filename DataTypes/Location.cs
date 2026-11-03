@@ -17,6 +17,7 @@ namespace WorldtreeNexus.DataTypes {
 
         public bool Dark = false;
         public string Hazard = "";
+        public bool Outside = true; // Whether or not this location counts as "outside". When vampires get added, they'll take damage if outside during the day
 
         public int MazeTile = -1;
         public string MazeMap = "";
@@ -44,6 +45,7 @@ namespace WorldtreeNexus.DataTypes {
 
         public List<string> ShopItemsHere = new();
         public double ShopPriceMultiplier = 1.0;
+        public bool Fence = false; // If true they will buy stolen items
 
         public List<string> FarmingPatchesHere = new(); 
 

@@ -61,74 +61,20 @@ namespace WorldtreeNexus.Hardcodes {
                 toAdd.Add(new("Knife", "Fletching", wood.Level, (int) (wood.Tier * 15), ["log" + wood.Name + "," + 1], "rod" + wood.Name + "U", tool: "knife"));
             }
 
-            /*
-            toAdd.Add(new("Knife", "Fletching", 1, 5, ["logPoplar" + "," + 1], "arrowshaft", 15, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 1, 5, ["logPoplar" + "," + 1], "shortbowPoplarU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 1, 5, ["logPoplar" + "," + 1], "longbowPoplarU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 1, 5, ["logPoplar" + "," + 1], "stockPoplar", tool: "knife")); 
-            toAdd.Add(new("Knife", "Fletching", 1, 5, ["logPoplar" + "," + 1], "plankPoplar", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 10, 10, ["logElm" + "," + 1], "arrowshaft", 30, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 10, 10, ["logElm" + "," + 1], "shortbowElmU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 10, 10, ["logElm" + "," + 1], "longbowElmU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 10, 10, ["logElm" + "," + 1], "stockElm", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 10, 10, ["logElm" + "," + 1], "plankElm", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 20, 15, ["logWalnut" + "," + 1], "arrowshaft", 45, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 20, 15, ["logWalnut" + "," + 1], "shortbowWalnutU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 20, 15, ["logWalnut" + "," + 1], "longbowWalnutU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 20, 15, ["logWalnut" + "," + 1], "stockWalnut", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 20, 15, ["logWalnut" + "," + 1], "plankWalnut", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 30, 20, ["logHolly" + "," + 1], "arrowshaft", 60, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 30, 30, ["logHolly" + "," + 1], "shortbowHollyU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 30, 30, ["logHolly" + "," + 1], "longbowHollyU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 30, 30, ["logHolly" + "," + 1], "stockHolly", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 30, 30, ["logHolly" + "," + 1], "plankHolly", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 40, 25, ["logAcacia" + "," + 1], "arrowshaft", 75, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 40, 45, ["logAcacia" + "," + 1], "shortbowAcaciaU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 40, 45, ["logAcacia" + "," + 1], "longbowAcaciaU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 40, 45, ["logAcacia" + "," + 1], "stockAcacia", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 40, 45, ["logAcacia" + "," + 1], "plankAcacia", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 50, 30, ["logBirch" + "," + 1], "arrowshaft", 90, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 50, 60, ["logBirch" + "," + 1], "shortbowBirchU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 50, 60, ["logBirch" + "," + 1], "longbowBirchU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 50, 60, ["logBirch" + "," + 1], "stockBirch", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 50, 60, ["logBirch" + "," + 1], "plankBirch", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 60, 35, ["logHickory" + "," + 1], "arrowshaft", 105, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 60, 75, ["logHickory" + "," + 1], "shortbowHickoryU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 60, 75, ["logHickory" + "," + 1], "longbowHickoryU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 60, 75, ["logHickory" + "," + 1], "stockHickory", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 60, 75, ["logHickory" + "," + 1], "plankHickory", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 70, 40, ["logBloodwood" + "," + 1], "arrowshaft", 120, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 70, 90, ["logBloodwood" + "," + 1], "shortbowBloodwoodU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 70, 90, ["logBloodwood" + "," + 1], "longbowBloodwoodU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 70, 90, ["logBloodwood" + "," + 1], "stockBloodwood", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 70, 90, ["logBloodwood" + "," + 1], "plankBloodwood", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 80, 45, ["logCamatillo" + "," + 1], "arrowshaft", 135, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 80, 105, ["logCamatillo" + "," + 1], "shortbowCamatilloU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 80, 105, ["logCamatillo" + "," + 1], "longbowCamatilloU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 80, 105, ["logCamatillo" + "," + 1], "stockCamatillo", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 80, 105, ["logCamatillo" + "," + 1], "plankCamatillo", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 90, 50, ["logKatalox" + "," + 1], "arrowshaft", 150, "knife"));
-            toAdd.Add(new("Knife", "Fletching", 90, 120, ["logKatalox" + "," + 1], "shortbowKataloxU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 90, 120, ["logKatalox" + "," + 1], "longbowKataloxU", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 90, 120, ["logKatalox" + "," + 1], "stockKatalox", tool: "knife"));
-            toAdd.Add(new("Knife", "Fletching", 90, 120, ["logKatalox" + "," + 1], "plankKatalox", tool: "knife"));
-            */
 
-
-            toAdd.Add(new("Pottery Wheel", "Crafting", 1, 7, ["claySoft" + "," +  1], "unfiredPot"));
-            toAdd.Add(new("Pottery Wheel", "Crafting", 3, 9, ["claySoft" + "," +  1], "unfiredCup", 4));
-            toAdd.Add(new("Pottery Wheel", "Crafting", 7, 15, ["claySoft" + "," +  1], "unfiredPieDish"));
-            toAdd.Add(new("Pottery Wheel", "Crafting", 8, 18, ["claySoft" + "," +  1], "unfiredBowl"));
-            toAdd.Add(new("Pottery Wheel", "Crafting", 19, 20, ["claySoft" + "," +  1], "unfiredPlantPot"));
-            toAdd.Add(new("Pottery Wheel", "Crafting", 25, 30, ["claySoft" + "," +  1], "unfiredPotLid")); 
+            toAdd.Add(new("Pottery Wheel", "Crafting", 1, 10, ["claySoft" + "," +  1], "unfiredPot"));
+            toAdd.Add(new("Pottery Wheel", "Crafting", 1, 10, ["claySoft" + "," +  1], "unfiredCup", 4));
+            toAdd.Add(new("Pottery Wheel", "Crafting", 1, 10, ["claySoft" + "," +  1], "unfiredPieDish"));
+            toAdd.Add(new("Pottery Wheel", "Crafting", 1, 10, ["claySoft" + "," +  1], "unfiredBowl"));
+            toAdd.Add(new("Pottery Wheel", "Crafting", 1, 10, ["claySoft" + "," +  1], "unfiredPlantPot"));
+            toAdd.Add(new("Pottery Wheel", "Crafting", 1, 10, ["claySoft" + "," +  1], "unfiredPotLid")); 
             
-            toAdd.Add(new("Glassblowing Pipe", "Crafting", 1, 18, ["glassMolten,1"], "beerGlass"));
-            toAdd.Add(new("Glassblowing Pipe", "Crafting", 4, 19, ["glassMolten,1"], "candleLanternEmpty"));
-            toAdd.Add(new("Glassblowing Pipe", "Crafting", 12, 25, ["glassMolten,1"], "oilLampEmpty"));
-            toAdd.Add(new("Glassblowing Pipe", "Crafting", 42, 43, ["glassMolten,1"], "fishbowlEmpty"));
-            toAdd.Add(new("Glassblowing Pipe", "Crafting", 49, 55, ["glassMolten,1"], "glassLens"));
-            toAdd.Add(new("Glassblowing Pipe", "Crafting", 46, 53, ["glassMolten,1"], "orbUnpowered"));
-            toAdd.Add(new("Glassblowing Pipe", "Crafting", 33, 35, ["glassMolten,1"], "vialEmpty"));
+            toAdd.Add(new("Glassblowing Pipe", "Crafting", 1, 20, ["glassMolten,1"], "beerGlass"));
+            toAdd.Add(new("Glassblowing Pipe", "Crafting", 1, 20, ["glassMolten,1"], "vialEmpty"));
+            toAdd.Add(new("Glassblowing Pipe", "Crafting", 1, 20, ["glassMolten,1"], "candleLanternEmpty"));
+            toAdd.Add(new("Glassblowing Pipe", "Crafting", 10, 40, ["glassMolten,1"], "oilLampEmpty"));
+            toAdd.Add(new("Glassblowing Pipe", "Crafting", 10, 40, ["glassMolten,1"], "fishbowlEmpty"));
+            toAdd.Add(new("Glassblowing Pipe", "Crafting", 20, 60, ["glassMolten,1"], "glassLens")); 
 
 
             // Jewellery

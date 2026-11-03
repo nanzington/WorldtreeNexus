@@ -1141,8 +1141,8 @@ namespace WorldtreeNexus.Managers {
                         mini.Con.PrintClickable(14, 28, new ColoredString("Slower", player.CombatViewing.Speed == 1.5 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.5; });
                         mini.Con.PrintClickable(22, 28, new ColoredString("Slow", player.CombatViewing.Speed == 1.25 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.25; });
                         mini.Con.PrintClickable(30, 28, new ColoredString("Medium", player.CombatViewing.Speed ==  1.0 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.0; });
-                        mini.Con.PrintClickable(38, 28, new ColoredString("Fast", player.CombatViewing.Speed == 1.25 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.25; });
-                        mini.Con.PrintClickable(46, 28, new ColoredString("Faster", player.CombatViewing.Speed == 1.5 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 1.5; });
+                        mini.Con.PrintClickable(38, 28, new ColoredString("Fast", player.CombatViewing.Speed == 0.75 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 0.75; });
+                        mini.Con.PrintClickable(46, 28, new ColoredString("Faster", player.CombatViewing.Speed == 0.5 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { player.CombatViewing.Speed = 0.5; });
                         
                         mini.Con.PrintClickable(1, 29, "Empowered " + Helper.Checkmark(player.CombatViewing.Empowered), () => { player.CombatViewing.Empowered.Flip(); });
                         mini.Con.PrintClickable(13, 29, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage("Spell damage +25%. Spell costs (tier / 2) elemental talismans complementary to main element. ", Color.Yellow); });

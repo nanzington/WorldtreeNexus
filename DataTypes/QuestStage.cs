@@ -8,6 +8,8 @@
         public string MiscString = "";
         public int MiscInt = 0;
 
+        public string ReachedLog = ""; // Displayed in the log when this quest stage is reached
+
 
         public QuestStage(string desc, int toStage, string prog = "", string misc = "", int num = 0, string quickDesc = "") {
             Description = desc;

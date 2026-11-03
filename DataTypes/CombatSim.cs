@@ -10,7 +10,7 @@
         public string DamageType = "Crush";
         public string DamageElement = "Earth";
 
-        public double AttackSpeedInMS = 2000;
+        public int AttackSpeedInMS = 2000;
 
         public int DRvsStyle = 0; 
         public string WeakType = "";
@@ -20,7 +20,7 @@
 
 
         public CombatSim() {}
-        public CombatSim(int hp, int atk, int def, int maxDmg, string dmgType, string dmgElement, double atkSpeed, int dr, string weakType, string element) {
+        public CombatSim(int hp, int atk, int def, int maxDmg, string dmgType, string dmgElement, int atkSpeed, int dr, string weakType, string element) {
             CurrentHP = hp;
             MaxHP = hp;
 
@@ -30,6 +30,12 @@
             MaxDamage = maxDmg;
             DamageType = dmgType;
             DamageElement = dmgElement; 
+
+            AttackSpeedInMS = atkSpeed;
+            DRvsStyle = dr;
+
+            WeakType = weakType;
+            Element = element;
         }
     }
 }

@@ -36,23 +36,19 @@ namespace WorldtreeNexus.UI {
                                         if (output != null) {
                                             int qty = 1 + patch.Compost;
                                             patch.Regrown--;
+                                             
+                                            player.TryGrantExp("Farming", seed.UseInt2 / 10, Log, SidebarManager.RecentlyTrainedSkills);
+                                            if (patch.PatchType == "Tree") { 
+                                                player.TryGrantExp("Woodcutting", (seed.UseInt2 / 4), Log, SidebarManager.RecentlyTrainedSkills); 
+                                            }
 
                                             if (output.Stackable) {
                                                 output.Quantity = qty; 
-                                                player.TryGrantExp("Farming", (seed.UseInt2 / 10) * qty, Log, SidebarManager.RecentlyTrainedSkills);
-                                                if (patch.PatchType == "Tree") { 
-                                                    player.TryGrantExp("Woodcutting", (seed.UseInt2 / 4) * qty, Log, SidebarManager.RecentlyTrainedSkills); 
-                                                }
                                                 if (!player.TryPickup(output, output.Quantity)) {
                                                     Log.AddMessage(new ColoredString("Your inventory is full, so the " + output.Name + "s fall to the ground." , Color.Crimson, Color.Black));
                                                 }
                                             } else {
                                                 for (int i = 0; i < qty; i++) {
-                                                    player.TryGrantExp("Farming", seed.UseInt2 / 10, Log, SidebarManager.RecentlyTrainedSkills);
-                                                    if (patch.PatchType == "Tree") { 
-                                                        player.TryGrantExp("Woodcutting", (seed.UseInt2 / 4), Log, SidebarManager.RecentlyTrainedSkills); 
-                                                    }
-
                                                     Item clone = new(output);
                                                     clone.Quantity = 1;
 
@@ -84,27 +80,22 @@ namespace WorldtreeNexus.UI {
                                         if (temp != null)
                                             output = new(temp);
                                         if (output != null) {
-                                            int qty = 5 + (int) Math.Floor((player.Skills["Farming"].Level - seed.UseInt) / 5.0) + patch.Compost;
+                                            int qty = 2 + (int) Math.Floor((player.Skills["Farming"].Level - seed.UseInt) / 5.0) + patch.Compost;
+                                            
+                                            player.TryGrantExp("Farming", seed.UseInt2, Log, SidebarManager.RecentlyTrainedSkills);
+
+                                            if (patch.PatchType == "Tree") { 
+                                                player.TryGrantExp("Woodcutting", seed.UseInt2 / 4, Log, SidebarManager.RecentlyTrainedSkills); 
+                                            }
 
                                             if (output.Stackable) {
-                                                output.Quantity = qty; 
-                                                player.TryGrantExp("Farming", seed.UseInt2 * qty, Log, SidebarManager.RecentlyTrainedSkills);
-
-                                                if (patch.PatchType == "Tree") { 
-                                                    player.TryGrantExp("Woodcutting", (seed.UseInt2 / 4) * qty, Log, SidebarManager.RecentlyTrainedSkills); 
-                                                }
+                                                output.Quantity = qty;  
 
                                                 if (!player.TryPickup(output, output.Quantity)) {
                                                     Log.AddMessage(new ColoredString("Your inventory is full, so the " + output.Name + "s fall to the ground." , Color.Crimson, Color.Black));
                                                 }
-                                            } else {
-                                                for (int i = 0; i < qty; i++) {
-                                                    player.TryGrantExp("Farming", seed.UseInt2, Log, SidebarManager.RecentlyTrainedSkills);
-
-                                                    if (patch.PatchType == "Tree") { 
-                                                        player.TryGrantExp("Woodcutting", seed.UseInt2 / 4, Log, SidebarManager.RecentlyTrainedSkills); 
-                                                    }
-
+                                            } else {  
+                                                for (int i = 0; i < qty; i++) { 
                                                     Item clone = new(output);
                                                     clone.Quantity = 1;
 

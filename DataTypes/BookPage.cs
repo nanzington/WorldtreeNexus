@@ -3,9 +3,9 @@
         public string Name = ""; // Used to build table of contents
 
         public string Text = ""; // 30ish characters wide multiline
-         
+
         public List<Requirement> Requirements = new(); // Requirements to do the action
-        public List<RunAction> Actions = new();
+        public List<RunAction> Actions = new(); 
 
         public BookPage(string name, string text, List<RunAction>? acts = null, List<Requirement>? reqs = null) {
             Name = name;

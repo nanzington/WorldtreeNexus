@@ -13,16 +13,17 @@ namespace WorldtreeNexus.DataTypes {
 
         public bool Noted = false;
          
-        public Requirement? Requirement = null;
+        public List<Requirement> Requirements = [ ];
 
         public string AltLog = "";
 
         public int SetDoses = 0;
+        public int AltExp = 0; // Only for gathering tiles basically
 
         [JsonConstructor]
         public ItemDrop() {}
 
-        public ItemDrop(string id, int x, double y, int min, int max, bool noted = false, bool evenIf0 = false, Requirement? req = null, string altlog = "", int doses = 0) {
+        public ItemDrop(string id, int x = 1, double y = 1, int min = 1, int max = 1, bool noted = false, bool evenIf0 = false, List<Requirement>? reqs = null, string altlog = "", int doses = 0, int altexp = 0) {
             ItemID = id;
             DropX = x;
             InY = y;
@@ -34,10 +35,14 @@ namespace WorldtreeNexus.DataTypes {
 
             EvenAt0x = evenIf0;
 
-            Requirement = req;
+            if (reqs != null) {
+                Requirements = reqs;
+            }
+
             AltLog = altlog; // Basically just used for the general clue log drops to redirect them
 
             SetDoses = doses;
+            AltExp = altexp;
         }
 
         public ItemDrop(ItemDrop other) {
@@ -48,9 +53,10 @@ namespace WorldtreeNexus.DataTypes {
             QuantityMax = other.QuantityMax;
             EvenAt0x = other.EvenAt0x;
             Noted = other.Noted;
-            Requirement = other.Requirement;
+            Requirements = [ ..other.Requirements ];
             AltLog = other.AltLog;
             SetDoses = other.SetDoses;
+            AltExp = other.AltExp;
         }
 
         // Rolls 0 to InY, if less than DropX, success
@@ -58,7 +64,7 @@ namespace WorldtreeNexus.DataTypes {
 
 
         public Item? RollDrop(Player player, CollectionLogEntry? log, bool inaccessible = false, bool justReturn = false) {
-            if (Requirement != null && !Requirement.CheckRequirement(player, true, true))
+            if (!Requirements.AllMet(false, true, true))
                 return null;
 
 

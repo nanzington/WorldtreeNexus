@@ -77,119 +77,30 @@ namespace WorldtreeNexus.DataTypes {
                                 continue;
                         }
 
-                        if (Recipes[j].SkillUsed == "Smithing" && Recipes[j].TertiaryIn != "") { // AKA: Smelting bars and they've got a ring of forging
-                            if (!p.HasAllItems([Recipes[j].TertiaryIn+",1"], false, true, true)) {
-                                return false;
-                            }
+                        int invCount = p.Inventory.Count; 
+                        p.ConsumeItems([comp + "," + qty]);
+                        if (invCount != p.Inventory.Count) { changedInv = true; }
 
-                            
-                            int invCount = p.Inventory.Count; 
-                            p.ConsumeItems([comp + "," + qty]);
-                            if (invCount != p.Inventory.Count) { changedInv = true; }
+                        invCount = p.Inventory.Count;
+                        if (Recipes[j].SecondaryIn != "") {
+                            p.ConsumeItems([Recipes[j].SecondaryIn]);
+                        }
+                        if (invCount != p.Inventory.Count) {
+                            changedInv = true;
+                        }
 
-                            invCount = p.Inventory.Count;
-                            if (Recipes[j].SecondaryIn != "") {
-                                p.ConsumeItems([Recipes[j].SecondaryIn+",1"]);
-                            }
-                            if (invCount != p.Inventory.Count) {
-                                changedInv = true;
-                            }
+                        int extra = 0;
 
-                            int extra = 0;
+                        if (Recipes[j].FailOutput != "" && p.GetEffectiveSkillLevel(Recipes[j].SkillUsed) < Recipes[j].StopFailingLevel) {
+                            int failRoll = GameLoop.rand.Next(100);  
+                            // TODO: Make cooking gauntlets lower fail level after Family Crest is implemented
 
-                            if (ItemLibrary.ContainsKey(Recipes[j].OutputID)) {
-                                Item item = new(ItemLibrary[Recipes[j].OutputID]);
+                            int skillForRoll = 50 + (p.GetEffectiveSkillLevel(Recipes[j].SkillUsed) - Recipes[j].SkillLevel);
 
-                                if (Recipes[j].HighSkillExtraOutputs) {
-                                    int skillDiff = p.Skills[Recipes[j].SkillUsed].Level - Recipes[j].SkillLevel;
-                                    extra = (int) Math.Floor(skillDiff / 10.0);
-                                    item.Quantity += extra;
-                                }
-
-                                p.TryPickup(item, item.Quantity);
-                            }
-
-                            if (Recipes[j].SecondaryOut != "") {
-                                if (ItemLibrary.ContainsKey(Recipes[j].SecondaryOut)) {
-                                    Item item = new(ItemLibrary[Recipes[j].SecondaryOut]); 
-
-                                    p.TryPickup(item, item.Quantity);
-                                }
-                            }
-                            string nameOre = GameLoop.WTN.ResolveItemName(Recipes[j].InputID).ToLower();
-                            string nameBar = GameLoop.WTN.ResolveItemName(Recipes[j].OutputID).ToLower();
-                            log.AddMessage("Your ring of forging allows you to smelt a" + (Helper.VowelStart(nameOre) ? "n " : " ") + nameOre + " directly into a" + (Helper.VowelStart(nameBar) ? "n " : " ") + nameBar + ".", Color.Crimson);
-
-                            if (p.Equipment.TryGetValue("Ring", out ItemWrapper? eqp) && eqp != null && eqp.ID == "ringForging") {
-                                eqp.Charges -= 1;  
-
-                                if (eqp.Charges <= 0) { 
-                                    log.AddMessage(new ColoredString("Your ring of forging runs out of charge and shatters.", Color.Crimson, Color.Black));
-                                    p.Equipment.Remove("Ring");
-                                }
-                            }
-
-                            p.TryGrantExp(Recipes[j].SkillUsed, Recipes[j].SkillEXP * (1 + extra), log, RecentSkills);
-                            return true;
-                        } else { 
-                            int invCount = p.Inventory.Count; 
-                            p.ConsumeItems([comp + "," + qty]);
-                            if (invCount != p.Inventory.Count) { changedInv = true; }
-
-                            invCount = p.Inventory.Count;
-                            if (Recipes[j].SecondaryIn != "") {
-                                p.ConsumeItems([Recipes[j].SecondaryIn]);
-                            }
-                            if (invCount != p.Inventory.Count) {
-                                changedInv = true;
-                            }
-
-                            int extra = 0;
-
-                            if (Recipes[j].FailOutput != "" && p.GetEffectiveSkillLevel(Recipes[j].SkillUsed) < Recipes[j].StopFailingLevel) {
-                                int failRoll = GameLoop.rand.Next(100);  
-                                // TODO: Make cooking gauntlets lower fail level after Family Crest is implemented
-
-                                int skillForRoll = 50 + (p.GetEffectiveSkillLevel(Recipes[j].SkillUsed) - Recipes[j].SkillLevel);
-
-                                if (failRoll <= skillForRoll || (p.Equipment.TryGetValue("Cape", out ItemWrapper? cape) && cape != null && cape.ID == "capeSkillCooking")) {
-                                    if (ItemLibrary.ContainsKey(Recipes[j].OutputID)) {
-                                        Item item = new(ItemLibrary[Recipes[j].OutputID]);
-                                        item.Quantity = Recipes[j].OutputQtyBase;
-                                        if (Recipes[j].NoteOutput) { item.Noted = true; }
-
-                                        if (Recipes[j].HighSkillExtraOutputs) {
-                                            int skillDiff = p.Skills[Recipes[j].SkillUsed].Level - Recipes[j].SkillLevel;
-                                            extra = (int) Math.Floor(skillDiff / 10.0);
-                                            item.Quantity += extra;
-                                        }
-
-                                        p.TryPickup(item, item.Quantity, item.Noted);
-                                    }
-                                
-                                    p.TryGrantExp(Recipes[j].SkillUsed, Recipes[j].SkillEXP * (1 + extra), log, RecentSkills);
-                                } else {
-                                    if (ItemLibrary.ContainsKey(Recipes[j].FailOutput)) {
-                                        Item item = new(ItemLibrary[Recipes[j].FailOutput]);
-                                        item.Quantity = Recipes[j].OutputQtyBase;
-                                        if (Recipes[j].NoteOutput) { item.Noted = true; }
-
-                                        if (Recipes[j].HighSkillExtraOutputs) {
-                                            int skillDiff = p.Skills[Recipes[j].SkillUsed].Level - Recipes[j].SkillLevel;
-                                            extra = (int) Math.Floor(skillDiff / 10.0);
-                                            item.Quantity += extra;
-                                        }
-
-                                        p.TryPickup(item, item.Quantity, item.Noted);
-                                    }
-                                
-                                    p.TryGrantExp(Recipes[j].SkillUsed, 1 * (1 + extra), log, RecentSkills);
-                                }
-                            } else { 
+                            if (failRoll <= skillForRoll || (p.Equipment.TryGetValue("Cape", out ItemWrapper? cape) && cape != null && cape.ID == "capeSkillCooking")) {
                                 if (ItemLibrary.ContainsKey(Recipes[j].OutputID)) {
                                     Item item = new(ItemLibrary[Recipes[j].OutputID]);
                                     item.Quantity = Recipes[j].OutputQtyBase;
-
                                     if (Recipes[j].NoteOutput) { item.Noted = true; }
 
                                     if (Recipes[j].HighSkillExtraOutputs) {
@@ -202,24 +113,57 @@ namespace WorldtreeNexus.DataTypes {
                                 }
                                 
                                 p.TryGrantExp(Recipes[j].SkillUsed, Recipes[j].SkillEXP * (1 + extra), log, RecentSkills);
-                            } 
+                            } else {
+                                if (ItemLibrary.ContainsKey(Recipes[j].FailOutput)) {
+                                    Item item = new(ItemLibrary[Recipes[j].FailOutput]);
+                                    item.Quantity = Recipes[j].OutputQtyBase;
+                                    if (Recipes[j].NoteOutput) { item.Noted = true; }
 
-                            if (Recipes[j].SecondaryOut != "") {
-                                if (ItemLibrary.ContainsKey(Recipes[j].SecondaryOut)) {
-                                    Item item = new(ItemLibrary[Recipes[j].SecondaryOut]); 
+                                    if (Recipes[j].HighSkillExtraOutputs) {
+                                        int skillDiff = p.Skills[Recipes[j].SkillUsed].Level - Recipes[j].SkillLevel;
+                                        extra = (int) Math.Floor(skillDiff / 10.0);
+                                        item.Quantity += extra;
+                                    }
 
-                                    p.TryPickup(item, item.Quantity);
+                                    p.TryPickup(item, item.Quantity, item.Noted);
                                 }
-                            }  
-
-                            if (Recipes[j].Actions.Count > 0) {
-                                foreach (var act in Recipes[j].Actions) {
-                                    act.Execute();
-                                }
+                                
+                                p.TryGrantExp(Recipes[j].SkillUsed, 1 * (1 + extra), log, RecentSkills);
                             }
+                        } else { 
+                            if (ItemLibrary.ContainsKey(Recipes[j].OutputID)) {
+                                Item item = new(ItemLibrary[Recipes[j].OutputID]);
+                                item.Quantity = Recipes[j].OutputQtyBase;
 
-                            return true;
+                                if (Recipes[j].NoteOutput) { item.Noted = true; }
+
+                                if (Recipes[j].HighSkillExtraOutputs) {
+                                    int skillDiff = p.Skills[Recipes[j].SkillUsed].Level - Recipes[j].SkillLevel;
+                                    extra = (int) Math.Floor(skillDiff / 10.0);
+                                    item.Quantity += extra;
+                                }
+
+                                p.TryPickup(item, item.Quantity, item.Noted);
+                            }
+                                
+                            p.TryGrantExp(Recipes[j].SkillUsed, Recipes[j].SkillEXP * (1 + extra), log, RecentSkills);
+                        } 
+
+                        if (Recipes[j].SecondaryOut != "") {
+                            if (ItemLibrary.ContainsKey(Recipes[j].SecondaryOut)) {
+                                Item item = new(ItemLibrary[Recipes[j].SecondaryOut]); 
+
+                                p.TryPickup(item, item.Quantity);
+                            }
+                        }  
+
+                        if (Recipes[j].Actions.Count > 0) {
+                            foreach (var act in Recipes[j].Actions) {
+                                act.Execute();
+                            }
                         }
+
+                        return true; 
                     } 
                     if (changedInv)
                         break;

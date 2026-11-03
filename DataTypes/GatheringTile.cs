@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using GoRogue.DiceNotation.Terms;
+using Newtonsoft.Json;
 using WorldtreeNexus.Managers;
 
 namespace WorldtreeNexus.DataTypes {
@@ -23,19 +24,22 @@ namespace WorldtreeNexus.DataTypes {
         public List<Requirement> Reqs = new();
         public bool ShowAnyways = true;
 
-        public List<WeightedItem>? PossibleItems = null;
+        public List<ItemDrop> PossibleItems = [ ];
 
         [JsonIgnore]
         public double LastGathered = 0;
 
-        public GatheringTile(string id, string name, string verb, int deplete, int restock, string skill = "", int skLevel = 0, int exp = 0, string neededTool = "", string neededBait = "", List<WeightedItem>? items = null, List<Requirement>? reqs = null, bool show = true, List<RunAction>? actions = null, string customLog = "") {
+        public GatheringTile(string id, string name, string verb, int deplete, int restock, string skill = "", int skLevel = 0, int exp = 0, string neededTool = "", string neededBait = "", List<ItemDrop>? items = null, List<Requirement>? reqs = null, bool show = true, List<RunAction>? actions = null, string customLog = "") {
             ID = id;
             Name = name;
             InteractVerb = verb; 
             DepleteChance = deplete;
             RestockTime = restock;
 
-            PossibleItems = items;
+            if (items != null) {
+                PossibleItems = items;
+            }
+
             Skill = skill;
             Level = skLevel;
             ExpGranted = exp; 
@@ -51,14 +55,7 @@ namespace WorldtreeNexus.DataTypes {
             
             ShowAnyways = show; 
             CustomLogMessage = customLog;
-        }
-
-
-        public WeightedItem? PickItem(int level) {
-            if (PossibleItems != null && PossibleItems.Count > 0)
-                return Helper.ChooseWeighted(PossibleItems, Skill, level);
-            return null;
-        }
+        } 
 
         public void Gather(Player p, MessageLog log, Dictionary<string, Item> itemLibrary, Location currentLoc, List<Skill> Recents) {
             if (CanGather(p) == "") {
@@ -95,37 +92,62 @@ namespace WorldtreeNexus.DataTypes {
                 if (NeededBait != "") { p.ConsumeItems([NeededBait + ",1"]); } 
                      
                  
-                WeightedItem? output = PickItem(esl);
+                ItemDrop? output = null;
+
+                if (PossibleItems != null && PossibleItems.Count > 0) {
+                    List<ItemDrop> rolled = new();
+                    int attempts = 0;
+                    while (rolled.Count < 1 && attempts < 1000) {
+                        foreach (var item in PossibleItems) {
+                            if (item.Requirements.AllMet()) {
+                                Item? roll = item.RollDrop(p, null, false, true);
+
+                                if (roll != null) {
+                                    roll.UseInt3 = (int) Math.Round(item.InY, MidpointRounding.AwayFromZero);
+                                    rolled.Add(item);
+                                }
+                            }
+                        }
+
+                        attempts++; // Emergency kill switch just in case we somehow end up here with a table where it's impossible to get an item
+                    }
+
+                    rolled = rolled.OrderBy(o => Math.Round(o.InY, MidpointRounding.AwayFromZero)).Reverse().ToList();
+
+                    if (rolled.Count > 0) {
+                        output = rolled[0];
+                    }
+                }
 
                 // Check to see if a quest is progressed by gathering from this type of gatherSpot successfully
                 foreach (var quest in GameLoop.WTN.QuestLibrary) { quest.Value.CheckProgress(p, "Gather", ID, 1); }
                  
                 if (CustomLogMessage != "") { log.AddMessage(new ColoredString(CustomLogMessage, Color.Yellow, Color.Black)); }
 
-                if (PossibleItems != null && PossibleItems.Count > 0) {
-                    if (output != null && itemLibrary.TryGetValue(output.Item, out Item? receive) && receive != null) {
-                        // Try to pick it up, if it failed then it fell to the ground.
-                        if (p.TryPickup(receive, 1)) {
-                            log.AddMessage(new ColoredString("You get " + receive.Name.ToLower() + " from the " + Name + ".", Color.Green, Color.Black));
-                        } else {
-                            log.AddMessage(new ColoredString("Your inventory is full so the " + receive.Name.ToLower() + " falls to the ground.", Color.Goldenrod, Color.Black));
-                        }
+                if (output != null && GameLoop.WTN.ResolveItem(output.ItemID) is Item receive) {
+                    if (Skill == "Thieving") { receive.Stolen = true; }
 
-                        // Check to see if a quest is progressed by gathering this specific item
-                        foreach (var quest in GameLoop.WTN.QuestLibrary) { quest.Value.CheckProgress(p, "GatheredItem", output.Item, 1); }
-
-                        // If the output specifies a different exp gained give that, otherwise give the normal exp
-                        if (Skill != "") {
-                            if (output.MiscInt2 != 0) { p.TryGrantExp(Skill, output.MiscInt2, log, Recents); } 
-                            else { p.TryGrantExp(Skill, ExpGranted, log, Recents); }
-                        }
-
-                        int deplete = GameLoop.rand.Next(100) + 1; 
-                        if (deplete <= DepleteChance) { LastGathered = Helper.Time(); } 
+                    // Try to pick it up, if it failed then it fell to the ground.
+                    if (p.TryPickup(receive, 1)) { // TODO: Revisit this if it's ever necessary for a gathering tile to be able to give more than 1 of an item
+                        log.AddMessage(new ColoredString("You get " + receive.Name.ToLower() + " from the " + Name + ".", Color.Green, Color.Black));
                     } else {
-                        log.AddMessage(new ColoredString("You " + InteractVerb.ToLower() + " the " + Name.ToLower() + " but got nothing.", Color.Crimson, Color.Black)); 
-                    }  
-                }
+                        log.AddMessage(new ColoredString("Your inventory is full so the " + receive.Name.ToLower() + " falls to the ground.", Color.Goldenrod, Color.Black));
+                    }
+
+                    // Check to see if a quest is progressed by gathering this specific item
+                    foreach (var quest in GameLoop.WTN.QuestLibrary) { quest.Value.CheckProgress(p, "GatheredItem", output.ItemID, 1); }
+
+                    // If the output specifies a different exp gained give that, otherwise give the normal exp
+                    if (Skill != "") {
+                        if (output.AltExp != 0) { p.TryGrantExp(Skill, output.AltExp, log, Recents); } 
+                        else { p.TryGrantExp(Skill, ExpGranted, log, Recents); }
+                    }
+
+                    int deplete = GameLoop.rand.Next(100) + 1; 
+                    if (deplete <= DepleteChance) { LastGathered = Helper.Time(); } 
+                } else {
+                    log.AddMessage(new ColoredString("You " + InteractVerb.ToLower() + " the " + Name.ToLower() + " but got nothing.", Color.Crimson, Color.Black)); 
+                } 
             } else {
                 log.AddMessage(new ColoredString("You need " + CanGather(p) + " to do that.", Color.Crimson, Color.Black));
             }

@@ -1,8 +1,10 @@
 ﻿using GoRogue;
 using GoRogue.DiceNotation.Terms;
 using SadConsole.EasingFunctions;
+using SadConsole.Entities;
 using SadConsole.Input;
 using SadConsole.UI;
+using System.Xml.Linq;
 using WorldtreeNexus.DataTypes;
 using WorldtreeNexus.HardcodedData;
 using Key = SadConsole.Input.Keys;
@@ -31,6 +33,7 @@ namespace WorldtreeNexus.Managers {
         public static string ViewingQuestID = "";
         public static bool QuestOverview = true;
         public static int QuestBlockScrollTop = 0;
+        public static bool QuestQuickGuide = false;
          
         public static Window Compendium;
         public static string CompendiumCat = "Overview";
@@ -60,6 +63,13 @@ namespace WorldtreeNexus.Managers {
         public static string DebugMenu = "Overview";
         public static int DebugRandomSource = 0;
         public static int DebugAlchemyLevel = 100;
+        public static int DebugIngredientsTotal, DebugIngredients1, DebugIngredients10, DebugIngredients20, DebugIngredients30, DebugIngredients40, DebugIngredients50, DebugIngredients60, DebugIngredients70, DebugIngredients80, DebugIngredients90, DebugIngredients100 = 0;
+        public static int DebugHP = 1;
+        public static int DebugMaxHit = 1;
+        public static int DebugPlayerStatBase = 1;
+        public static int DebugAtk, DebugDef, DebugDR = 0;
+        public static int DebugAtkSpeed = 10; // This gets divided by 10
+        public static int DebugSimWinsW, DebugSimWinsVB, DebugSimWinsB, DebugSimWinsN, DebugSimWinsG, DebugSimWinsVG, DebugSimWinsP = 0;
 
         public static Window Clue;
         public static string CurrentClue = "";
@@ -82,6 +92,11 @@ namespace WorldtreeNexus.Managers {
         public static Window Book;
         public static string BookID = "";
         public static int LeftPage = 0;
+
+        
+        public static Window Newspaper;
+        public static string NewspaperID = "";
+        public static int NewspaperPage = 0;
          
         public static Window Cutscene;
         public static string CutsceneID = "";
@@ -119,6 +134,8 @@ namespace WorldtreeNexus.Managers {
         public static string CompassFilterActive = "";
         public static string CompassTyping = "";
         public static int CompassScrollTop = 0;
+        public static bool CompassTraversable = true;
+        public static bool CompassWithinRegion = true;
         public static List<string> CompassRoute = new();
         public static List<Location> CompassFiltered = new();
          
@@ -171,6 +188,8 @@ namespace WorldtreeNexus.Managers {
                 return true;
             if (Book.IsVisible && except != "Book") 
                 return true;
+            if (Newspaper.IsVisible && except != "Newspaper")
+                return true;
             if (Cutscene.IsVisible && except != "Cutscene")
                 return true;
             if (Shop.IsVisible && except != "Shop")
@@ -205,6 +224,7 @@ namespace WorldtreeNexus.Managers {
             Teleport.IsVisible = false;
             InventoryContainer.IsVisible = false;
             Book.IsVisible = false;
+            Newspaper.IsVisible = false;
             Cutscene.IsVisible = false;
             Shop.IsVisible = false;
             LampMenu.IsVisible = false;
@@ -228,6 +248,7 @@ namespace WorldtreeNexus.Managers {
             Teleport = new(50, 30) { CanDrag = true, Position = new Point(25, 10), Title = "Teleports".Align(HorizontalAlignment.Center, 48)};
             InventoryContainer = new(50, 10) { CanDrag = true, Position = new Point(25, 10), Title = "Inventory COntainer".Align(HorizontalAlignment.Center, 48)}; 
             Book = new(77, 25) { CanDrag = true, Position = new Point(25, 10), Title = "Book".Align(HorizontalAlignment.Center, 75)}; 
+            Newspaper = new(124, 40) { CanDrag = true, Position = new Point(13, 5), Title = "Newspaper".Align(HorizontalAlignment.Center, 122)}; 
             Cutscene = new(100, 30) { CanDrag = true, Position = new Point(25, 10), Title = "Cutscene".Align(HorizontalAlignment.Center, 98)};
             Shop = new(50, 30) { CanDrag = true, Position = new Point(25, 10), Title = "Shop".Align(HorizontalAlignment.Center, 48)}; 
             LampMenu = new(50, 30) { CanDrag = true, Position = new Point(25, 10), Title = "Lamp".Align(HorizontalAlignment.Center, 48)};
@@ -342,15 +363,16 @@ namespace WorldtreeNexus.Managers {
             Debug.PrintClickable(2, 6, new ColoredString("Alchemy Arrays", DebugMenu == "Alchemy" ? Color.Yellow : Color.White, Color.Black), () => { Sources = DebugAlchemy(); DebugMenu = "Alchemy"; CompendiumSourceTop = 0; });
             
             Debug.PrintClickable(2, 7, new ColoredString("Exp Chart", DebugMenu == "Exp Chart" ? Color.Yellow : Color.White, Color.Black), () => { DebugMenu = "Exp Chart"; CompendiumSourceTop = 0; });
+            Debug.PrintClickable(2, 8, new ColoredString("Combat Sim", DebugMenu == "Combat Sim" ? Color.Yellow : Color.White, Color.Black), () => { DebugMenu = "Combat Sim"; });
             
             if (DebugMenu == "Overview") {
-                Debug.Print(22, 1, "         Locations: " + GameLoop.WTN.Atlas.Count);
-                Debug.Print(22, 2, "             Items: " + GameLoop.WTN.ItemLibrary.Count);
-                Debug.Print(22, 3, "       Use Recipes: " + GameLoop.WTN.UseRecipes.Count);
-                Debug.Print(22, 4, "     Craft Recipes: " + GameLoop.WTN.CraftLib.Values.Sum(o => o.Count));
-                Debug.Print(22, 5, "Processing Recipes: " + (GameLoop.WTN.ProcessingStations.Values.Where(o => !o.DontIncludeInCounts).Sum(o => o.Recipes.Count)));
-                Debug.Print(22, 6, "              NPCs: " + GameLoop.WTN.NPCLibrary.Count);
-                Debug.Print(22, 7, "          Monsters: " + GameLoop.WTN.MonsterLibrary.Count);
+                Debug.Print(22, 1, "          Locations: " + GameLoop.WTN.Atlas.Count);
+                Debug.Print(22, 2, "              Items: " + GameLoop.WTN.ItemLibrary.Count);
+                Debug.Print(22, 3, "        Use Recipes: " + GameLoop.WTN.UseRecipes.Count);
+                Debug.Print(22, 4, "      Craft Recipes: " + GameLoop.WTN.CraftLib.Values.Sum(o => o.Count));
+                Debug.Print(22, 5, " Processing Recipes: " + (GameLoop.WTN.ProcessingStations.Values.Where(o => !o.DontIncludeInCounts).Sum(o => o.Recipes.Count)));
+                Debug.Print(22, 6, "               NPCs: " + GameLoop.WTN.NPCLibrary.Count);
+                Debug.Print(22, 7, "           Monsters: " + GameLoop.WTN.MonsterLibrary.Count);
 
                 int tutorialSteps = GameLoop.WTN.ClueStepLibrary.Values.Where(o => o.Difficulty == "Tutorial").Count();
                 int beginnerSteps = GameLoop.WTN.ClueStepLibrary.Values.Where(o => o.Difficulty == "Beginner").Count();
@@ -359,8 +381,26 @@ namespace WorldtreeNexus.Managers {
                 int hardSteps = GameLoop.WTN.ClueStepLibrary.Values.Where(o => o.Difficulty == "Hard").Count();
 
 
-                Debug.Print(22, 8, "        Clue Steps: " + tutorialSteps + "t / " + beginnerSteps + "b / " + easySteps + "e / " + mediumSteps + "m / " + hardSteps + "h");
-                Debug.Print(22, 9, "            Quests: " + GameLoop.WTN.QuestLibrary.Count);
+                Debug.Print(22, 8, "         Clue Steps: " + tutorialSteps + "t / " + beginnerSteps + "b / " + easySteps + "e / " + mediumSteps + "m / " + hardSteps + "h");
+                Debug.Print(22, 9, "             Quests: " + GameLoop.WTN.QuestLibrary.Count);
+                
+                Debug.Print(22, 11, "Alchemy Ingredients: " +
+                    "Lv  1 (" + DebugIngredients1.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Lv 10 (" + DebugIngredients10.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Lv 20 (" + DebugIngredients20.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Lv 30 (" + DebugIngredients30.ToString().Align(HorizontalAlignment.Right, 3) + ")");
+
+                Debug.Print(22, 12, "  Ingredients Cont.: " +
+                    "Lv 40 (" + DebugIngredients40.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Lv 50 (" + DebugIngredients50.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Lv 60 (" + DebugIngredients60.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Lv 70 (" + DebugIngredients70.ToString().Align(HorizontalAlignment.Right, 3) + ")");
+
+                Debug.Print(22, 13, "  Ingredients Cont.: " +
+                    "Lv 80 (" + DebugIngredients80.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Lv 90 (" + DebugIngredients90.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Lv100 (" + DebugIngredients100.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
+                    "Total (" + DebugIngredientsTotal.ToString().Align(HorizontalAlignment.Right, 5) + ")");
             } else if (DebugMenu == "Exp Chart") {  
                 
                 for (int i = 1; i < 101; i++) {
@@ -377,6 +417,105 @@ namespace WorldtreeNexus.Managers {
                 }
                 
 
+            } else if (DebugMenu == "Combat Sim") {
+                int printY = 2;
+                Debug.Print(22, printY, "Enemy HP: ", Color.White);
+                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugHP, 1, 10000);
+                
+                Debug.Print(22, printY, "Enemy Atk: ", Color.White);
+                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugAtk, 1, 10000);
+                 
+                Debug.Print(22, printY, "Enemy Def: ", Color.White);
+                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugDef, 1, 10000);
+                 
+                Debug.Print(22, printY, "Enemy Max Hit: ", Color.White);
+                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugMaxHit, 1, 10000); 
+                 
+                Debug.PrintScrollableInteger(22, printY, "Enemy Atk Spd: ", ref DebugAtkSpeed, false, 1, 100, 1, 5, 10, true);
+                Debug.Print(38, printY++, (DebugAtkSpeed / 10.0).ToString(), Color.White);
+                
+                Debug.Print(22, printY, "Enemy DR: ", Color.White);
+                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugDR, 0, 100);
+
+                printY++;
+                
+                int tier = (int) Math.Floor(DebugPlayerStatBase / 10.0) + 1;
+                Debug.Print(22, printY, "Player Levels: ", Color.White);
+                Debug.Print(47, printY, "(Tier " + tier + ")", Color.White);
+                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugPlayerStatBase, 1, 100);
+
+                printY++;
+
+                 
+                int maxHit = tier * 2; // Assumes using highest tier of equipment possible but no further bonuses
+
+                Debug.PrintClickable(22, printY++, "Run Simulations", () => {
+                    DebugSimWinsW = Helper.CombatSimulator(
+                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Wood", 2000, 0, "", "Metal"),
+                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Fire"),
+                        1000
+                    );
+
+                    DebugSimWinsVB = Helper.CombatSimulator(
+                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Wood", 2000, (int) Math.Floor(tier / 2.0), "", "Metal"),
+                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Fire"),
+                        1000
+                    );
+
+                    DebugSimWinsB = Helper.CombatSimulator(
+                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Wood", 2000, tier, "", "Metal"),
+                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Fire"),
+                        1000
+                    );
+
+                    DebugSimWinsN = Helper.CombatSimulator(
+                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Fire", 2000, tier, "", "Metal"),
+                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Fire"),
+                        1000
+                    ); 
+
+                    DebugSimWinsG = Helper.CombatSimulator(
+                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Fire", 2000, tier, "", "Fire"),
+                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Metal"),
+                        1000
+                    ); 
+
+                    DebugSimWinsVG = Helper.CombatSimulator(
+                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Crush", "Fire", 2000, tier, "", "Fire"),
+                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Metal"),
+                        1000
+                    ); 
+
+                    DebugSimWinsP = Helper.CombatSimulator(
+                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Crush", "Fire", 2000, tier * 2, "", "Fire"),
+                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Metal"),
+                        1000
+                    );
+                });
+
+
+                printY += 2;
+
+                Debug.Print(22, printY++, "Last Sim Results:");
+                Debug.Print(22, printY++, "|     Worst: " + (DebugSimWinsW / 10).ToString().Align(HorizontalAlignment.Right, 5) + "%    (No armor, elemental disadv)", Color.White);
+                Debug.Print(22, printY++, "|  Very Bad: " + (DebugSimWinsVB / 10).ToString().Align(HorizontalAlignment.Right, 5) + "%    (Bad armor, elemental disadv", Color.White);
+                Debug.Print(22, printY++, "|       Bad: " + (DebugSimWinsB / 10).ToString().Align(HorizontalAlignment.Right, 5) + "%    (Neutral armor, element disadv)", Color.White);
+                Debug.Print(22, printY++, "|   Neutral: " + (DebugSimWinsN / 10).ToString().Align(HorizontalAlignment.Right, 5) + "%    (Neutral armor, neutral elements)", Color.White);
+                Debug.Print(22, printY++, "|      Good: " + (DebugSimWinsG / 10).ToString().Align(HorizontalAlignment.Right, 5) + "%    (Neutral armor, element adv)", Color.White);
+                Debug.Print(22, printY++, "| Very Good: " + (DebugSimWinsVG / 10).ToString().Align(HorizontalAlignment.Right, 5) + "%    (Neutral armor, element+type adv)", Color.White);
+                Debug.Print(22, printY++, "|   Perfect: " + (DebugSimWinsP / 10).ToString().Align(HorizontalAlignment.Right, 5) + "%    (Good armor, element+type adv)", Color.White);
+                
+                /*
+                return new CombatSim(MaxHP, AttackLv, DefenseLv, MaxHit, DamageType, DmgElement, AttackSpeedSeconds * 2000, DamageReduction, WeakType, Element);
+
+                public static int DebugHP, DebugAtk, DebugDef, DebugMaxHit, DamageReduction, DebugPlayerStatBase = 0;
+                public static double DebugAtkSpeed = 1.0;
+                public static string DebugDmgType = "";
+                public static string DebugDmgElement = "";
+                public static string DebugWeakType = "";
+                public static string DebugElement = "";
+                public static int DebugPlayerLevel = 1;
+                */
             } else { 
                 int qty = 1;
                 if (Helper.EitherShift())
@@ -483,8 +622,8 @@ namespace WorldtreeNexus.Managers {
 
                 if (kv.Value.PossibleItems != null) {
                     foreach (var loot in kv.Value.PossibleItems) {
-                        if (loot.Item != "" && loot.Item[0] != '*' && loot.Item[0] != '_' && !GameLoop.WTN.ItemLibrary.ContainsKey(loot.Item)) {
-                            findings.Add(new("Gather: " + kv.Value.ID + ": Loot (" + loot.Item + ")", "", "", "", "", 0));
+                        if (loot.ItemID != "" && loot.ItemID[0] != '*' && loot.ItemID[0] != '_' && !GameLoop.WTN.ItemLibrary.ContainsKey(loot.ItemID)) {
+                            findings.Add(new("Gather: " + kv.Value.ID + ": Loot (" + loot.ItemID + ")", "", "", "", "", 0));
                         }
                     }
                 }
@@ -501,6 +640,12 @@ namespace WorldtreeNexus.Managers {
                     foreach (var tp in kv.Value.TeleportLocations) {
                         if (tp != "" && !GameLoop.WTN.Atlas.ContainsKey(tp)) {
                             findings.Add(new("Item: " + kv.Value.ID + ": TeleLoc (" + tp + ")", "", "", "", "", 0));
+                        }
+                    }
+
+                    if (kv.Value.Alchemy != null && kv.Value.Alchemy.ReturnID != "") {
+                        if (!GameLoop.WTN.ItemLibrary.ContainsKey(kv.Value.Alchemy.ReturnID)) { 
+                            findings.Add(new("Item: " + kv.Value.ID + ": Alchemy Return (" + kv.Value.Alchemy.ReturnID + ")", "", "", "", "", 0));
                         }
                     }
                 }
@@ -580,6 +725,10 @@ namespace WorldtreeNexus.Managers {
             }
 
             foreach (var kv in GameLoop.WTN.MonsterLibrary) {  
+                if (!GameLoop.WTN.ItemLibrary.ContainsKey(kv.Value.AlchemySecretionID)) {
+                    findings.Add(new("Monster: " + kv.Value.ID + " Secretion (" + kv.Value.AlchemySecretionID + ")", "", "", "", "", 0));
+                }
+
                 foreach (var drop in kv.Value.DropTable) {
                     if (!GameLoop.WTN.ItemLibrary.ContainsKey(drop.ItemID)) {
                         findings.Add(new("Monster: " + kv.Value.ID + " Drop (" + drop.ItemID + ")", "", "", "", "", 0));
@@ -634,6 +783,38 @@ namespace WorldtreeNexus.Managers {
                         findings.Add(new("Quest: " + kv.Value.ID + " Reward (" + reward.MiscString + ")", "", "", "", "", 0));
                     }  
                 }
+            } 
+
+            List<Item> alchs = GameLoop.WTN.ItemLibrary.Values.Where(o => o.Alchemy != null).ToList();
+
+            foreach (var recipe in GameLoop.WTN.PotionRecipeLibrary) {
+                int perfects = 0;
+                foreach (var one in alchs) { 
+                    foreach (var two in alchs) {
+                        if (one.ID != two.ID && recipe.Value.ReqsMet(one.Alchemy.Plus(two.Alchemy))) {
+                            perfects++;
+                        }
+                    }
+                }
+                
+                if (perfects > 2) {
+                    findings.Add(new("Multiple Perfect Recipes: (" + recipe.Key + ")", "", "", "", "", 0));
+                }
+            }
+
+
+            foreach (var one in alchs) { 
+                foreach (var two in alchs) {
+                    if (one.ID != two.ID && one.Alchemy.CheckMatch(two.Alchemy)) {
+                        findings.Add(new("Identical Alchemy Stats: (" + one.ID + ") and (" + two.ID + ")", "", "", "", "", 0));
+                    }
+                } 
+
+                int tier = one.Alchemy.Level == 1 ? 0 : one.Alchemy.Level / 10;
+                if (((one.Alchemy.Total() != (30 - tier) && !one.ID.Contains("clean")) || (one.ID.Contains("clean") && one.Alchemy.Total() != (15 - tier)))
+                    && !one.ID.Contains("essence")  && one.ID != "alchemyMixture") {
+                    findings.Add(new("Malformed Alchemy Stats: (" + one.ID + ")", "", "", "", "", 0));
+                }
             }
 
             return findings;
@@ -641,16 +822,23 @@ namespace WorldtreeNexus.Managers {
         
         public static List<CompendiumResult> DebugAlchemy() { 
             List<CompendiumResult> rolls = new();
-
-            for (int i = 0; i < 10; i++) {
-                string build = (i == 0 ? "Lv  1" : "Lv " + (i * 10));
+            
+            rolls.Add(new("Half the following values (rounded down) for herbs", "", "", "", "", 0, 0));
+            for (int i = 0; i < 11; i++) {
+                int num = i == 0 ? 1 : i * 10;
+                string build = "Lv " + num.ToString().Align(HorizontalAlignment.Right, 3);
 
                 int r = 0;
                 int b = 0;
                 int y = 0;
                 int w = 0;
 
-                for (int j = 0; j < 11 - i; j++) {
+                int rH = 0;
+                int bH = 0;
+                int yH = 0;
+                int wH = 0;
+
+                for (int j = 0; j < 30 - i; j++) { // Non-herb values
                     int randCat = GameLoop.rand.Next(4);
 
                     if (randCat == 0) { r++; }
@@ -659,19 +847,29 @@ namespace WorldtreeNexus.Managers {
                     if (randCat == 3) { w++; }
                 }
 
-                if (GameLoop.rand.Next(2) == 0) { r *= -1; }
-                if (GameLoop.rand.Next(2) == 0) { b *= -1; }
-                if (GameLoop.rand.Next(2) == 0) { y *= -1; }
-                if (GameLoop.rand.Next(2) == 0) { w *= -1; }
+                for (int j = 0; j < 15 - i; j++) { // Herb values
+                    int randCat = GameLoop.rand.Next(4);
+
+                    if (randCat == 0) { rH++; }
+                    if (randCat == 1) { bH++; }
+                    if (randCat == 2) { yH++; }
+                    if (randCat == 3) { wH++; }
+                }
+
+                if (GameLoop.rand.Next(2) == 0) { r *= -1; rH *= -1; }
+                if (GameLoop.rand.Next(2) == 0) { b *= -1; bH *= -1; }
+                if (GameLoop.rand.Next(2) == 0) { y *= -1; yH *= -1; }
+                if (GameLoop.rand.Next(2) == 0) { w *= -1; wH *= -1; }
 
                 build += " - (" + r.ToString().Align(HorizontalAlignment.Right, 3) + "R / " + b.ToString().Align(HorizontalAlignment.Right, 3) + "B / " + y.ToString().Align(HorizontalAlignment.Right, 3) + "Y / " + w.ToString().Align(HorizontalAlignment.Right, 3) + "W" + ")";
+                build += " ///// (" + rH.ToString().Align(HorizontalAlignment.Right, 3) + "R / " + bH.ToString().Align(HorizontalAlignment.Right, 3) + "B / " + yH.ToString().Align(HorizontalAlignment.Right, 3) + "Y / " + wH.ToString().Align(HorizontalAlignment.Right, 3) + "W" + ")";
 
                 rolls.Add(new(build, "", "", "", "", 0, 0));
             }
 
             rolls.Add(new("", "", "", "", "", 0, 0));
 
-            List<string> Colors = [ "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple", "Magenta / Pink", "Maroon / Wine" ];
+            List<string> Colors = [ "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple", "Magenta / Pink", "Maroon / Wine", "Black" ];
             Colors.Shuffle();
 
             for (int i = 0; i < Colors.Count; i++) { 
@@ -1434,13 +1632,8 @@ namespace WorldtreeNexus.Managers {
                                 CompendiumDropTop = 0;
                             } 
 
-                            int totalWeight = 0;
-                            for (int i = 0; i < gather.PossibleItems.Count; i++) { 
-                                totalWeight += gather.PossibleItems[i].Weight;
-                            }
-
                             for (int i = CompendiumDropTop; i < gather.PossibleItems.Count && i < CompendiumDropTop + 15; i++) { 
-                                Compendium.PrintClickable(32, gatherY++, "| " + GameLoop.WTN.ResolveItemName(gather.PossibleItems[i].Item) + " [" + gather.PossibleItems[i].Weight + "/" + totalWeight + "]", () => { ResetAllCompendiumValues(); CompendiumCat = "Items"; CompendiumViewingID = gather.PossibleItems[i].Item; });
+                                Compendium.PrintClickable(32, gatherY++, "| " + GameLoop.WTN.ResolveItemName(gather.PossibleItems[i].ItemID) + " [" + gather.PossibleItems[i].DropX + "/" + gather.PossibleItems[i].InY + "]", () => { ResetAllCompendiumValues(); CompendiumCat = "Items"; CompendiumViewingID = gather.PossibleItems[i].ItemID; });
                             }
                         } else { 
                             Compendium.Print(32, gatherY++, "| (no drops)", Color.DarkSlateGray);
@@ -2440,10 +2633,12 @@ namespace WorldtreeNexus.Managers {
                     if (kv.Value.PossibleItems != null && kv.Value.PossibleItems.Count > 1) {
                         for (int i = 0; i < kv.Value.PossibleItems.Count; i++) {
                             int level = kv.Value.Level;
-                            if (kv.Value.PossibleItems[i].MiscInt != 0)
-                                level = kv.Value.PossibleItems[i].MiscInt;
 
-                            sources.Add(new("[" + level.ToString().Align(HorizontalAlignment.Right, 3) + "] " + kv.Value.InteractVerb + " " + kv.Value.Name + " - " + GameLoop.WTN.ResolveItemName(kv.Value.PossibleItems[i].Item), "Gathering", "", kv.Value.ID, "", 0));
+                            foreach (var req in kv.Value.PossibleItems[i].Requirements) {
+                                if (req.RequirementType == "Skill") { level = req.MiscInt; }
+                            }
+
+                            sources.Add(new("[" + level.ToString().Align(HorizontalAlignment.Right, 3) + "] " + kv.Value.InteractVerb + " " + kv.Value.Name + " - " + GameLoop.WTN.ResolveItemName(kv.Value.PossibleItems[i].ItemID), "Gathering", "", kv.Value.ID, "", 0));
                         }
                     } else {
                         sources.Add(new("[" + kv.Value.Level.ToString().Align(HorizontalAlignment.Right, 3) + "] " + kv.Value.InteractVerb + " " + kv.Value.Name, "Gathering", "", kv.Value.ID, "", 0));
@@ -2517,6 +2712,10 @@ namespace WorldtreeNexus.Managers {
             }
 
             foreach (var kv in GameLoop.WTN.MonsterLibrary) {
+                if (kv.Value.AlchemySecretionID == id) {
+                    sources.Add(new("Secretion: " + " Use extraction kit on " + kv.Value.Name, "Monsters", "", kv.Value.ID, "", 0));
+                }
+
                 for (int i = 0; i < kv.Value.DropTable.Count; i++) {
                     if (kv.Value.DropTable[i].ItemID == id) {
                         sources.Add(new("Drop: " + kv.Value.DropTable[i].DropX + "/" + kv.Value.DropTable[i].InY + " from " + kv.Value.Name, "Monsters", "", kv.Value.ID, "", 0));
@@ -2579,14 +2778,9 @@ namespace WorldtreeNexus.Managers {
             foreach (var kv in GameLoop.WTN.GatherSpots) {
                 if (kv.Value.PossibleItems != null) {
                     for (int i = 0; i < kv.Value.PossibleItems.Count; i++) {
-                        if (kv.Value.PossibleItems[i].Item == id) {
-                            int totalWeight = 0;
+                        if (kv.Value.PossibleItems[i].ItemID == id) {
 
-                            for (int j = 0; j < kv.Value.PossibleItems.Count; j++) {
-                                totalWeight += kv.Value.PossibleItems[j].Weight;
-                            }
-
-                            sources.Add(new("Gather: " + kv.Value.PossibleItems[i].Weight + "/" + totalWeight + " from " + kv.Value.Name, "Gathering", "", kv.Value.ID, "", 0));
+                            sources.Add(new("Gather: " + kv.Value.PossibleItems[i].DropX + "/" + kv.Value.PossibleItems[i].InY + " from " + kv.Value.Name, "Gathering", "", kv.Value.ID, "", 0));
                         }
                     }
                 }
@@ -2686,6 +2880,37 @@ namespace WorldtreeNexus.Managers {
             }
 
             return sources;
+        }
+
+        public static void DebugAlchemyCounts() {
+            List<Item> alchemy = GameLoop.WTN.ItemLibrary.Values.Where(o => o.Alchemy != null && o.ID != "alchemyMixture").ToList();
+            DebugIngredientsTotal = 0;
+            DebugIngredients1 = 0;
+            DebugIngredients10 = 0;
+            DebugIngredients20 = 0;
+            DebugIngredients30 = 0;
+            DebugIngredients40 = 0;
+            DebugIngredients50 = 0;
+            DebugIngredients60 = 0;
+            DebugIngredients70 = 0;
+            DebugIngredients80 = 0;
+            DebugIngredients90 = 0;
+            DebugIngredients100 = 0;
+
+            foreach (var ing in alchemy) {
+                DebugIngredientsTotal++;
+                if (ing.Alchemy.Level == 1) { DebugIngredients1++; }
+                if (ing.Alchemy.Level == 10) { DebugIngredients10++; }
+                if (ing.Alchemy.Level == 20) { DebugIngredients20++; }
+                if (ing.Alchemy.Level == 30) { DebugIngredients30++; }
+                if (ing.Alchemy.Level == 40) { DebugIngredients40++; }
+                if (ing.Alchemy.Level == 50) { DebugIngredients50++; }
+                if (ing.Alchemy.Level == 60) { DebugIngredients60++; }
+                if (ing.Alchemy.Level == 70) { DebugIngredients70++; }
+                if (ing.Alchemy.Level == 80) { DebugIngredients80++; }
+                if (ing.Alchemy.Level == 90) { DebugIngredients90++; }
+                if (ing.Alchemy.Level == 100) { DebugIngredients100++; }
+            } 
         }
 
 
@@ -3211,6 +3436,7 @@ namespace WorldtreeNexus.Managers {
 
 
                         Quests.PrintClickable(19, 1, "[View Quest Overview]", () => { QuestOverview = true; });
+                        Quests.PrintClickable(85, 1, new ColoredString("[Quick Guide]", QuestQuickGuide ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { QuestQuickGuide = !QuestQuickGuide; });
 
                         int printY = 28;
                         int count = -1; 
@@ -3224,13 +3450,17 @@ namespace WorldtreeNexus.Managers {
 
                                 //if (kv.Value.Description.Length >= 80) { printY -= (kv.Value.Description.Length / 75); } 
 
-                                int simPrint = Quests.PrintMultiLine(19, printY, kv.Value.Description, 80, col.R, col.G, col.B, justSim: true);
-
-                                printY -= (simPrint - printY) + 1;
-
-                                if (printY < 2) { break; }
-
-                                Quests.PrintMultiLine(19, printY, kv.Value.Description, 80, col.R, col.G, col.B);
+                                if (!QuestQuickGuide) {
+                                    int simPrint = Quests.PrintMultiLine(19, printY, kv.Value.Description, 80, col.R, col.G, col.B, justSim: true); 
+                                    printY -= (simPrint - printY) + 1; 
+                                    if (printY < 2) { break; } 
+                                    Quests.PrintMultiLine(19, printY, kv.Value.Description, 80, col.R, col.G, col.B);
+                                } else {
+                                    int simPrint = Quests.PrintMultiLine(19, printY, kv.Value.QuickDesc, 80, col.R, col.G, col.B, justSim: true); 
+                                    printY -= (simPrint - printY) + 1; 
+                                    if (printY < 2) { break; } 
+                                    Quests.PrintMultiLine(19, printY, kv.Value.QuickDesc, 80, col.R, col.G, col.B);
+                                }
                             }
                         } 
 
@@ -3341,7 +3571,7 @@ namespace WorldtreeNexus.Managers {
             if (GameLoop.WTN.BookLibrary.TryGetValue(BookID, out Book? book)) {
                 Book.Print(1, 0, ("[" + book.Name + "]").Align(HorizontalAlignment.Center, 75, (char) 196));
 
-                if (book.FrameType == 1) {
+                if (book.FrameType == 1) { // Looks like a book
                     Book.DrawLine(new Point(3, 2), new Point(35, 2), 196, Color.White);
                     Book.DrawLine(new Point(41, 2), new Point(73, 2), 196, Color.White); 
                     Book.Print(36, 3, "\\   /", Color.White);
@@ -3391,7 +3621,7 @@ namespace WorldtreeNexus.Managers {
                         });
                     }
                     if (LeftPage > 1) { Book.PrintClickable(5, 23, "[LAST PAGE]", () => { LeftPage -= 2; }); }
-                } else if (book.FrameType == 0) { 
+                } else if (book.FrameType == 0) { // Just a sheet of paper
                     Book.DrawLine(new Point(21, 2), new Point(55, 2), 196, Color.White);
                     Book.DrawLine(new Point(21, 21), new Point(55, 21), 196, Color.White);
                     Book.DrawLine(new Point(21, 3), new Point(21, 20), 179, Color.White);
@@ -3412,6 +3642,63 @@ namespace WorldtreeNexus.Managers {
             Book.PrintClickable(76, 0, new ColoredString("X", Color.Crimson, Color.Black), () => { Book.IsVisible = false; });
         }    
     
+        public static void NewspaperDraw() {
+            Newspaper.Clear();
+            Helper.DrawBox(Newspaper, 0, 0, 122, 38);
+
+            if (GameLoop.WTN.NewspaperLibrary.TryGetValue(NewspaperID, out Newspaper? news)) {
+                Newspaper.Print(1, 0, ("[" + news.Name + "]").Align(HorizontalAlignment.Center, 122, (char) 196));
+                Helper.DrawBox(Newspaper, 6, 2, 111, 34);
+
+                if (news.Sheets.Count > NewspaperPage) {
+                    NewspaperSheet sheet = news.Sheets[NewspaperPage];
+
+                    if (NewspaperPage == 0) {
+                        
+                        Newspaper.Print(12, 4, "###            ###    ###   #####  #    #   #     #####  #####  #####  #####  #   #  #####        ## ", Color.White);
+                        Newspaper.Print(12, 5, " #  # #        #  #  #   #    #    #     # #      #      #   #  #   #  #   #  #   #    #       ###   ", Color.White);
+                        Newspaper.Print(12, 6, " #  ### ###    #  #  #####    #    #      #       #####  #####  #####  #   #  #   #    #      #  ### ", Color.White);
+                        Newspaper.Print(12, 7, "    # # ##     #  #  #   #    #    #      #           #  #      #  #   #   #  #   #    #         #  #", Color.White);
+                        Newspaper.Print(12, 8, "        ###    ###   #   #  #####  #####  #       #####  #      #   #  #####  #####    #        ###  ", Color.White);
+                        
+                        Newspaper.Print(70, 10, news.Byline.Align(HorizontalAlignment.Right, 47), Color.White);
+                        Newspaper.DrawLine(new Point(7, 11), new Point(117, 11), 196, Color.White);
+                    }
+
+                    int printX = 7;
+                    for (int i = 0; i < sheet.Columns.Count; i++) {
+                        NewspaperColumn column = sheet.Columns[i];
+                        int printY = NewspaperPage == 0 ? 12 : 3;
+                        if (i != sheet.Columns.Count - 1) { Newspaper.DrawLine(new Point(printX + column.Width + 1, NewspaperPage == 0 ? 12 : 3), new Point(printX + column.Width + 1, 36), 179, Color.White); }
+
+                        for (int j = 0; j < column.Sections.Count; j++) {
+                            NewspaperSection section = column.Sections[j];
+
+                            printY = Newspaper.PrintMultiLine(printX, printY, section.Text, column.Width); 
+                            printY++;
+                             
+                            if (j != column.Sections.Count - 1) {
+                                Newspaper.DrawLine(new Point(printX, printY), new Point(printX + column.Width, printY), 196, Color.White);
+                            }
+                        } 
+
+                        printX += column.Width + 2;
+                    }
+                }
+                
+
+
+                if (news.Sheets.Count > NewspaperPage + 1) { 
+                    Newspaper.PrintClickable(106, 37, "[NEXT PAGE]", () => { 
+                        NewspaperPage += 1;
+                    });
+                }
+                if (NewspaperPage > 0) { Newspaper.PrintClickable(8, 37, "[LAST PAGE]", () => { NewspaperPage -= 1; }); } 
+            }
+            Newspaper.PrintClickable(123, 0, new ColoredString("X", Color.Crimson, Color.Black), () => { Newspaper.IsVisible = false; });
+        }    
+    
+
         public static void CutsceneDraw() {
             Cutscene.Clear();
             Helper.DrawBox(Cutscene, 0, 0, 98, 28);
@@ -3874,7 +4161,16 @@ namespace WorldtreeNexus.Managers {
         public static void CompassDraw() {
             Compass.Clear();
             Helper.DrawBox(Compass, 0, 0, 48, 28);
-            Compass.Print(2, 0, "[Compass - Where To?]");
+            Compass.Print(2, 0, "[Compass]");
+
+            Compass.PrintClickable(12, 0, "[Same Region " + Helper.Checkmark(CompassWithinRegion) + new ColoredString("]"), () => {
+                CompassWithinRegion = !CompassWithinRegion; CompassUpdate();
+            });
+
+            Compass.PrintClickable(28, 0, "[Only Traversable " + Helper.Checkmark(CompassTraversable) + new ColoredString("]"), () => {
+                CompassTraversable = !CompassTraversable;
+            });
+
             Compass.PrintStringField(2, 1, "Search: ", ref CompassFilterActive, ref CompassTyping, "compassFilter");
 
             if (CompassFilterSaved != CompassFilterActive) {
@@ -3904,7 +4200,13 @@ namespace WorldtreeNexus.Managers {
         public static void CompassUpdate() {
             CompassFiltered.Clear();
 
-            CompassFiltered = GameLoop.WTN.Atlas.Values.Where(o => (o.ID.ToLower().Contains(CompassFilterSaved.ToLower()) || o.DisplayName.ToLower().Contains(CompassFilterSaved.ToLower()) )).ToList();
+            string playerRegion = GameLoop.WTN.player.GetRegion();
+
+            CompassFiltered = GameLoop.WTN.Atlas.Values.Where(o => 
+            (o.ID.ToLower().Contains(CompassFilterSaved.ToLower()) || o.DisplayName.ToLower().Contains(CompassFilterSaved.ToLower())) 
+            && (!CompassWithinRegion || o.Region == playerRegion)
+            && ((o.Region != "Tutorial Island" && playerRegion != "Tutorial Island") || (o.Region == "Tutorial Island" && playerRegion == "Tutorial Island") // Only TI visible on TI, TI not visible elsewhere
+            )).ToList();
         }
 
 
@@ -3916,7 +4218,7 @@ namespace WorldtreeNexus.Managers {
 
             if (GameLoop.WTN.Atlas.TryGetValue(GameLoop.WTN.player.NavLoc, out Location? curr)) {
                 foreach (var conn in curr.ConnectedLocations) {
-                    if (conn.CanTraverse(GameLoop.WTN.player)) {
+                    if (conn.CanTraverse(GameLoop.WTN.player) || !CompassTraversable) {
                         CompassTryPath(new() { conn.Destination }, conn.Destination, destID, 0);
                     }
                 }
@@ -3927,7 +4229,7 @@ namespace WorldtreeNexus.Managers {
             if (CompassRoute.Count == 0) { // Should only happen if no route was found within 20 steps, so tell the player
                 GameLoop.WTN.Log.AddMessage("Destination not found within 20 map connections.", Color.Crimson);
             } else { 
-                GameLoop.WTN.Log.AddMessage("Destination found in " + CompassRoute.Count + " steps. Follow blue locations to reach it.", Color.Turquoise);
+                GameLoop.WTN.Log.AddMessage("Destination found in " + CompassRoute.Count + " steps. Follow blue locations to reach it." + (!CompassTraversable ? " Untraversable path nodes will be orange instead of blue." : ""), Color.Turquoise);
             }
         } 
 
@@ -3941,6 +4243,8 @@ namespace WorldtreeNexus.Managers {
                 } 
 
                 if (GameLoop.WTN.Atlas.TryGetValue(id, out Location? curr)) {
+                    if (curr.MazeMap != "") { return; } // Can't navigate through maze areas with a compass
+
                     foreach (var conn in curr.ConnectedLocations) {
                         if (conn.CanTraverse(GameLoop.WTN.player)) {
                             CompassTryPath(path.Append(conn.Destination).ToList(), conn.Destination, target, depth + 1);
@@ -4466,5 +4770,6 @@ namespace WorldtreeNexus.Managers {
             Talisman.PrintClickable(99, 0, new ColoredString("X", Color.Crimson, Color.Black), () => {  Talisman.IsVisible = false;  });
         }
         
+
     }
 }

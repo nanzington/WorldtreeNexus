@@ -2,7 +2,7 @@
 using WorldtreeNexus.HardcodedData;
 
 namespace WorldtreeNexus.Hardcodes {
-    public static class HardcodedItemsQuests {
+    public static class ItemsQuests {
         public static void InitItems(Dictionary<string, Item> ItemLibrary) {
             List<Item> itemsToAdd = new();
 
@@ -27,7 +27,8 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Tybalt's sword [Q]", "A fine steel sword. Soon to be a little less fine. (Romeo & Juliet)", "swordTybalt", ColorLib.Steel, 0, trade: false));
             itemsToAdd.Add(new Item("Brittle sword [Q]", "A steel sword with the temper ruined. Will shatter easily under stress. (Romeo & Juliet)", "swordBrittle", Color.Silver, 0, trade: false));
             
-
+            itemsToAdd.Add(new Item("List of Items [Q]", "A list of the items you must collect to be able to leave Tutorial Island.", "qListTutorial", Color.White, 0, trade: false) { ConsumedOnUse = false, UseString = "Book", UseString2 = "qListTutorial" });
+            
 
             for (int i = 0; i < itemsToAdd.Count; i++) {
                 ItemLibrary.Add(itemsToAdd[i].ID, itemsToAdd[i]);

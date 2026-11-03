@@ -46,8 +46,8 @@
                         if (ClickReqs[i].MiscString == "Gold" && ClickReqs[i].ConsumeItem) {
                             p.TakeGold(ClickReqs[i].MiscInt);
                         } else {
-                            if (ClickReqs[i].ConsumeItem){
-                                p.ConsumeItems(new() { ClickReqs[i].MiscString + "," + ClickReqs[i].MiscInt}, true, true);
+                            if (ClickReqs[i].ConsumeItem) {
+                                p.ConsumeItems([ClickReqs[i].MiscString + "," + ClickReqs[i].MiscInt], true, true);
                             }
                         }
                     }

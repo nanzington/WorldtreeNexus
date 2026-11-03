@@ -20,13 +20,13 @@ namespace WorldtreeNexus.Managers {
                         if (clueTut != null) {
                             if (clueTut.ClueType == clueType && player.NavLoc == clueTut.SolveLoc && interacted == clueTut.EmoteOrNpc) {
                                 if (clueTut.ClueType != "Emote") {
-                                    if (interacted == "mistVarCharlie" && clueTut.Equip1 != "") {
+                                    if (clueTut.ClueType == "Item" && interacted == clueTut.EmoteOrNpc && clueTut.Equip1 != "") {
                                         if (player.HasAllItems([clueTut.Equip1 + ",1"])) {
                                             player.ConsumeItems([clueTut.Equip1 + ",1"]);
                                             ProgressStep(diff, player, Log);
                                             return true;
                                         } else {
-                                            GameLoop.WTN.Log.AddMessage("Charlie wants you to bring him a " + GameLoop.WTN.ResolveItemName(clueTut.Equip1).ToLower() + ".", Color.SandyBrown);
+                                            GameLoop.WTN.Log.AddMessage(GameLoop.WTN.ResolveNPCName(interacted) + " would like a" + (Helper.VowelStart(GameLoop.WTN.ResolveItemName(clueTut.Equip1).ToLower()) ? "n " : " ") + GameLoop.WTN.ResolveItemName(clueTut.Equip1).ToLower() + ".", Color.SandyBrown);
                                             return true;
                                         }
                                     } else {

@@ -41,26 +41,26 @@ namespace WorldtreeNexus.HardcodedData {
                 new("Tools I", "Brazier: Heats mixtures to finish them. The most important tool, as Alchemy cannot be done without it. /n /n Loupe: While in your inventory, allows you to see the RBYW values of any items with them. /n /n Pestle and Mortar: Grind some items into usable alchemical ingredients."),
                 new("Tools II", "Retort: +1 Red, -1 Black /n /n Alembic: +1 Black, -1 Yellow /n /n Crucible: +1 Yellow, -1 White /n /n Aludel: +1 White, -1 Red /n /n Inverter: Invert polarity of all colors /n /n Water Vial / Mixture: Becomes a copy of the mixture. Both have each color set to the average of their combined value, rounded to zero. Water counts as 0 in all colors."),
                 new("Tools III", "Calcinator: All colors move one step towards zero /n /n Swizzler: Average all colors, rounded towards zero, maintaining polarity, neutrals become positive /n /n Agitator: Shift colors one slot right (Red -> Black -> Yellow -> White -> Red) /n /n Deagitator: Shift colors one slot left (Red <- Black <- Yellow <- White <- Red)"),
-                new("Low Level Herbs", "   Neela  4, -1,  3, -3. Lv1 /n " +
-                                       "  Midori  4, -3,  4,  0. Lv1 /n /n " +
-                                       "   Nimbu  3, -4,  3,  0. Lv10 /n " +
-                                       "   Kiiro -2,  2, -1, -5. Lv10 /n /n " +
-                                       "Baingani -1,  4, -2,  2. Lv20 /n " +
-                                       "Murasaki -3,  0,  4, -2. Lv20 /n /n " +
-                                       "     Lal  0, -6, -1,  1. Lv30 /n " +
-                                       "  Mazent  4,  2,  1,  1. Lv30 /n /n " +
-                                       "    Hara -3,  0,  0,  4. Lv40 /n " +
-                                       " Kuriiro  2,  3,  0,  2. Lv40 /n /n " +
-                                       "  Gulabi -1, -2,  1,  2. Lv50 /n " +
-                                       "    Kusa  1, -3, -1,  1. Lv50"),
-                 new("Wood Ashes",  "Poplar -2,  3, -3,  3. Lv1 /n " +
-                                    "   Elm  0, -3, -4,  3. Lv10 /n  " +
-                                    "Walnut  6,  0,  0, -3. Lv20 /n " +
-                                    " Holly  1, -2,  4,  1. Lv30 /n " +
-                                    "Acacia  0, -4,  2, -1. Lv40 /n " +
-                                    " Birch -3,  1,  0,  2. Lv50 /n "),
-                new("Other Ingredients - Level 1","  Eye of Cuy  2,  2, -4,  3 /n " +
-                                                  "Ground Bones  4, -3,  4,  0 /n "),
+                new("Low Level Herbs", "   Neela -5,  1, -6,  3. Lv1 /n " +
+                                       "  Midori -4, -3,  3,  5. Lv1 /n /n " +
+                                       "   Nimbu -2,  2,  6,  4. Lv10 /n " +
+                                       "   Kiiro  2, -3, -5, -4. Lv10 /n /n " +
+                                       "Baingani  4, -1,  6,  2. Lv20 /n " +
+                                       "Murasaki -1, -3,  2, -7. Lv20 /n /n " +
+                                       "     Lal  1, -3, -2,  6. Lv30 /n " +
+                                       "  Mazent  2, -4, -3,  3. Lv30 /n /n " +
+                                       "    Hara -1,  3,  3,  4. Lv40 /n " +
+                                       " Kuriiro -3, -5, -2,  1. Lv40 /n /n " +
+                                       "  Gulabi  4,  1,  2,  3. Lv50 /n " +
+                                       "    Kusa -2,  2, -2,  4. Lv50"),
+                 new("Wood Ashes",  "Poplar -4,  6, -6,  6. Lv1 /n " +
+                                    "   Elm  0, -6, -8,  6. Lv10 /n  " +
+                                    "Walnut 12,  0,  0, -6. Lv20 /n " +
+                                    " Holly  2, -4,  8,  2. Lv30 /n " +
+                                    "Acacia  0, -8,  4, -2. Lv40 /n " +
+                                    " Birch -6,  2,  0,  4. Lv50 /n "),
+                new("Other Ingredients - Level 1","  Eye of Cuy  4,  4, -8,  6 /n " +
+                                                  "Ground Bones  6, -6,  6,  4 /n "),
             }));
 
             toAdd.Add(new("Recipe (Attack Potion)", "alchemyRecipeAttack", 0, new() {
@@ -69,6 +69,25 @@ namespace WorldtreeNexus.HardcodedData {
 
             toAdd.Add(new("Papermakers Pamphlet", "bookPapermaker", 0, new() {
                 new("", "Acquire logs of the kind of paper you wish to make. /n /n Fletch them into wood chips with a knife. /n /n Burn any other log for wood ash, then add it to a pot of water to make lye. /n /n Add the wood chips to the pot of lye, then heat on a fire or range to get wood pulp. /n /n Use the pulp on a paper mould for two sheets of paper, or Activate (*) for one sheet."),
+            }));
+
+            toAdd.Add(new("List of Items", "qListTutorial", 1, new() {
+                new("", "Collect the following items, then take them to Wizard Atrel in his hut to finish the quest. /n /n Copper bar /n Illusion talisman /n Attack potion /n Cleansed bones /n Small coin pouch /n Poplar shortbow /n Cozy Cottages teleport /n Fish and Chips"),
+                new("", "/n /n /n /n /n Want additional assistance for how to get each item? /n /n Flip to the next page using the bottom at the bottom of this page!"),
+                new("", "Copper bar /n /n Smelt a copper ore at a furnace to make copper bars. Copper ore can be mined in the Cavern, if you have a pickaxe. /n /n /n Illusion talisman /n /n Acquire novice ink and poplar paper, then activate the ink to draw on the paper. Speak to Talisman Guy for more information."),
+                new("", "Attack potion /n /n Combine a clean neela with a cuy eye in a vial of water, then heat it with an alchemist's brazier. Speak to Talisman Guy for more information about Alchemy. /n /n /n Cleansed bones /n /n Get bones by killing anything but the rat in the starting hut (chicken may be easiest). Clean them with the Holy Fountain in the Temple."),
+                new("", "Small coin pouch /n /n Successfully pickpocket Dodgy Ranger Guy by clicking the P to the right of his name in the NPC menu. /n /n /n Poplar shortbow /n /n Fletch a poplar log into a shortbow (u) with a knife, spin a piece of flax into a bowstring at a Spinning Wheel, then use the string on the unstrung bow."),
+                new("", "Cozy Cottages teleport /n /n Complete two Cozy Cottages contracts, then buy in the Reward shop. Speak to the Estate Agent in the Bank to learn about how to do that."),
+                new("", "Fish and Chips /n /n Grow a potato, cut it into slices with a knife and then the slices into sticks. /n /n Catch a pollock, fillet it with a knife, batter it with egg and flour, then deep fry the potato sticks and the battered pollock in the Kitchen. Use on eachother to combine into Fish and Chips."),
+            }));
+
+            toAdd.Add(new("The Daily Sprout - Issue #0 (10-30-2026)", "patchNotes0", 2, new() {
+                new("", "Prim's Primers /n /n /n Your guide to the multiverse!"),
+                new("", "Sneed's Feed and Seed /n /n Need feed? /n Get seed!"),
+                new("", "Crossroads Inn /n /n Grab a drink where all paths meet!"), 
+                new("Worldtree Welcomes You!", "New people from the multiverse appear on the Worldtree each day as more worlds become interconnected by its' branches. /n /n We at the Daily Sprout are happy to welcome our latest neighbors, the residents of Everafter! A land of whimsy and fairytales made real. Give it a visit when you have time!"),
+                new("", "Cult of the Tree recieves official recognition and allowed to open a temple in the Nexus."),
+                new("", "Cozener's Casino reports high profits in opening week as gamblers from across the multiverse flock to their tables."),
             }));
 
             for (int i = 0; i < toAdd.Count; i++) {

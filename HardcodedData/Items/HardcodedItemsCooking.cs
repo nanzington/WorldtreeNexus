@@ -12,7 +12,6 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Burnt food bowl", "Completely inedible now, whatever it was. At least the bowl is salvageable.", "burntBowl", Color.DimGray, 1) { UseString = "Transform", UseString2 = "bowlEmpty" });
             itemsToAdd.Add(new Item("Burnt pie", "Completely inedible now, whatever it was. At least the dish is salvageable.", "burntPie", Color.DimGray, 1) { UseString = "Transform", UseString2 = "pieEmpty" });
             
-            itemsToAdd.Add(new Item("Baked potato", "It'd taste even better with some toppings.", "potatoBaked", Color.SaddleBrown, 5) { UseString = "Heal", UseInt = 4 });
             itemsToAdd.Add(new Item("Cooked sweetcorn", "A nice cob of cooked sweetcorn.", "sweetcornCooked", Color.Goldenrod, 9) { UseString = "Heal", UseInt = 2 });
             
 
@@ -20,22 +19,27 @@ namespace WorldtreeNexus.Hardcodes {
                 Color cooked = Color.Lerp(new Color(fish.R, fish.G, fish.B), Color.Orange, 0.5f);
                 itemsToAdd.Add(new Item("Raw " + fish.Name.ToLower(), "A raw " + fish.Descriptor + ". Cook with " + fish.Level + " Cooking.", "fishRaw" + fish.SimpleName, fish.R, fish.G, fish.B, fish.CostMultiplier)); 
                 itemsToAdd.Add(new Item("Grilled " + fish.Name.ToLower(), "Nicely grilled " + fish.Descriptor + ".", "fishCooked" + fish.SimpleName, cooked, fish.CostMultiplier) { UseString = "Heal", UseInt = (int) fish.Tier }); 
-                
+                itemsToAdd.Add(new Item(fish.Name + " fillet", "A " + fish.Descriptor + " cleaned, prepared, and cut into a fillet.", "fishFillet" + fish.SimpleName, cooked, fish.CostMultiplier)); 
             }
+            itemsToAdd.Add(new Item("Minnow scales", "A pile of minnow scales.", "fishScalesMinnow", Color.SpringGreen, 1) { Alchemy = new(5, 8, 3, 14, 1) }); 
+            itemsToAdd.Add(new Item("Bluegill scales", "A pile of bluegill scales.", "fishScalesBluegill", Color.SeaGreen, 1) { Alchemy = new(-7, 8, -6, -9, 1) }); 
+            itemsToAdd.Add(new Item("Pollock scales", "A pile of pollock scales.", "fishScalesPollock", Color.DarkGray, 1) { Alchemy = new(7, 3, 10, 10, 1) }); 
+            itemsToAdd.Add(new Item("Cod scales", "A pile of cod scales.", "fishScalesCod", ColorLib.PastelYellow, 1) { Alchemy = new(-7, -9, -8, -6, 1) }); 
+                
 
 
-            itemsToAdd.Add(new Item("Raw cuy meat", "A cut of meat taken from a giant guinea pig.", "meatRawCuy", 138, 3, 3, 1));
-            itemsToAdd.Add(new Item("Raw beef", "A cut of meat taken from a cow.", "meatRawBeef", 138, 3, 3, 1));
-            itemsToAdd.Add(new Item("Raw rat meat", "A cut of meat taken from a rat.", "meatRawRat", 138, 3, 3, 1));
-            itemsToAdd.Add(new Item("Raw bear meat", "A cut of meat taken from a bear.", "meatRawBear", 138, 3, 3, 1));
-            itemsToAdd.Add(new Item("Raw chicken", "A whole chicken, currently very inedible.", "meatRawChicken", 242, 209, 209, 1));
+            itemsToAdd.Add(new Item("Raw cuy meat", "A cut of meat taken from a giant guinea pig.", "meatRawCuy", 138, 3, 3, 1) { Alchemy = new(-13, -6, 7, -4, 1) });
+            itemsToAdd.Add(new Item("Raw beef", "A cut of meat taken from a cow.", "meatRawBeef", 138, 3, 3, 1) { Alchemy = new(-11, 8, 8, -3, 1) });
+            itemsToAdd.Add(new Item("Raw rat meat", "A cut of meat taken from a rat.", "meatRawRat", 138, 3, 3, 1) { Alchemy = new(-6, 14, 4, 6, 1) });
+            itemsToAdd.Add(new Item("Raw bear meat", "A cut of meat taken from a bear.", "meatRawBear", 138, 3, 3, 1) { Alchemy = new(7, 7, -9, -7, 1) });
+            itemsToAdd.Add(new Item("Raw chicken", "A whole chicken, currently very inedible.", "meatRawChicken", 242, 209, 209, 1) { Alchemy = new(-3, -8, -7, 12, 1) });
              
             itemsToAdd.Add(new Item("Cooked meat", "A cooked cut of meat.", "meatCooked", 150, 100, 50, 4) { UseString = "Heal", UseInt = 3 }); 
             itemsToAdd.Add(new Item("Cooked chicken", "A cooked chicken.", "meatCookedChicken", 150, 100, 50, 4) { UseString = "Heal", UseInt = 3 });
             
             itemsToAdd.Add(new Item("Pie shell", "I need to find a filling for this pie.", "pieShell", Color.SandyBrown, 4)); 
             
-            itemsToAdd.Add(new Item("Tea leaves", "Mmm, how about a nice cup of tea?", "teaLeaves", Color.ForestGreen, 1, trade: false)); 
+            itemsToAdd.Add(new Item("Tea leaves", "Mmm, how about a nice cup of tea?", "teaLeaves", Color.ForestGreen, 1, trade: false) { Alchemy = new(6, 10, -7, -7, 1) }); 
             itemsToAdd.Add(new Item("Kettle (empty)", "The kettle is empty.", "kettleEmpty", ColorLib.Steel, 1, trade: false)); 
             itemsToAdd.Add(new Item("Kettle (full)", "The kettle is full of water.", "kettleFull", ColorLib.Steel, 1, trade: false)); 
             itemsToAdd.Add(new Item("Kettle (hot)", "The kettle is full of boiling water.", "kettleHot", ColorLib.Steel, 1, trade: false)); 
@@ -65,21 +69,34 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Dwarven stout", "A pint of thick dark beer.", "dwarvenStout", Color.DimGray, 2) { UseString = "Potion", UseInt4 = 1, ItemReturned = "beerGlass", Potion = new() { new("Heal", 1), new("Attack", -3), new("Strength", -3), new("Defense", -3), new("Mining", 1), new("Smithing", 1) } });
             itemsToAdd.Add(new Item("Cider", "A glass of cider.", "cider", Color.YellowGreen, 2) { UseString = "Potion", UseInt4 = 1, ItemReturned = "beerGlass", Potion = new() { new("Heal", 1), new("Attack", -2), new("Strength", -2), new("Farming", 1) } });
             
-            itemsToAdd.Add(new Item("Garlic", "Deters vampires.", "garlic", Color.AntiqueWhite, 3));
+            itemsToAdd.Add(new Item("Garlic", "Deters vampires.", "garlic", Color.AntiqueWhite, 3) { Alchemy = new(-6, 8, -8, 8, 1) });
+             
+            itemsToAdd.Add(new Item("Raw potato slices", "A potato sliced into equal portions.", "potatoSlicesRaw", Color.AntiqueWhite, 3));
+            itemsToAdd.Add(new Item("Raw potato sticks", "A potato cut into sticks.", "potatoSticksRaw", Color.AntiqueWhite, 3));
+            itemsToAdd.Add(new Item("Raw potato cubes", "A potato diced into cubes.", "potatoCubesRaw", Color.AntiqueWhite, 3));
+            itemsToAdd.Add(new Item("Fried potato sticks", "A serving of potato sticks deepfried in oil to golden perfection.", "potatoSticksFried", Color.Goldenrod, 10) { UseString = "Heal", UseInt = 2 });
+            itemsToAdd.Add(new Item("Baked potato", "A potato, baked until the inside is nice and fluffy. Could use some butter.", "potatoBaked", 205, 127, 50, 10) { UseString = "Heal", UseInt = 2 });
 
-            itemsToAdd.Add(new Item("Pot of flour", "A pot full of flour.", "potFlour", 207, 185, 151, 10));
+            itemsToAdd.Add(new Item("Egg", "An egg from a chicken. Could be fried or scrambled, perhaps.", "eggChicken", 233, 185, 93, 4) { Alchemy = new(-8, 10, 7, -5, 1) });
+            itemsToAdd.Add(new Item("Bowl of egg", "A bowl with an egg cracked into it.", "bowlEgg", Color.Yellow, 3));
+            itemsToAdd.Add(new Item("Bowl of batter", "A bowl of simple egg and flour batter.", "bowlBatter", Color.Beige, 3));
+            itemsToAdd.Add(new Item("Battered pollock", "A pollock fillet rolled in batter.", "batteredPollock", Color.Beige, 3));
+            itemsToAdd.Add(new Item("Fish sticks", "A battered pollock fillet, deepfried to crispy goodness.", "fishSticks", Color.PaleGoldenrod, 10) { UseString = "Heal", UseInt = 2 });
+            itemsToAdd.Add(new Item("Fish and chips", "Fried pollock with a side of fried potatoes. Terrible for your arteries, but tastes great!", "mealFishChips", Color.Goldenrod, 30) { UseString = "Heal", UseInt = 5 });
+
+
+            itemsToAdd.Add(new Item("Pot of flour", "A pot full of flour.", "potFlour", 207, 185, 151, 10) { Alchemy = new(13, -8, -7, -2, 1, "potEmpty") });
             itemsToAdd.Add(new Item("Bread dough", "Some uncooked dough.", "doughBread", 221, 199, 160, 4) { UseString = "Baking" });
             itemsToAdd.Add(new Item("Pizza base", "I need to add some tomato next.", "doughPizza", 221, 199, 160, 4) { UseString = "Baking" });
             itemsToAdd.Add(new Item("Pastry dough", "Some uncooked dough.", "doughPastry", 221, 199, 160, 4) { UseString = "Baking" });
-            itemsToAdd.Add(new Item("Bread", "Nice crispy bread.", "bread", 233, 185, 93, 12) { UseString = "Heal", UseInt = 5 });
-            itemsToAdd.Add(new Item("Egg", "An egg from a chicken. Could be fried or scrambled, perhaps.", "eggChicken", 233, 185, 93, 4));
+            itemsToAdd.Add(new Item("Bread", "Nice crispy bread.", "bread", 233, 185, 93, 12) { UseString = "Heal", UseInt = 5 }); 
             itemsToAdd.Add(new Item("Cake", "A plain sponge cake.", "cake", 255, 255, 255, 50) { UseString = "Heal", UseInt = 9 });
               
             itemsToAdd.Add(new Item("Pot of water", "A pot filled with water.", "potWater", 207, 185, 151, 1));
-            itemsToAdd.Add(new Item("Pot of lye", "A pot filled with water and wood ash.", "potLye", 207, 185, 151, 6));
+            itemsToAdd.Add(new Item("Pot of lye", "A pot filled with water and wood ash.", "potLye", 207, 185, 151, 6) { Alchemy = new(-6, 8, 9, 7, 1, "potEmpty") });
 
             itemsToAdd.Add(new Item("Bucket of water", "A bucket filled with water.", "bucketWater", 111, 66, 33, 2));
-            itemsToAdd.Add(new Item("Bucket of milk", "A bucket filled with milk.", "bucketMilk", 111, 66, 33, 2));
+            itemsToAdd.Add(new Item("Bucket of milk", "A bucket filled with milk.", "bucketMilk", 111, 66, 33, 2) { Alchemy = new(-11, -7, -5, -7, 1, "potEmpty") });
             itemsToAdd.Add(new Item("Bottomless milk bucket", "It's a bucket of milk that never ends!", "bucketMilkBottomless", 111, 66, 33, 15000) { CountsAsIDs = ["bucketMilk"], UseInt4 = -1 });
             itemsToAdd.Add(new Item("Pot of cream", "Fresh cream.", "cream", Color.White, 4));
             itemsToAdd.Add(new Item("Pat of butter", "A pat of freshly churned butter.", "butter", Color.LightYellow, 8));
