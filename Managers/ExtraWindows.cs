@@ -422,11 +422,11 @@ namespace WorldtreeNexus.Managers {
                 Debug.Print(22, printY, "Enemy HP: ", Color.White);
                 Debug.PrintAdjustableInt(38, printY++, 3, ref DebugHP, 1, 10000);
                 
-                Debug.Print(22, printY, "Enemy Atk: ", Color.White);
-                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugAtk, 1, 10000);
+                Debug.Print(22, printY, "Enemy ToHit: ", Color.White);
+                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugAtk, 0, 10000);
                  
-                Debug.Print(22, printY, "Enemy Def: ", Color.White);
-                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugDef, 1, 10000);
+                Debug.Print(22, printY, "Enemy ToArmor: ", Color.White);
+                Debug.PrintAdjustableInt(38, printY++, 3, ref DebugDef, 0, 10000);
                  
                 Debug.Print(22, printY, "Enemy Max Hit: ", Color.White);
                 Debug.PrintAdjustableInt(38, printY++, 3, ref DebugMaxHit, 1, 10000); 
@@ -448,47 +448,56 @@ namespace WorldtreeNexus.Managers {
 
                  
                 int maxHit = tier * 2; // Assumes using highest tier of equipment possible but no further bonuses
+                int playerToHit = (int) Math.Floor(DebugPlayerStatBase / 5.0) + tier; // 1/5th of attack, plus current weapon tier toHit. Assuming current highest tier weapon in use
+                int playerToArmor = tier * 4; // Armor is 3 for torso, 2 for legs, 1 for each of helm/gloves/boots. Multiplied by tier, halved for bad style, doubled for good style)
 
                 Debug.PrintClickable(22, printY++, "Run Simulations", () => {
-                    DebugSimWinsW = Helper.CombatSimulator(
-                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Wood", 2000, 0, "", "Metal"),
-                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Fire"),
+                    // No armor, player at elemental disadvantage, not targeting weak type
+                    DebugSimWinsW = Helper.NewCombatSimulator(
+                        new CombatSim2(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, playerToHit, 0, maxHit, "Stab", "Wood", 2000, 0, "", "Metal"),
+                        new CombatSim2(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10.0)), DebugDR, "Crush", "Fire"),
                         1000
                     );
 
-                    DebugSimWinsVB = Helper.CombatSimulator(
-                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Wood", 2000, (int) Math.Floor(tier / 2.0), "", "Metal"),
-                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Fire"),
+                    // Armor but bad style match, player at elemental disadvantage, not targeting weak type
+                    DebugSimWinsVB = Helper.NewCombatSimulator(
+                        new CombatSim2(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, playerToHit, (int) Math.Floor(playerToArmor / 2.0), maxHit, "Stab", "Wood", 2000, 0, "", "Metal"),
+                        new CombatSim2(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10.0)), DebugDR, "Crush", "Fire"),
                         1000
                     );
 
-                    DebugSimWinsB = Helper.CombatSimulator(
-                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Wood", 2000, tier, "", "Metal"),
-                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Fire"),
+                    // Armor with neutral style, player at elemental disad, not targeting weak type
+                    DebugSimWinsB = Helper.NewCombatSimulator(
+                        new CombatSim2(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, playerToHit, playerToArmor, maxHit, "Stab", "Wood", 2000, 0, "", "Metal"),
+                        new CombatSim2(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10.0)), DebugDR, "Crush", "Fire"),
                         1000
                     );
 
-                    DebugSimWinsN = Helper.CombatSimulator(
-                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Fire", 2000, tier, "", "Metal"),
-                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Fire"),
+                    // Armor with neutral style, neutral elements, not targeting weak type
+                    DebugSimWinsN = Helper.NewCombatSimulator(
+                        new CombatSim2(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, playerToHit, playerToArmor, maxHit, "Stab", "Fire", 2000, 0, "", "Fire"),
+                        new CombatSim2(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Fire", (int) (2000 * (DebugAtkSpeed / 10.0)), DebugDR, "Crush", "Fire"),
                         1000
                     ); 
 
-                    DebugSimWinsG = Helper.CombatSimulator(
-                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Stab", "Fire", 2000, tier, "", "Fire"),
-                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Metal"),
+                    // Armor with neutral style, player has elemental advantage, no targeting weak type
+                    DebugSimWinsG = Helper.NewCombatSimulator(
+                        new CombatSim2(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, playerToHit, playerToArmor, maxHit, "Stab", "Fire", 2000, 0, "", "Fire"),
+                        new CombatSim2(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10.0)), DebugDR, "Crush", "Metal"),
                         1000
                     ); 
 
-                    DebugSimWinsVG = Helper.CombatSimulator(
-                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Crush", "Fire", 2000, tier, "", "Fire"),
-                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Metal"),
+                    // Armor with neutral style, player has elemental advantage, targeting weak type
+                    DebugSimWinsVG = Helper.NewCombatSimulator(
+                        new CombatSim2(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, playerToHit, playerToArmor, maxHit, "Crush", "Fire", 2000, 0, "", "Fire"),
+                        new CombatSim2(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10.0)), DebugDR, "Crush", "Metal"),
                         1000
                     ); 
 
-                    DebugSimWinsP = Helper.CombatSimulator(
-                        new CombatSim(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, DebugPlayerStatBase, DebugPlayerStatBase, maxHit, "Crush", "Fire", 2000, tier * 2, "", "Fire"),
-                        new CombatSim(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10)), DebugDR, "Crush", "Metal"),
+                    // Armor with good style, player has elemental advantage, targeting weak type
+                    DebugSimWinsP = Helper.NewCombatSimulator(
+                        new CombatSim2(DebugPlayerStatBase < 10 ? 10 : DebugPlayerStatBase, playerToHit, playerToArmor * 2, maxHit, "Crush", "Fire", 2000, 0, "", "Fire"),
+                        new CombatSim2(DebugHP, DebugAtk, DebugDef, DebugMaxHit, "Melee", "Wood", (int) (2000 * (DebugAtkSpeed / 10.0)), DebugDR, "Crush", "Metal"),
                         1000
                     );
                 });
@@ -506,7 +515,7 @@ namespace WorldtreeNexus.Managers {
                 Debug.Print(22, printY++, "|   Perfect: " + (DebugSimWinsP / 10).ToString().Align(HorizontalAlignment.Right, 5) + "%    (Good armor, element+type adv)", Color.White);
                 
                 /*
-                return new CombatSim(MaxHP, AttackLv, DefenseLv, MaxHit, DamageType, DmgElement, AttackSpeedSeconds * 2000, DamageReduction, WeakType, Element);
+        public CombatSim2(int hp, int toHit, int toArmor, int maxDmg, string dmgType, string dmgElement, int atkSpeed, int dr, string weakType, string element) {
 
                 public static int DebugHP, DebugAtk, DebugDef, DebugMaxHit, DamageReduction, DebugPlayerStatBase = 0;
                 public static double DebugAtkSpeed = 1.0;

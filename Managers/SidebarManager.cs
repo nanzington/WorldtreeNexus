@@ -90,16 +90,20 @@ namespace WorldtreeNexus.Managers {
 
 
             if (player.CombatCasting != null) {
-                string castingWhich = "Casting Spell #";
+                if (player.IsMaging()) {
+                    string castingWhich = "Casting Spell #";
 
-                if (player.CombatSpell1 != null && player.CombatSpell1.Equals(player.CombatCasting)) { castingWhich += "1"; }
-                else if (player.CombatSpell2 != null && player.CombatSpell2.Equals(player.CombatCasting)) { castingWhich += "2"; }
-                else if (player.CombatSpell3 != null && player.CombatSpell3.Equals(player.CombatCasting)) { castingWhich += "3"; }
-                else if (player.CombatSpell4 != null && player.CombatSpell4.Equals(player.CombatCasting)) { castingWhich += "4"; }
-                else if (player.CombatSpell5 != null && player.CombatSpell5.Equals(player.CombatCasting)) { castingWhich += "5"; }
-                else { castingWhich += "E"; }
+                    if (player.CombatSpell1 != null && player.CombatSpell1.Equals(player.CombatCasting)) { castingWhich += "1"; }
+                    else if (player.CombatSpell2 != null && player.CombatSpell2.Equals(player.CombatCasting)) { castingWhich += "2"; }
+                    else if (player.CombatSpell3 != null && player.CombatSpell3.Equals(player.CombatCasting)) { castingWhich += "3"; }
+                    else if (player.CombatSpell4 != null && player.CombatSpell4.Equals(player.CombatCasting)) { castingWhich += "4"; }
+                    else if (player.CombatSpell5 != null && player.CombatSpell5.Equals(player.CombatCasting)) { castingWhich += "5"; }
+                    else { castingWhich += "E"; }
                     
-                mini.Con.PrintClickable(0, 9, new ColoredString("*" + castingWhich.Align(HorizontalAlignment.Center, 18) + "*", Color.SkyBlue, Color.Black), () => { player.CombatCasting = null; });
+                    mini.Con.PrintClickable(0, 9, new ColoredString("*" + castingWhich.Align(HorizontalAlignment.Center, 18) + "*", Color.SkyBlue, Color.Black), () => { player.CombatCasting = null; });
+                } else {
+                    player.CombatCasting = null;
+                }
             }
 
             if (player.CoinPouch) {

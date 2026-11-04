@@ -141,6 +141,7 @@ namespace WorldtreeNexus.DataTypes {
                 p.TryGrantExp(ExpTo, ExpGranted, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills, false); 
             p.NavLoc = Destination;
 
+            
             if (GameLoop.SoundManager.MusicEnabled && p.MusicMode == "Auto") {
                 if (GameLoop.WTN.Atlas.TryGetValue(Destination, out Location? dest)) {
                     if (dest.SongHere != "" && GameLoop.SoundManager.CurrentSong != dest.SongHere) {

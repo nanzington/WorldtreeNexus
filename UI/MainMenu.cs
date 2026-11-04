@@ -44,9 +44,9 @@ namespace WorldtreeNexus.UI {
         public void Update(UI_EmbeddedMini mini) {
             if (ExtraWindows.Alchemy.IsVisible)
                 ExtraWindows.AlchemyDraw();
-
+             
             mini.Con.Clear();
-            mini.SingleSquare.Clear();
+            mini.SingleSquare.Clear(); 
 
             mini.Con.Print(131, 0, "VOLUME: ");
             mini.Con.PrintClickable(139, 0, new ColoredString("-", Color.White, Color.Transparent), () => {

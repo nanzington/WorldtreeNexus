@@ -10,7 +10,7 @@ namespace WorldtreeNexus {
     class GameLoop {
         public const int GameWidth = 150;
         public const int GameHeight = 50;
-        public const bool DemoMode = false;
+        public const bool DemoMode = true;
         public const bool BuildingWithoutMusic = false; // If you've cloned this from the repo and weren't specifically given the music files, set this to true while testing or it won't build.
 
 #pragma warning disable CS8618

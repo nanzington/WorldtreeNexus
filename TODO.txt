@@ -17,9 +17,12 @@ Random thoughts
 - Beehives to get honey and wax, buildable in POH or found in world
 - Music clue steps, one in Nexus with the music from inside the Nexus Portal (have to teleport out and reach the NPC without touching the plaza)
 - "Shoplift" button, like thieving from a stall but it generates the loot table dynamically from current shop item selection. 
-- - Failure damage and odds of success based on item value vs thieving experience
-- - Doesn't count as shop use, so players who can't use shops could still do it
-- - Item selected is random. Pool value of all items, each item chance is inversely proportional to how much of the total it is (1 in (total - value) / total)
+# # Failure damage and odds of success based on item value vs thieving experience
+# # Doesn't count as shop use, so players who can't use shops could still do it
+# # Item selected is random. Pool value of all items, each item chance is inversely proportional to how much of the total it is (1 in (total - value) / total)
+- Fantasy sport thing (or maybe just straight up baseball/football), games played weekly, maybe you can buy and manage a team??
+# # Bets, maybe run through the Thieves Guild, possibly some way to trick them into letting you bet on yourself or own team
+# # Maybe the player can actually join a team as a participant and play the game as a minigame of some kind
 
 
 Still need to prune/remake:

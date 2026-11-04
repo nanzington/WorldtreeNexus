@@ -1372,6 +1372,76 @@ namespace WorldtreeNexus {
             return (returnWhich == "first" ? firstWins : returnWhich == "second" ? secondWins : draws);
         }
 
+        public static int NewCombatSimulator(CombatSim2 first, CombatSim2 second, int rounds, string returnWhich = "first") {
+            int firstWins = 0;
+            int secondWins = 0;
+            int draws = 0; 
+
+            double firstMinRoll = (10 + second.ToArmor) - first.ToHit; // First has to roll higher than this to land a hit
+            Materials.ElementalWeaknesses.TryGetValue(second.Element, out string? fweakElement); 
+            if (fweakElement == null || fweakElement == "") { fweakElement = "Wood"; }
+            Materials.ElementalWeaknesses.TryGetValue(second.Element, out string? fstrongElement); 
+            if (fstrongElement == null || fstrongElement == "") { fstrongElement = "Wood"; } 
+            if (first.DamageElement == fweakElement) { firstMinRoll = (int) Math.Clamp(Math.Ceiling(firstMinRoll * 0.5), 0, Math.Max(0, firstMinRoll - 1)); } // If damage element is what the enemy is weak to, lower required roll
+            if (first.DamageType == second.WeakType) { firstMinRoll = (int) Math.Clamp(Math.Ceiling(firstMinRoll * 0.5), 0, Math.Max(0, firstMinRoll - 1)); } // If enemy is weak to this damage type, lower required roll
+            if (first.DamageElement == fstrongElement) { firstMinRoll = (int) Math.Clamp(Math.Ceiling(firstMinRoll * 1.5), firstMinRoll + 1, 100); } // If enemy is strong to this element, raise required roll
+            double firstHitChance = ((21 - firstMinRoll) / 20.0); // Then the actual hit chance is the odds that a d20 would roll over the target, ie if you need a 21 or higher then it's impossible
+            double firstDamageAvg = ((first.MaxDamage - second.DRvsStyle) / 2.0);
+            double firstDPS = firstDamageAvg * (1000.0 / first.AttackSpeedInMS);
+            //double firstDPS = (firstDamageAvg * firstHitChance) * (1000.0 / first.AttackSpeedInMS);
+             
+            
+            double secondMinRoll = (10 + first.ToArmor) - second.ToHit; 
+            Materials.ElementalWeaknesses.TryGetValue(first.Element, out string? sweakElement); 
+            if (sweakElement == null || sweakElement == "") { sweakElement = "Wood"; }
+            Materials.ElementalWeaknesses.TryGetValue(first.Element, out string? sstrongElement); 
+            if (sstrongElement == null || sstrongElement == "") { sstrongElement = "Wood"; } 
+            if (second.DamageElement == sweakElement) { secondMinRoll = (int) Math.Clamp(Math.Ceiling(secondMinRoll * 0.5), 0, Math.Max(0, secondMinRoll - 1)); }
+            if (second.DamageType == first.WeakType) { secondMinRoll = (int) Math.Clamp(Math.Ceiling(secondMinRoll * 0.5), 0, Math.Max(0, secondMinRoll - 1)); }
+            if (second.DamageElement == sstrongElement) { secondMinRoll = (int) Math.Clamp(Math.Ceiling(secondMinRoll * 1.5), secondMinRoll + 1, 100); } 
+            double secondHitChance = ((21 - secondMinRoll) / 20.0);
+            double secondDamageAvg = ((second.MaxDamage - first.DRvsStyle) / 2.0);
+            double secondDPS = secondDamageAvg * (1000.0 / second.AttackSpeedInMS);
+             
+            //double secondDPS = (secondDamageAvg * secondHitChance) * (1000.0 / second.AttackSpeedInMS);
+
+            for (int i = 0; i < rounds; i++) {
+                first.CurrentHP = first.MaxHP;
+                second.CurrentHP = second.MaxHP;
+
+                bool someoneWon = false;
+
+                for (int time = 0; time < 600; time++) { // If the fight would last more than 600 damage exchanges call it a draw
+                    if (second.AttackSpeedInMS <= first.AttackSpeedInMS) {
+                        if (GameLoop.rand.Next(20) + 1 >= secondMinRoll) {
+                            first.CurrentHP -= secondDPS;
+                            if (first.CurrentHP <= 0) { secondWins++; someoneWon = true; break; }
+                        }
+                        if (GameLoop.rand.Next(20) + 1 >= firstMinRoll) {
+                            second.CurrentHP -= firstDPS;
+                            if (second.CurrentHP <= 0) { firstWins++; someoneWon = true; break;}
+                        }
+                    } else {
+                        if (GameLoop.rand.Next(20) + 1 >= firstMinRoll) {
+                            second.CurrentHP -= firstDPS;
+                            if (second.CurrentHP <= 0) { firstWins++; someoneWon = true; break;}
+                        }
+
+                        if (GameLoop.rand.Next(20) + 1 >= secondMinRoll) {
+                            first.CurrentHP -= secondDPS;
+                            if (first.CurrentHP <= 0) { secondWins++; someoneWon = true; break; }
+                        }
+                    }
+                }
+
+                if (!someoneWon) {
+                    draws++;
+                }
+            }
+            
+            return (returnWhich == "first" ? firstWins : returnWhich == "second" ? secondWins : draws);
+        }
+
         public static string ConvertTime(int Minutes, bool twelve) {
             return ConvertTime(Minutes / 60, Minutes % 60, twelve);
         }
