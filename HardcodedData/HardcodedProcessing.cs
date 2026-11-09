@@ -8,7 +8,7 @@ namespace WorldtreeNexus.Hardcodes {
             List<ProcessingStation> toAdd = new();
 
             ProcessingStation Furnace = new("Furnace") {
-                Recipes = new() {
+                Recipes = [
                     new("swordTybalt",   "swordBrittle") { Actions = [ new("Quest", "MI_RomeoJuliet", "", 100), new("CustomLog", "I've ruined Tybalt's sword, and should return it to the sword shop for him to pick up.", "", 3) ] },
                     new("bucketSand",    "glassMolten",   "Crafting", 1, 20, secondaryIn: "ashSoda", secondaryOut: "bucketEmpty"), 
                     new("oreCopper",     "barCopper",     "Smithing",   1,  10),  
@@ -22,7 +22,7 @@ namespace WorldtreeNexus.Hardcodes {
                     new("oreTungsten",   "barTungsten",   "Smithing",  80,  90),
                     new("oreTitanium",   "barTitanium",   "Smithing",  90, 100), // yes yes there's no such thing as titanium ore and it should be rutile or ilmenite but that may confuse players
                     new("oreYggdrasite", "barYggdrasite", "Smithing", 100, 150) 
-                }
+                ]
             }; 
             toAdd.Add(Furnace);
 
@@ -41,18 +41,18 @@ namespace WorldtreeNexus.Hardcodes {
             toAdd.Add(new("Casting") { OpensUI = true });
 
             toAdd.Add(new("Dairy Churn") {
-                Recipes = new() {
+                Recipes = [
                     new("bucketMilk", "cream",  "Cooking", 21, 18, secondaryOut: "bucketEmpty"),
                     new("cream",      "butter", "Cooking", 38, 23),
                     new("butter",     "cheese", "Cooking", 48, 24)
-                }
+                ]
             });
 
             ProcessingStation sawmill = new("Sawmill");
             ProcessingStation papermill = new("Papermill");
 
             toAdd.Add(new("Sawmill") {
-                Recipes = new() {
+                Recipes = [
                     new("logPoplar",    "plankPoplar",    "Construction",   1, secondaryIn: "Gold,20",    outQty: 4, noteOut: true),
                     new("logElm",       "plankElm",       "Construction",  10, secondaryIn: "Gold,60",    outQty: 4, noteOut: true),
                     new("logWalnut",    "plankWalnut",    "Construction",  20, secondaryIn: "Gold,100",   outQty: 4, noteOut: true),
@@ -64,11 +64,11 @@ namespace WorldtreeNexus.Hardcodes {
                     new("logCamatillo", "plankCamatillo", "Construction",  80, secondaryIn: "Gold,10000", outQty: 4, noteOut: true),
                     new("logKatalox",   "plankKatalox",   "Construction",  90, secondaryIn: "Gold,20000", outQty: 4, noteOut: true),
                     new("logWorldtree", "plankWorldtree", "Construction", 100, secondaryIn: "Gold,60000", outQty: 4, noteOut: true)
-                }
+                ]
             });
 
             toAdd.Add(new("Papermill") {
-                Recipes = new() {
+                Recipes = [
                     new("logPoplar",    "paperPoplar",    "Construction",   1, secondaryIn: "Gold,8",     outQty: 5, noteOut: true),
                     new("logElm",       "paperElm",       "Construction",  10, secondaryIn: "Gold,24",    outQty: 5, noteOut: true),
                     new("logWalnut",    "paperWalnut",    "Construction",  20, secondaryIn: "Gold,40",    outQty: 5, noteOut: true),
@@ -80,14 +80,14 @@ namespace WorldtreeNexus.Hardcodes {
                     new("logCamatillo", "paperCamatillo", "Construction",  80, secondaryIn: "Gold,4000",  outQty: 5, noteOut: true),
                     new("logKatalox",   "paperKatalox",   "Construction",  90, secondaryIn: "Gold,8000",  outQty: 5, noteOut: true),
                     new("logWorldtree", "paperWorldtree", "Construction", 100, secondaryIn: "Gold,24000", outQty: 5, noteOut: true)
-                }
+                ]
             });
 
             toAdd.Add(new("Tannery") {
-                Recipes = new() {
+                Recipes = [
                     new("cowhide",     "leatherSoft", "Crafting",  1, 5),
-                    new("leatherSoft", "leatherHard", "Crafting", 10, 5)
-                }
+                    new("hideMinotaur", "leatherHard", "Crafting", 10, 5)
+                ]
             });
 
             toAdd.Add(new("Anvil") { OpensUI = true });  
@@ -108,14 +108,14 @@ namespace WorldtreeNexus.Hardcodes {
             toAdd.Add(new("Trade Hall Collection") { OpensUI = true });
 
             toAdd.Add(new("Deep Fryer") {
-                Recipes = new() {
+                Recipes = [
                     new("batteredPollock", "fishSticks", "Cooking", 1, 40, failOutput: "burntFood", failStop: 31),
                     new("potatoSticksRaw", "potatoSticksFried", "Cooking", 1, 40, failOutput: "burntFood", failStop: 31),
-                }
+                ]
             });
 
             ProcessingStation Range = new("Range") {
-                Recipes = new() {
+                Recipes = [
                     new("seaweed",           "ashSoda"),
                     new("weedSwamp",         "ashSoda"),
                     new("potChipsPoplar",    "pulpPoplar",    secondaryOut: "potEmpty", outQty: 5),
@@ -138,7 +138,7 @@ namespace WorldtreeNexus.Hardcodes {
                     new("meatRawChicken",    "meatCookedChicken", "Cooking", 1, 30, failOutput: "burntFood", failStop: 31),
                     new("potato",            "potatoBaked",       "Cooking", 1, 30, failOutput: "burntFood", failStop: 31),
                     new("kettleFull",        "kettleHot")
-                }
+                ]
             };
              
             foreach (var fish in Materials.Fish) {
@@ -191,18 +191,18 @@ namespace WorldtreeNexus.Hardcodes {
             toAdd.Add(new("Pottery Wheel") { OpensUI = true });
 
             toAdd.Add(new("Pottery Kiln") {
-                Recipes = new() {
+                Recipes = [
                     new("unfiredPot",      "potEmpty",      "Crafting",  1,  7),
                     new("unfiredCup",      "cupEmpty",      "Crafting",  3,  9),
                     new("unfiredPieDish",  "pieEmpty",      "Crafting",  7, 15),
                     new("unfiredBowl",     "bowlEmpty",     "Crafting",  8, 18),
                     new("unfiredPlantPot", "plantPotEmpty", "Crafting", 19, 20),
                     new("unfiredPotLid",   "potLid",        "Crafting", 20, 30)
-                }
+                ]
             });
 
             ProcessingStation sink = new("Sink") {
-                Recipes = new() {
+                Recipes = [
                     new("bucketEmpty", "bucketWater"), 
                     new("potEmpty",    "potWater"), 
                     new("clayDust",    "claySoft"), 
@@ -210,8 +210,9 @@ namespace WorldtreeNexus.Hardcodes {
                     new("bowlEmpty",   "bowlWater"), 
                     new("jugEmpty",    "jugWater"), 
                     new("potFlour",    "doughBread", secondaryOut: "potEmpty"),
-                    new("kettleEmpty", "kettleFull")
-                }
+                    new("kettleEmpty", "kettleFull"),
+                    new("waterskin", "waterskin")
+                ]
             };
 
             ProcessingStation fountain = Helper.Clone(sink);
@@ -221,22 +222,28 @@ namespace WorldtreeNexus.Hardcodes {
             toAdd.Add(sink);
             toAdd.Add(fountain);
 
-            toAdd.Add(new("Sand") { Recipes = new() { new("bucketEmpty", "bucketSand") } });
+            toAdd.Add(new("Sand") { Recipes = [ new("bucketEmpty", "bucketSand") ] });
 
 
-            toAdd.Add(new("Spinning Wheel") {
-                Recipes = new() {
+            ProcessingStation spinningWheel = new("Spinning Wheel") {
+                Recipes = [
                     new("flax",       "bowstring",      "Crafting", 1,  5),
                     new("sinew",      "crossbowString", "Crafting", 1,  5),
                     new("woolRaw",    "woolBall",       "Crafting", 1,  3),
                     new("woolBall,4", "clothBolt",      "Crafting", 1, 10)
-                }
-            });
+                ]
+            };
+
+            foreach (var cloth in Materials.Cloths) {
+                spinningWheel.Recipes.Add(new("fiber" + cloth.Name, "bolt" + cloth.Name, "Crafting", cloth.Level, 5));
+            }
+
+            toAdd.Add(spinningWheel);
 
             toAdd.Add(new("Windmill") {
-                Recipes = new() {
+                Recipes = [
                     new("grain", "potFlour", secondaryIn: "potEmpty")
-                }
+                ]
             });
 
             
@@ -244,7 +251,7 @@ namespace WorldtreeNexus.Hardcodes {
             List<string> Imbuements = ["Metal", "Water", "Wood", "Fire", "Earth", "Destruction", "Restoration", "Alteration", "Mysticism", "Conjuration", "Illusion" ]; 
             
             toAdd.Add(new("Magic Altar") {
-                Recipes = new() {
+                Recipes = [
                     new("inkNovice", "inkNoviceImbued"),
                     new("inkBeginner", "inkBeginnerImbued"),
                     new("inkApprentice", "inkApprenticeImbued"),
@@ -256,12 +263,12 @@ namespace WorldtreeNexus.Hardcodes {
                     new("inkGrandmaster", "inkGrandmasterImbued"),
                     new("inkParagon", "inkParagonImbued"),
                     new("inkDivine", "inkDivineImbued")
-                }
+                ]
             });
 
             foreach (var imbue in Imbuements) {
                  toAdd.Add(new(imbue + " Altar", dont: true) {
-                    Recipes = new() {
+                    Recipes = [
                         new("inkNovice", "inkNovice" + imbue),
                         new("inkBeginner", "inkBeginner" + imbue),
                         new("inkApprentice", "inkApprentice" + imbue),
@@ -273,14 +280,13 @@ namespace WorldtreeNexus.Hardcodes {
                         new("inkGrandmaster", "inkGrandmaster" + imbue),
                         new("inkParagon", "inkParagon" + imbue),
                         new("inkDivine", "inkDivine" + imbue)
-                    }
+                    ]
                 });
             }
 
-            toAdd.Add(new("Dairy Cow") { Recipes = new() { new("bucketEmpty", "bucketMilk") } });
+            toAdd.Add(new("Dairy Cow") { Recipes = [ new("bucketEmpty", "bucketMilk") ] });
 
-            toAdd.Add(new("Beer Keg") { Recipes = new() { new("beerGlass", "beer") } });
-            toAdd.Add(new("Cider Keg") { Recipes = new() { new("beerGlass", "cider") } }); 
+            toAdd.Add(new("Beer Keg") { Recipes = [ new("beerGlass", "beer") ] });
 
             for (int i = 0; i < toAdd.Count; i++) {
                 Stations.Add(toAdd[i].Name, toAdd[i]);

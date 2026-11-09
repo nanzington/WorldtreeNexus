@@ -18,25 +18,12 @@ namespace WorldtreeNexus.UI {
         public int SkippingTutorialIsland = 0;
 
         public List<string> MusicCredits = [
-            "sinneschlösen".Align(HorizontalAlignment.Left, 20) + "- Beam",
-            "feedeorfano".Align(HorizontalAlignment.Left, 20) + "- Cukies Zelda",
-            "tomhUK".Align(HorizontalAlignment.Left, 20) + "- Assembled with Chair",
-            "Ada79452".Align(HorizontalAlignment.Left, 20) + "- Miss",
-            "DSTechnician".Align(HorizontalAlignment.Left, 20) + "- Away",
-            "sunsetflowerray".Align(HorizontalAlignment.Left, 20) + "- Clockwork",
-            "EthemSaygi".Align(HorizontalAlignment.Left, 20) + "- Caravan Rest at Dawn",
-            "Dummy_Daniel".Align(HorizontalAlignment.Left, 20) + "- Party at the Tavern",
-            "Dummy_Daniel".Align(HorizontalAlignment.Left, 20) + "- Along the Road",
-            "Dummy_Daniel".Align(HorizontalAlignment.Left, 20) + "- Hometown",
-            "oldkech".Align(HorizontalAlignment.Left, 20) + "- Fur Elise",
-            "(Anonymous Uploader)".Align(HorizontalAlignment.Left, 20) + "- Gymnopedie 1",
-            "(Anonymous Uploader)".Align(HorizontalAlignment.Left, 20) + "- Dance of the Sugar Plum Fairy", 
 
         ]; 
         public int MusicCreditsTop = 0;
 
         public List<string> OtherCredits = [
-            "JesterMouse - Romeo & Juliet"
+            "[Q] Romeo & Juliet - JesterMouse"
         ]; 
         public int OtherCreditsTop = 0;
 
@@ -47,7 +34,7 @@ namespace WorldtreeNexus.UI {
              
             mini.Con.Clear();
             mini.SingleSquare.Clear(); 
-
+            /*
             mini.Con.Print(131, 0, "VOLUME: ");
             mini.Con.PrintClickable(139, 0, new ColoredString("-", Color.White, Color.Transparent), () => {
                 double qty = 0.01;
@@ -67,7 +54,7 @@ namespace WorldtreeNexus.UI {
                 
                 GameLoop.GlobalOptions.MusicVolume = Math.Clamp(GameLoop.GlobalOptions.MusicVolume + qty, GameLoop.GlobalOptions.MusicVolume, 1.0);
                 GameLoop.SaveGlobalPrefs();
-            });
+            });*/
 
             //Point mousePos = new MouseScreenObjectState(mini.Con, GameHost.Instance.Mouse).CellPosition;   
 
@@ -237,7 +224,7 @@ namespace WorldtreeNexus.UI {
 
                 int printY = 13;
 
-                mini.Con.Print(28, printY, "Trade Hall:");
+                mini.Con.Print(28, printY, "    Trade Hall:");
                 mini.Con.PrintClickable(44, printY, new ColoredString("Full", GameLoop.WTN.player.TradeHallLimit == 0 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.TradeHallLimit = 0; });
                 mini.Con.PrintClickable(49, printY, new ColoredString("Bronze", GameLoop.WTN.player.TradeHallLimit == 1 ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.TradeHallLimit = 1; });
                 mini.Con.PrintClickable(56, printY, new ColoredString("None", GameLoop.WTN.player.TradeHallLimit == 2 ? Color.Crimson : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.TradeHallLimit = 2; });
@@ -251,7 +238,7 @@ namespace WorldtreeNexus.UI {
 
                 printY++;
 
-                mini.Con.Print(27, printY, "Instadeath Mode: "); 
+                mini.Con.Print(27, printY, " Nightmare Mode: "); 
                 mini.Con.PrintClickable(28 + 16, printY, new ColoredString("Off", !GameLoop.WTN.player.NightmareMode ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.NightmareMode = false; });
                 mini.Con.PrintClickable(28 + 20, printY, new ColoredString("On", GameLoop.WTN.player.NightmareMode ? (Helper.Time() % 10 < 5 ? Color.Red : Color.White) : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.NightmareMode = true; });
 
@@ -270,7 +257,7 @@ namespace WorldtreeNexus.UI {
                 mini.Con.PrintClickable(28 + 16, printY, new ColoredString("Off", !GameLoop.WTN.player.CoinPouch ? Color.Crimson : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.CoinPouch = false; });
                 mini.Con.PrintClickable(28 + 20, printY, new ColoredString("On", GameLoop.WTN.player.CoinPouch ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.CoinPouch = true; });
                 if (GameLoop.WTN.player.CoinPouch)
-                    mini.Con.PrintClickable(28 + 23, printY, new ColoredString(GameLoop.WTN.player.CoinPouchDeath ? "Drop on Death" : "Keep on Death", GameLoop.WTN.player.CoinPouchDeath ? Color.Crimson : Color.White, Color.Black), () => { GameLoop.WTN.player.CoinPouchDeath = !GameLoop.WTN.player.CoinPouchDeath; });
+                    mini.Con.PrintClickable(28 + 25, printY, new ColoredString(GameLoop.WTN.player.CoinPouchDeath ? "Drop on Death" : "Keep on Death", GameLoop.WTN.player.CoinPouchDeath ? Color.Crimson : Color.White, Color.Black), () => { GameLoop.WTN.player.CoinPouchDeath = !GameLoop.WTN.player.CoinPouchDeath; });
 
                 printY++;
 
@@ -298,8 +285,8 @@ namespace WorldtreeNexus.UI {
                 mini.Con.PrintClickable(28 + 22, printY, new ColoredString("5", GameLoop.WTN.player.DropMultiplier == 5 ? Color.AnsiGreen : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.DropMultiplier = 5; });
                 mini.Con.PrintClickable(28 + 24, printY, new ColoredString("10", GameLoop.WTN.player.DropMultiplier == 10 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.DropMultiplier = 10; });
                 
-                mini.Con.PrintClickable(28 + 27, printY, new ColoredString("Dry Protection", GameLoop.WTN.player.DropModifier == 1 ? Color.Green : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.DropModifier = GameLoop.WTN.player.DropModifier == 1 ? 0 : 1; });
-                mini.Con.PrintClickable(28 + 42, printY, new ColoredString("No RNG Drops", GameLoop.WTN.player.DropModifier == 2 ? Color.Crimson : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.DropModifier = GameLoop.WTN.player.DropModifier == 2 ? 0 : 2; });
+                mini.Con.PrintClickable(28 + 28, printY, new ColoredString("Dry Protection", GameLoop.WTN.player.DropModifier == 1 ? Color.Green : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.DropModifier = GameLoop.WTN.player.DropModifier == 1 ? 0 : 1; });
+                mini.Con.PrintClickable(28 + 44, printY, new ColoredString("No RNG Drops", GameLoop.WTN.player.DropModifier == 2 ? Color.Crimson : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.DropModifier = GameLoop.WTN.player.DropModifier == 2 ? 0 : 2; });
 
                 printY++;
 
@@ -324,6 +311,7 @@ namespace WorldtreeNexus.UI {
                 mini.Con.PrintClickable(28 + 16, printY, new ColoredString("Yes", GameLoop.WTN.player.CanUseShops ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.CanUseShops = true; });
                 mini.Con.PrintClickable(28 + 20, printY, new ColoredString("No", !GameLoop.WTN.player.CanUseShops ? Color.Crimson : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.CanUseShops = false; });
                 mini.Con.PrintClickable(28 + 23, printY, new ColoredString(GameLoop.WTN.player.ShopsAlwaysFullPrice ? "Buys @ 100%" : "Buys @ 50%", GameLoop.WTN.player.ShopsAlwaysFullPrice ? Color.Lime : Color.White, Color.Black), () => { GameLoop.WTN.player.ShopsAlwaysFullPrice = !GameLoop.WTN.player.ShopsAlwaysFullPrice; });
+                mini.Con.PrintClickable(28 + 35, printY, new ColoredString(GameLoop.WTN.player.ShopsOnlyStocked ? "Only Stocked" : "Buys All", GameLoop.WTN.player.ShopsOnlyStocked ? Color.Red : Color.White, Color.Black), () => { GameLoop.WTN.player.ShopsOnlyStocked = !GameLoop.WTN.player.ShopsOnlyStocked; });
 
                 printY++;
 
@@ -334,6 +322,64 @@ namespace WorldtreeNexus.UI {
                 mini.Con.PrintClickable(28 + 33, printY, new ColoredString("Instant", GameLoop.WTN.player.FarmGrowthIncrement == 10000 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.FarmGrowthIncrement = 10000; });
 
                 printY++; 
+
+                mini.Con.Print(26, printY, " Hunger Settings: ");
+                mini.Con.Print(26 + 18, printY, "Decay Rate (");
+                mini.Con.PrintClickable(28 + 28, printY, new ColoredString("1", GameLoop.WTN.player.SecondsPerFoodTick == 1 ? Color.Red : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerFoodTick = 1; });
+                mini.Con.PrintClickable(28 + 31, printY, new ColoredString("5", GameLoop.WTN.player.SecondsPerFoodTick == 5 ? Color.Crimson : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerFoodTick = 5; });
+                mini.Con.PrintClickable(28 + 33, printY, new ColoredString("10", GameLoop.WTN.player.SecondsPerFoodTick == 10 ? Color.DarkRed : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerFoodTick = 10; });
+                mini.Con.PrintClickable(28 + 36, printY, new ColoredString("30", GameLoop.WTN.player.SecondsPerFoodTick == 30 ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerFoodTick = 30; });
+                mini.Con.PrintClickable(28 + 39, printY, new ColoredString("60", GameLoop.WTN.player.SecondsPerFoodTick == 60 ? Color.ForestGreen : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerFoodTick = 60; });
+                mini.Con.PrintClickable(28 + 42, printY, new ColoredString("120", GameLoop.WTN.player.SecondsPerFoodTick == 120 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerFoodTick = 120; });
+                mini.Con.Print(26 + 47, printY, ") Mode: (");
+                mini.Con.PrintClickable(28 + 54, printY, new ColoredString("Hard", GameLoop.WTN.player.HungerMode == 0 ? Color.Red : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.HungerMode = 0; });
+                mini.Con.PrintClickable(28 + 59, printY, new ColoredString("Normal", GameLoop.WTN.player.HungerMode == 1 ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.HungerMode = 1; });
+                mini.Con.PrintClickable(28 + 66, printY, new ColoredString("Off", GameLoop.WTN.player.HungerMode == 2 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.HungerMode = 2; });
+                mini.Con.Print(26 + 71, printY, ")");
+
+                printY++;
+
+                mini.Con.Print(26, printY, " Thirst Settings: ");
+                mini.Con.Print(26 + 18, printY, "Decay Rate (");
+                mini.Con.PrintClickable(28 + 28, printY, new ColoredString("1", GameLoop.WTN.player.SecondsPerWaterTick == 1 ? Color.Red : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerWaterTick = 1; });
+                mini.Con.PrintClickable(28 + 31, printY, new ColoredString("5", GameLoop.WTN.player.SecondsPerWaterTick == 5 ? Color.Crimson : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerWaterTick = 5; });
+                mini.Con.PrintClickable(28 + 33, printY, new ColoredString("15", GameLoop.WTN.player.SecondsPerWaterTick == 15 ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerWaterTick = 15; });
+                mini.Con.PrintClickable(28 + 36, printY, new ColoredString("30", GameLoop.WTN.player.SecondsPerWaterTick == 30 ? Color.ForestGreen : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerWaterTick = 30; });
+                mini.Con.PrintClickable(28 + 39, printY, new ColoredString("60", GameLoop.WTN.player.SecondsPerWaterTick == 60 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerWaterTick = 60; });
+                mini.Con.PrintClickable(28 + 42, printY, new ColoredString("120", GameLoop.WTN.player.SecondsPerWaterTick == 120 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerWaterTick = 120; });
+                mini.Con.Print(26 + 47, printY, ") Mode: (");
+                mini.Con.PrintClickable(28 + 54, printY, new ColoredString("Hard", GameLoop.WTN.player.ThirstMode == 0 ? Color.Red : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.ThirstMode = 0; });
+                mini.Con.PrintClickable(28 + 59, printY, new ColoredString("Normal", GameLoop.WTN.player.ThirstMode == 1 ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.ThirstMode = 1; });
+                mini.Con.PrintClickable(28 + 66, printY, new ColoredString("Off", GameLoop.WTN.player.ThirstMode == 2 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.ThirstMode = 2; });
+                mini.Con.Print(26 + 71, printY, ")");
+
+                printY++;
+
+                mini.Con.Print(26, printY, "   Rest Settings: ");
+                mini.Con.Print(26 + 18, printY, "Decay Rate (");
+                mini.Con.PrintClickable(28 + 28, printY, new ColoredString("1", GameLoop.WTN.player.SecondsPerRestTick == 1 ? Color.Red : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerRestTick = 1; });
+                mini.Con.PrintClickable(28 + 30, printY, new ColoredString("10", GameLoop.WTN.player.SecondsPerRestTick == 5 ? Color.Crimson : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerRestTick = 5; });
+                mini.Con.PrintClickable(28 + 33, printY, new ColoredString("20", GameLoop.WTN.player.SecondsPerRestTick == 20 ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerRestTick = 20; });
+                mini.Con.PrintClickable(28 + 36, printY, new ColoredString("30", GameLoop.WTN.player.SecondsPerRestTick == 30 ? Color.ForestGreen : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerRestTick = 30; });
+                mini.Con.PrintClickable(28 + 39, printY, new ColoredString("60", GameLoop.WTN.player.SecondsPerRestTick == 60 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerRestTick = 60; });
+                mini.Con.PrintClickable(28 + 42, printY, new ColoredString("120", GameLoop.WTN.player.SecondsPerRestTick == 120 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.SecondsPerRestTick = 120; });
+                mini.Con.Print(26 + 47, printY, ") Mode: (");
+                mini.Con.PrintClickable(28 + 54, printY, new ColoredString("Hard", GameLoop.WTN.player.RestMode == 0 ? Color.Red : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.RestMode = 0; });
+                mini.Con.PrintClickable(28 + 59, printY, new ColoredString("Normal", GameLoop.WTN.player.RestMode == 1 ? Color.White : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.RestMode = 1; });
+                mini.Con.PrintClickable(28 + 66, printY, new ColoredString("Off", GameLoop.WTN.player.RestMode == 2 ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { GameLoop.WTN.player.RestMode = 2; });
+                mini.Con.Print(26 + 71, printY, ")");
+
+                printY++; 
+
+                if (GameLoop.WTN.player.SecondsPerSpoilageTick == 10)
+                    mini.Con.PrintScrollableInteger(24, printY, "Food Spoilage Rate: ", ref GameLoop.WTN.player.SecondsPerSpoilageTick, false, -1, 20);
+                else if (GameLoop.WTN.player.SecondsPerSpoilageTick == -1) 
+                    mini.Con.PrintScrollableInteger(24, printY, "Food Spoilage Rate: ", ref GameLoop.WTN.player.SecondsPerSpoilageTick, false, -1, 20, r: 0, b: 0);
+                else if (GameLoop.WTN.player.SecondsPerSpoilageTick < 10) 
+                    mini.Con.PrintScrollableInteger(24, printY, "Food Spoilage Rate: ", ref GameLoop.WTN.player.SecondsPerSpoilageTick, false, -1, 20, g: 0, b: 0);
+                else if (GameLoop.WTN.player.SecondsPerSpoilageTick > 10) 
+                    mini.Con.PrintScrollableInteger(24, printY, "Food Spoilage Rate: ", ref GameLoop.WTN.player.SecondsPerSpoilageTick, false, -1, 20, r: 0, g: 150, b: 0);
+                
                  
 
                 /*
@@ -358,9 +404,11 @@ namespace WorldtreeNexus.UI {
                 */
 
 
-                mini.Con.Print(22, 40, "White options are considered the default method of play.", Color.White);
-                mini.Con.Print(22, 41, "Green options are considered to make the game easier, brighter means even easier.", Color.Lime);
-                mini.Con.Print(22, 42, "Red options are considered to make the game harder, and may make the game impossible.", Color.Crimson); 
+                mini.Con.Print(22, 38, "White options are considered the default method of play.", Color.White);
+                mini.Con.Print(22, 39, "Green options are considered to make the game easier, brighter means even easier.", Color.Lime);
+                mini.Con.Print(22, 40, "Red options are considered to make the game harder, and may make the game impossible.", Color.Crimson); 
+                 
+                mini.Con.Print(22, 42, "Press F1 to view guidebook for more information.", Color.White);
 
                 mini.Con.PrintClickable(22, 44, "<- Nevermind", () => { MenuMode = "Main"; });
 
@@ -408,6 +456,23 @@ namespace WorldtreeNexus.UI {
 
                 mini.Con.Print(64, 39, "--------------------");
                 mini.Con.PrintClickable(68, 40, "Back to Menu", () => { MenuMode = "Main"; });
+
+                if (SteamManager.SteamInitialized && !GameLoop.DemoMode) {
+                    Helper.DrawBox(mini.Con, 63, 41, 20, 1, clearInside: true);
+                    if (Steamworks.SteamApps.IsAppInstalled(5560460)) {
+                        mini.Con.PrintClickable(64, 42, "Copy Saves from Demo", () => {
+                            string demoDir = Steamworks.SteamApps.AppInstallDir(5560460);
+
+                            if (Directory.Exists(demoDir + "/saves/") && Directory.Exists("./saves/")) {
+                                foreach (var file in Directory.GetFiles(demoDir + "/saves/")) {
+                                    string[] split = file.Split('/');
+                                    File.Copy(file, "./saves/" + split[^1], false);
+                                }
+                            }
+                        });
+                    }
+                }
+
             } else if (MenuMode == "Credits") { 
                 Point mousePos = new MouseScreenObjectState(mini.Con, GameHost.Instance.Mouse).CellPosition;
                 Helper.DrawBox(mini.Con, 20, 10, 105, 34, 255, 255, 255, 0, true);
@@ -451,9 +516,23 @@ namespace WorldtreeNexus.UI {
                 mini.Con.DrawLine(new Point(21, 43), new Point(125, 43), 196, Color.White);
                 mini.Con.PrintClickable(22, 44, "<- Back to Menu", () => { MenuMode = "Main"; });
             }
+
+            if (ExtraWindows.Guide.IsVisible) {
+                ExtraWindows.GuideDraw();
+            }
         }
 
-        public void Input(UI_EmbeddedMini mini) { } 
+        public void Input(UI_EmbeddedMini mini) { 
+            if (Helper.HotkeyDown(Key.F1) && !ExtraWindows.AnyVisible("Guidebook")) {
+                if (ExtraWindows.Guide.IsVisible) { 
+                    ExtraWindows.Guide.IsVisible = false; 
+                } else {
+                    ExtraWindows.HideAll();
+                    ExtraWindows.Guide.IsVisible = true; 
+                    ExtraWindows.GuideTab = "Difficulty";
+                }
+            }   
+        } 
         public void Close(UI_EmbeddedMini mini) {  } 
         public void Reset() {  }
 
@@ -535,11 +614,11 @@ namespace WorldtreeNexus.UI {
             GameLoop.UIManager.WTNWrap.Win.IsVisible = true;
             MenuMode = "Main";
             GameLoop.WTN.TimeLastTicked = Helper.Time();
-
+            /*
             GameLoop.SoundManager.CurrentSong = "";
             GameLoop.SoundManager.music.StopAllSounds();
             GameLoop.SoundManager.PickMusic();
-
+            */
             PerformUpdateMaintenance();
 
             if (GameLoop.WTN.player.ActiveTH.Where(o => o.Resolved).ToList().Count > 0) {

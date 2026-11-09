@@ -71,19 +71,6 @@ namespace WorldtreeNexus.Hardcodes {
             toAdd.Add(new("cupPorcelainTea", "bucketMilk", "cupPorcelainTeaMilk", returns: ["bucketEmpty"] )); 
             toAdd.Add(new("cupAntiqueTea", "bucketMilk", "cupAntiqueTeaMilk", returns: ["bucketEmpty"] )); 
                
-             
-            // Farming 
-            toAdd.Add(new("plantPot", "seedTreePoplar", "plantPotPoplar", 1, 1, 1, "Farming", 1, 10)); 
-            toAdd.Add(new("plantPot", "seedTreeElm", "plantPotElm", 1, 1, 1, "Farming", 10, 20)); 
-            toAdd.Add(new("plantPot", "seedTreeWalnut", "plantPotWalnut", 1, 1, 1, "Farming", 20, 30)); 
-            toAdd.Add(new("plantPot", "seedTreeHolly", "plantPotHolly", 1, 1, 1, "Farming", 30, 40)); 
-            toAdd.Add(new("plantPot", "seedTreeAcacia", "plantPotAcacia", 1, 1, 1, "Farming", 40, 50)); 
-            toAdd.Add(new("plantPot", "seedTreeBirch", "plantPotBirch", 1, 1, 1, "Farming", 50, 60)); 
-            toAdd.Add(new("plantPot", "seedTreeHickory", "plantPotHickory", 1, 1, 1, "Farming", 60, 70)); 
-            toAdd.Add(new("plantPot", "seedTreeBloodwood", "plantPotBloodwood", 1, 1, 1, "Farming", 70, 80)); 
-            toAdd.Add(new("plantPot", "seedTreeCamatillo", "plantPotCamatillo", 1, 1, 1, "Farming", 80, 90)); 
-            toAdd.Add(new("plantPot", "seedTreeKatalox", "plantPotKatalox", 1, 1, 1, "Farming", 90, 100)); 
-
             // Crafting 
             foreach (var mat in Materials.Jewels) { 
                 toAdd.Add(new("amulet" + mat.Name + "U", "woolBall", "amulet" + mat.Name, 1, 1, 1, "Crafting", mat.Level, 5)); 
@@ -93,18 +80,15 @@ namespace WorldtreeNexus.Hardcodes {
              
             toAdd.Add(new("unstrungSymbol", "woolBall", "unblessedSymbol", 1, 1, 1, "Crafting", 16, 4)); 
 
-            toAdd.Add(new("bodyHardleather", "studsIron", "bodyStudded", 1, 1, 1, "Crafting", 20, 40)); 
-            toAdd.Add(new("coifHardleather", "studsIron", "coifStudded", 1, 1, 1, "Crafting", 20, 40)); 
-            toAdd.Add(new("chapsHardleather", "studsIron", "chapsStudded", 1, 1, 1, "Crafting", 20, 40)); 
-            toAdd.Add(new("vambracesHardleather", "studsIron", "vambracesStudded", 1, 1, 1, "Crafting", 20, 40)); 
-            toAdd.Add(new("bootsHardleather", "studsIron", "bootsStudded", 1, 1, 1, "Crafting", 20, 40)); 
-
             foreach (var wood in Materials.Woods) { 
                 toAdd.Add(new("wand" + wood.Name + "Unf", "cut" + Materials.JewelNames[(int) wood.Tier - 1], "wand" + wood.Name, s: "Crafting", lv: wood.Level, exp: (int) (20 * wood.Tier))); 
                 toAdd.Add(new("potWater", "ashes" + wood.Name, "potLye"));
                 toAdd.Add(new("pestleMortar", "log" + wood.Name, "pulp" + wood.Name, fQ: 0, s: "Crafting", lv: wood.Level, exp: (int) (5 * wood.Tier))); 
                 toAdd.Add(new("potLye", "chips" + wood.Name, "potChips" + wood.Name, s: "Crafting", lv: wood.Level, exp: (int) (10 * wood.Tier))); 
                 toAdd.Add(new("mouldPaper", "pulp" + wood.Name, "paper" + wood.Name, fQ: 0, oQ: 2, s: "Crafting", lv: wood.Level, exp: (int) (5 * wood.Tier))); 
+
+                
+                toAdd.Add(new("plantPot", "seed" + wood.Name, "plantPot" + wood.Name, 1, 1, 1, "Farming", wood.Level, (int) wood.Tier * 10)); 
             }
 
             
@@ -124,8 +108,8 @@ namespace WorldtreeNexus.Hardcodes {
             toAdd.Add(new("vialWater", "nightshade", "potionSleepingUnf"));
 
             // Alchemy 
-            toAdd.Add(new("pestleMortar", "bonesRegular", "bonesRegularGround", s: "Alchemy", lv: 1, exp: 5));
-            toAdd.Add(new("pestleMortar", "unicornHorn", "unicornHornGround", s: "Alchemy", lv: 1, exp: 5));
+            toAdd.Add(new("pestleMortar", "bonesRegular", "bonesRegularGround", 0, s: "Alchemy", lv: 1, exp: 5));
+            toAdd.Add(new("pestleMortar", "unicornHorn", "unicornHornGround", 0, s: "Alchemy", lv: 1, exp: 5));
               
 
             for (int i = 0; i < toAdd.Count; i++) {

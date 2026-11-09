@@ -10,6 +10,9 @@ namespace WorldtreeNexus.HardcodedData {
             {"Metal", "Earth"}, {"Water", "Metal"}, {"Wood", "Water"}, {"Fire", "Wood"}, {"Earth", "Fire"}
         };
 
+        
+        public static List<string> RomanNumerals = [ "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV" ];
+
 
         // Woods, these don't really use the exp for anything yet but it's not optional so they're just 1 for now
         public static List<string> WoodNames = [ "Poplar", "Elm", "Walnut", "Holly", "Acacia", "Birch", "Hickory", "Bloodwood", "Camatillo", "Katalox", "Worldtree" ];
@@ -42,6 +45,20 @@ namespace WorldtreeNexus.HardcodedData {
         public static MaterialDef Yggdrasite = new("Yggdrasite", ColorLib.Yggdrasite, tier: 11, lv:100, cost: 24000, exp: 1500, desc: "peerless");
         public static List<MaterialDef> Metals = [ Copper, Bronze, Iron, Silver, Gold, Platinum, Steel, Cobalt, Tungsten, Titanium, Yggdrasite ];
 
+        // Cloth
+        public static MaterialDef Xiangdao =   new("Xiangdao",   ColorLib.Chinese,    tier:  1, lv:  1, cost:    15, exp:   15, desc: "minimal"); 
+        public static MaterialDef Veneficus =  new("Veneficus",  ColorLib.Roman,      tier:  2, lv: 10, cost:    45, exp:   40, desc: "slight");  
+        public static MaterialDef Zauberer =   new("Zauberer",   ColorLib.German,     tier:  3, lv: 20, cost:    90, exp:   75, desc: "adequate"); 
+        public static MaterialDef Volshebnik = new("Volshebnik", ColorLib.Russian,    tier:  4, lv: 30, cost:   180, exp:  120, desc: "good");
+        public static MaterialDef Draiodoir =  new("Draiodoir",  ColorLib.Irish,      tier:  5, lv: 40, cost:   360, exp:  170, desc: "great"); 
+        public static MaterialDef Sahir =      new("Sahir",      ColorLib.Arabian,    tier:  6, lv: 50, cost:   720, exp:  240, desc: "shining");  
+        public static MaterialDef Bruxa =      new("Bruxa",      ColorLib.Portuguese, tier:  7, lv: 60, cost:  1500, exp:  350, desc: "excellent"); 
+        public static MaterialDef Kilokilo =   new("Kilokilo",   Color.Yellow,        tier:  8, lv: 70, cost:  3000, exp:  500, desc: "incredible"); // Hawaiian
+        public static MaterialDef Kalon =      new("Kalon",      Color.White,         tier:  9, lv: 80, cost:  6000, exp:  750, desc: "amazing"); // Greek
+        public static MaterialDef Ilbechin =   new("Ilbechin",   Color.Orange,        tier: 10, lv: 90, cost: 12000, exp: 1000, desc: "unbelievable"); // Mongolian
+        public static MaterialDef Taikuri =    new("Taikuri",    Color.SaddleBrown,   tier: 11, lv:100, cost: 24000, exp: 1500, desc: "peerless"); // Finnish
+        public static List<MaterialDef> Cloths = [ Xiangdao, Veneficus, Zauberer, Volshebnik, Draiodoir, Sahir, Bruxa, Kilokilo, Kalon, Ilbechin, Taikuri ];
+
         // Jewels
         public static List<string> JewelNames = [ "Quartz", "Garnet", "Emerald", "Sapphire", "Ruby", "Amethyst", "Morganite", "Heliodor", "Diamond", "Obsidian", "Spacetime" ];
         public static MaterialDef Quartz =    new("Quartz",    Color.DarkGray,     tier:  1, lv:  1, cost:    50, exp:  10, desc: "clear", extraMat: "Copper");
@@ -67,9 +84,8 @@ namespace WorldtreeNexus.HardcodedData {
 
 
         // Leathers
-        public static MaterialDef Leather = new("Leather", new Color(205, 127, 50), tier: 1, lv: 1, cost: 20, exp: 15, desc: "minimal", simple: "leatherSoft");
-        public static MaterialDef Hardleather = new("Hardleather", new(175, 97, 20), tier: 2, lv: 10, cost: 40, exp: 30, desc: "slight", simple: "leatherHard"); 
-        public static MaterialDef Studded = new("Studded", new(175, 97, 20), tier: 3, lv: 20, cost: 110, exp: 45, desc: "adequate"); 
+        public static MaterialDef Leather =     new("Leather",     new Color(205, 127, 50), tier: 1, lv:  1, cost: 15, exp: 15, desc: "minimal", simple: "leatherSoft");
+        public static MaterialDef Hardleather = new("Hardleather", new(175, 97, 20),        tier: 2, lv: 10, cost: 45, exp: 40, desc: "slight", simple: "leatherHard");  
         public static List<MaterialDef> Leathers = [ Leather, Hardleather ];
 
 

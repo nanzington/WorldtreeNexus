@@ -6,17 +6,19 @@
         public int Yellow = 0;
         public int White = 0;
         public int ExpGranted = 0;
+        public int LevelForPerfect = 1;
 
         public List<string> RequiredIngredients = new();
         public List<string> RequiredActions = new();
 
-        public PotionRecipe(string id, int r, int b, int y, int w, int exp, List<string>? ingredients = null, List<string>? acts = null) {
+        public PotionRecipe(string id, int r, int b, int y, int w, int exp, int pLv, List<string>? ingredients = null, List<string>? acts = null) {
             PotionID = id;
             Red = r;
             Black = b;
             Yellow = y;
             White = w;
             ExpGranted = exp;
+            LevelForPerfect = pLv;
 
             if (ingredients != null) { RequiredIngredients = ingredients; } 
             if (acts != null) { RequiredActions = acts; }

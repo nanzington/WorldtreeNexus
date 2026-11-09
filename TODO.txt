@@ -1,15 +1,13 @@
 To-do for new launch:
 - Ideally want at least 20 ingredients per tier 
-- - (Ideal   4 herb + 2 mushroom + 1 ash + 1 metal + 1 ground bone 
-- - (Current 2 herb + 2 mushroom + 1 ash + 
-- - (Extra not as part of the base outline: monster secretions/blood, collected by killing specific things with an empty vial in inventory. basically every monster (+boss?) should have one)
 - Set recipes for all potions, poisons, inks, and oils
-- Cloth and leather tiers for mage and ranged armor
+- Leather tiers for ranged armor
 - Rework and implement hunting in some form (possibly bug catching in "outside" maps, along with setting small traps that take a while to resolve (maybe only rolls to see if it succeeded at midnight)
-- Farming: Two or three more sets of herbs maybe, higher tier allotment, at least 1 per tier for flowers, bushes, and fruit trees, fabric plants (these maybe just also go in allotments)
-- Beginner, Easy, Medium clue steps and rewards
+- Farming: Two or three more sets of herbs maybe, higher tier allotment, at least 1 per tier for fruit trees
+- Beginner, Easy, Medium clue steps and rewards. Maybe rename the clue tiers?
 - Make a decent number of spells to use
 - FILL OUT GUIDE THIS TIME
+- Place a bunch of Cozy Cottages locations in the nexus
 
 
 Random thoughts
@@ -23,18 +21,28 @@ Random thoughts
 - Fantasy sport thing (or maybe just straight up baseball/football), games played weekly, maybe you can buy and manage a team??
 # # Bets, maybe run through the Thieves Guild, possibly some way to trick them into letting you bet on yourself or own team
 # # Maybe the player can actually join a team as a participant and play the game as a minigame of some kind
+- Radiant guild tasks, basically like slayer or hunter rumors
+# # Alchemist's Guild: random potion you have the level to do the perfect for. Reward shop should include the alchemist tools, plus maybe ingredient packs?
+# # Fletcher's Guild: tasks to make bows, crossbows, arrows, planks, rods, 
+- Button to open a Bank UI, where you can manage and filter items in bank more easily (allow adding custom tags to items and filtering by tag, itemID, or name)
+- Companions? Help with combat, possibly hold some items, maybe recurring costs to keep them around or upgrade them. If necro/taming added then those are free but require the skill
+- Player Owned Restaurant minigame. buy the restaurant somewhere, renovate it, then the gameplay is basically plateup (NPCs appear and order something, serve them, clean up table, etc)
+- - Initially just a cook (maybe at the Jolly Boar, quest to make the existing cook leave), but with decent cooking level and big money you can buy the place to renovate/change/upgrade it
+- - Can set menu, must find an array that satisfies your current clientele
+- - Have to manage restaurant inventory, but it can only hold so many total things before needing to be upgraded
+- Ego Items? Small chance for equipment to have a random enchantment that improves it in some way a la angband
+- Difficulty options for real time to game tick rate (default 1 real second = 1 tick)
+- Enchanted jewellery that stops food from decaying, slows hunger/thirst/sleep
+- TV shows and news broadcasts that air periodically as you go through days, new episode on a specific day each week and a random rerun on another
+- Random garbage piles that stack up around the WTN or are otherwise only visible sometimes, can be cleaned up for a random bit of semi-useful loot. Maybe tie to a minigame job to clean up the city.
+# # Possibly cleaning a pile gives a reward point thing and you redeem those for money, rather than an "active" job with a timer or anything
 
 
 Still need to prune/remake:
 - Ranged armor
 - - 1 Leather (cow), 10 Hardleather (minotaur), 20 Xornhide (xorn, may need better name), 30 Drakehide (at least desert drake),  40 Fiendskin (from fiends like rakshasa)
 - - 50 Wormscale (giant scaled worms), 60 Jotunheid (jotun / frost giants), 
-- Skilling pets
-
-Current Projects:
-- Debug menu option for simulating constructed combat blocks at will
-- Rework the rest of the spells
-- Hunger and thirst mechanics?
+- Skilling pets 
 
 
 "Living" NPCs
@@ -42,8 +50,6 @@ Current Projects:
   
 Spell ideas
 - Teleports to nearest of a type of place? Like nearest bank, nearest farm plot, nearest bar, nearest temple/church. Maybe default to a random one in your current world if none connected, or Nexus as fallback
-- Teleport to Nexus Plaza, maybe world-specific teleports only visible if you're in the related world or it'll get messy
-- Healing spells (ideally one elemental talisman that empowers your current attunement, plus two restoration. if can't find a way to do variable cost)
 - Doors that can be lockpicked, and spell to unlock them
 
 
@@ -104,6 +110,11 @@ Worldtree Nexus Layout
 - Undercity (accessible somewhere out of the way, contains black market and such)
 
 
+WTN Quest Possibilities
+- Maybe help a homeless guy get back on his feet?
+- Help the Cult of the Worldtree gain official recognition and the right to have a temple in the temple district
+- 
+
 Everafter Quest Possibilities
 - The Elves and the Shoemaker (Cobbler is about to go out of business but offers to make you some shoes if you bring him some leather, bring leather, next game day get shoes, he says he didn't make them, asks you to investigate his shop overnight etc)
 - The Brave Little Tailor (series of challenges/puzzles you have to help the tailor solve so he can marry the princess)
@@ -119,15 +130,6 @@ Everafter Quest Possibilities
 - - Let maps or RunActions unlock songs, and Requirements check that you have a song unlocked or playing actively
 - - Allow players to block songs so that they don't get autoplayed or shuffled to
  
-
-Random Ideas
-- Button to open a Bank UI, where you can manage and filter items in bank more easily (allow adding custom tags to items and filtering by tag, itemID, or name)
-- Companions? Help with combat, possibly hold some items, maybe recurring costs to keep them around or upgrade them. If necro/taming added then those are free but require the skill
-- Player Owned Restaurant minigame. buy the restaurant somewhere, renovate it, then the gameplay is basically plateup (NPCs appear and order something, serve them, clean up table, etc)
-- - Initially just a cook (maybe at the Jolly Boar, quest to make the existing cook leave), but with decent cooking level and big money you can buy the place to renovate/change/upgrade it
-- - Can set menu, must find an array that satisfies your current clientele
-- - Have to manage restaurant inventory, but it can only hold so many total things before needing to be upgraded
-- Ego Items? Small chance for equipment to have a random enchantment that improves it in some way a la angband
 
 Immediately important stuff to get working:
 - An achievement tracking thing where performing an action can check to see if doing it progresses an achievement/task, also have a screen to show all achieves with some sort options

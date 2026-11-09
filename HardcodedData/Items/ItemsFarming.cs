@@ -1,6 +1,7 @@
 ﻿using GoRogue.GameFramework;
 using WorldtreeNexus.DataTypes;
 using WorldtreeNexus.HardcodedData;
+using static SadConsole.UI.Controls.Table.Cell;
 
 namespace WorldtreeNexus.Hardcodes {
     public static class ItemsFarming {
@@ -13,12 +14,12 @@ namespace WorldtreeNexus.Hardcodes {
             // // Farming - Allotments
             {
                 // Potato
-                itemsToAdd.Add(new Item("Potato seed", "Aren't potatoes potato seeds? Plant in an allotment. (1)", "seedPotato", Color.SaddleBrown, 10, true) {
+                itemsToAdd.Add(new Item("Potato seed", "Aren't potatoes potato seeds? Plant in an allotment. (1)", "seedPotato", Color.DimGray, 10, true) {
                     UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "potato",
                     UseInt = 1 /* Level */, UseInt2 = 40 /* Exp on Harvest */, UseInt3 = 2400 /* Growth time in seconds */
 
                 });
-                itemsToAdd.Add(new Item("Potato", "A tuber most versatile.", "potato", Color.SaddleBrown, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(3, 6, -14, -7, 1)  });
+                itemsToAdd.Add(new Item("Potato", "A tuber most versatile.", "potato", Color.SaddleBrown, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(3, 6, -14, -7, 1)  });
 
                 // Onion
                 itemsToAdd.Add(new Item("Onion seed", "An onion seed - plant in an allotment. (1)", "seedOnion", Color.DimGray, 10, true) {
@@ -26,7 +27,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Onion", "A strong smelling onion.", "onion", Color.Beige, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(6, 9, -6, 9, 1)  });
+                itemsToAdd.Add(new Item("Onion", "A strong smelling onion.", "onion", Color.Beige, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(6, 9, -6, 9, 1)  });
 
                 // Cabbage
                 itemsToAdd.Add(new Item("Cabbage seed", "A cabbage seed - plant in an allotment. (1)", "seedCabbage", Color.DimGray, 10, true) {
@@ -34,7 +35,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Cabbage", "Yuck, I don't like cabbage.", "cabbage", Color.Lime, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(11, -6, -9, -4, 1)  });
+                itemsToAdd.Add(new Item("Cabbage", "Yuck, I don't like cabbage.", "cabbage", Color.Lime, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(11, -6, -9, -4, 1)  });
 
                 // Tomato
                 itemsToAdd.Add(new Item("Tomato seed", "A tomato seed - plant in an allotment. (1)", "seedTomato", Color.DimGray, 10, true) {
@@ -42,7 +43,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Tomato", "This would make good ketchup.", "tomato", Color.Crimson, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(-8, -6, -5, 11, 1)  });
+                itemsToAdd.Add(new Item("Tomato", "This would make good ketchup.", "tomato", Color.Crimson, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(-8, -6, -5, 11, 1)  });
 
                 // Sweetcorn
                 itemsToAdd.Add(new Item("Sweetcorn seed", "A sweetcorn seed - plant in an allotment. (1)", "seedSweetcorn", Color.DimGray, 10, true) {
@@ -50,7 +51,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Sweetcorn", "Raw sweetcorn.", "sweetcorn", Color.Yellow, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(-9, -9, -6, -6, 1)  });
+                itemsToAdd.Add(new Item("Sweetcorn", "Raw sweetcorn.", "sweetcorn", Color.Yellow, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(-9, -9, -6, -6, 1)  });
                 
                 // Lettuce
                 itemsToAdd.Add(new Item("Lettuce seed", "A lettuce seed - plant in an allotment. (1)", "seedLettuce", Color.DimGray, 10, true) {
@@ -58,7 +59,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Lettuce", "A head of lettuce. Alas, poor Yorick! I grew him.", "lettuce", Color.SpringGreen, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(-7, 12, 4, 7, 1)  });
+                itemsToAdd.Add(new Item("Lettuce", "A head of lettuce. Alas, poor Yorick! I grew him.", "lettuce", Color.SpringGreen, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(-7, 12, 4, 7, 1)  });
 
                 // Broccoli
                 itemsToAdd.Add(new Item("Broccoli seed", "A broccoli seed - plant in an allotment. (1)", "seedBroccoli", Color.DimGray, 10, true) {
@@ -66,7 +67,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Broccoli", "A crown of broccoli.", "broccoli", Color.ForestGreen, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(6, 11, 8, -5, 1)  });
+                itemsToAdd.Add(new Item("Broccoli", "A crown of broccoli.", "broccoli", Color.ForestGreen, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(6, 11, 8, -5, 1)  });
 
                 // Cauliflower
                 itemsToAdd.Add(new Item("Cauliflower seed", "A cauliflower seed - plant in an allotment. (1)", "seedCauliflower", Color.DimGray, 10, true) {
@@ -74,7 +75,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Cauliflower", "A crown of cauliflower.", "cauliflower", Color.AntiqueWhite, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(7, -9, 8, 6, 1)  });
+                itemsToAdd.Add(new Item("Cauliflower", "A crown of cauliflower.", "cauliflower", Color.AntiqueWhite, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(7, -9, 8, 6, 1)  });
 
                 // Bellpepper
                 itemsToAdd.Add(new Item("Bellpepper seed", "A bellpepper seed - plant in an allotment. (1)", "seedBellpepper", Color.DimGray, 10, true) {
@@ -82,7 +83,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Bellpepper", "A nice yellow bellpepper.", "bellpepper", Color.Yellow, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(-11, -4, 7, -8, 1)  });
+                itemsToAdd.Add(new Item("Bellpepper", "A nice yellow bellpepper.", "bellpepper", Color.Yellow, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(-11, -4, 7, -8, 1)  });
 
                 // Carrot
                 itemsToAdd.Add(new Item("Carrot seed", "A carrot seed - plant in an allotment. (1)", "seedCarrot", Color.DimGray, 10, true) {
@@ -90,7 +91,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Carrot", "A vibrant orange carrot.", "carrot", Color.Orange, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(7, 7, -6, 10, 1)  });
+                itemsToAdd.Add(new Item("Carrot", "A vibrant orange carrot.", "carrot", Color.Orange, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(7, 7, -6, 10, 1)  });
 
                 // Cucumber
                 itemsToAdd.Add(new Item("Cucumber seed", "A cucumber seed - plant in an allotment. (1)", "seedCucumber", Color.DimGray, 10, true) {
@@ -98,7 +99,7 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Cucumber", "A cucumber. Good in salads.", "cucumber", Color.DarkGreen, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(4, -9, -10, 7, 1)  });
+                itemsToAdd.Add(new Item("Cucumber", "A cucumber. Good in salads.", "cucumber", Color.DarkGreen, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(4, -9, -10, 7, 1)  });
 
                 // Sweetpeas
                 itemsToAdd.Add(new Item("Sweetpeas seed", "A sweetpeas seed - plant in an allotment. (1)", "seedSweetpeas", Color.DimGray, 10, true) {
@@ -106,80 +107,278 @@ namespace WorldtreeNexus.Hardcodes {
                     UseInt = 1 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 2400 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Sweetpeas", "Some fresh peas still in their pods.", "sweetpeas", Color.LawnGreen, 5) { UseString = "Heal", UseInt = 1, Alchemy = new(6, 12, 3, 9, 1)  });
+                itemsToAdd.Add(new Item("Sweetpeas", "Some fresh peas still in their pods.", "sweetpeas", Color.LawnGreen, 5) { SpoilTimer = 1008, UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ], Alchemy = new(6, 12, 3, 9, 1)  });
 
             }
 
+
+            // // Farming - Fabrics, but also grown in Allotments
+            {
+                // Xiangdao
+                itemsToAdd.Add(new Item("Xiangdao seed", "A xiangdao fiber seed - plant in an allotment. (1)", "seedXiangdao", Color.Goldenrod, 10, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberXiangdao",
+                    UseInt = 1 /* Level */,  UseInt2 = 30 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Xiangdao fibers", "Some raw xiangdao fibers. Spun into cloth with Crafting. (1)", "fiberXiangdao", ColorLib.Chinese, 5) { Alchemy = new(-6, 9, -6, 9, 1) });
+            
+                // Veneficus
+                itemsToAdd.Add(new Item("Veneficus seed", "A veneficus fiber seed - plant in an allotment. (10)", "seedVeneficus", Color.Goldenrod, 30, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberVeneficus",
+                    UseInt = 10 /* Level */,  UseInt2 = 60 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Veneficus fibers", "Some raw veneficus fibers. Spun into cloth with Crafting. (10)", "fiberVeneficus", ColorLib.Roman, 15) { Alchemy = new(-8, -3, -11, 7, 10) });
+            
+                // Zauberer
+                itemsToAdd.Add(new Item("Zauberer seed", "A zauberer fiber seed - plant in an allotment. (20)", "seedZauberer", Color.Goldenrod, 50, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberZauberer",
+                    UseInt = 20 /* Level */,  UseInt2 = 90 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Zauberer fibers", "Some raw zauberer fibers. Spun into cloth with Crafting. (20)", "fiberZauberer", ColorLib.German, 25) { Alchemy = new(-8, -7, -5, 8, 20) });
+            
+                // Volshebnik
+                itemsToAdd.Add(new Item("Volshebnik seed", "A volshebnik fiber seed - plant in an allotment. (30)", "seedVolshebnik", Color.Goldenrod, 100, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberVolshebnik",
+                    UseInt = 30 /* Level */,  UseInt2 = 120 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Volshebnik fibers", "Some raw volshebnik fibers. Spun into cloth with Crafting. (30)", "fiberVolshebnik", ColorLib.Russian, 50) { Alchemy = new(-3, -3, -4, -17, 30) });
+            
+                // Draiodoir
+                itemsToAdd.Add(new Item("Draiodoir seed", "A draiodoir fiber seed - plant in an allotment. (40)", "seedDraiodoir", Color.Goldenrod, 300, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberDraiodoir",
+                    UseInt = 40 /* Level */,  UseInt2 = 150 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Draiodoir fibers", "Some raw draiodoir fibers. Spun into cloth with Crafting. (40)", "fiberDraiodoir", ColorLib.Irish, 150) { Alchemy = new(-7, 6, -9, -4, 40) });
+            
+                // Sahir
+                itemsToAdd.Add(new Item("Sahir seed", "A sahir fiber seed - plant in an allotment. (50)", "seedSahir", Color.Goldenrod, 500, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberSahir",
+                    UseInt = 50 /* Level */,  UseInt2 = 180 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Sahir fibers", "Some raw sahir fibers. Spun into cloth with Crafting. (50)", "fiberSahir", ColorLib.Arabian, 250) { Alchemy = new(-8, 6, 8, 3, 50) });
+            
+                // Bruxa
+                itemsToAdd.Add(new Item("Bruxa seed", "A bruxa fiber seed - plant in an allotment. (60)", "seedBruxa", Color.Goldenrod, 1000, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberBruxa",
+                    UseInt = 60 /* Level */,  UseInt2 = 210 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Bruxa fibers", "Some raw bruxa fibers. Spun into cloth with Crafting. (60)", "fiberBruxa", ColorLib.Portuguese, 500) { Alchemy = new(7, -6, 6, -5, 60) });
+            
+                // Kilokilo
+                itemsToAdd.Add(new Item("Kilokilo seed", "A kilokilo fiber seed - plant in an allotment. (70)", "seedKilokilo", Color.Goldenrod, 3000, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberKilokilo",
+                    UseInt = 70 /* Level */,  UseInt2 = 240 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Kilokilo fibers", "Some raw kilokilo fibers. Spun into cloth with Crafting. (70)", "fiberKilokilo", Color.Yellow, 1500) { Alchemy = new(4, -8, -6, -5, 70) });
+            
+                // Kalon
+                itemsToAdd.Add(new Item("Kalon seed", "A kalon fiber seed - plant in an allotment. (80)", "seedKalon", Color.Goldenrod, 5000, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberKalon",
+                    UseInt = 80 /* Level */,  UseInt2 = 270 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Kalon fibers", "Some raw kalon fibers. Spun into cloth with Crafting. (80)", "fiberKalon", Color.White, 2500) { Alchemy = new(-7, -2, -9, -4, 80) });
+            
+                // Ilbechin
+                itemsToAdd.Add(new Item("Ilbechin seed", "A ilbechin fiber seed - plant in an allotment. (90)", "seedIlbechin", Color.Goldenrod, 10000, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberIlbechin",
+                    UseInt = 90 /* Level */,  UseInt2 = 300 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Ilbechin fibers", "Some raw ilbechin fibers. Spun into cloth with Crafting. (90)", "fiberIlbechin", Color.Orange, 5000) { Alchemy = new(6, -5, 3, -7, 90) });
+            
+                // Taikuri
+                itemsToAdd.Add(new Item("Taikuri seed", "A taikuri fiber seed - plant in an allotment. (100)", "seedTaikuri", Color.Goldenrod, 30000, true) {
+                    UseString = "PlantSeed", UseString2 = "Allotment", UseString3 = "fiberTaikuri",
+                    UseInt = 100 /* Level */,  UseInt2 = 330 /* Exp On Harvest */, UseInt3 = 1800 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Taikuri fibers", "Some raw taikuri fibers. Spun into cloth with Crafting. (100)", "fiberTaikuri", Color.SaddleBrown, 15000) { Alchemy = new(-6, -4, 4, 6, 100) });
+            
+            }
+            
+            
             // // Farming - Flowers
             {
-                itemsToAdd.Add(new Item("Marigold seed", "A marigold seed - plant in a flower patch. (2)", "seedMarigold", 245, 245, 220, 85, true) {
-                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "marigold",
-                    UseInt = 2 /* Level */,  UseInt2 = 55 /* Exp On Harvest */, UseInt3 = 1200 /* Growth time in seconds */ 
+                // Sunflower
+                itemsToAdd.Add(new Item("Sunflower seed", "A sunflower seed - plant in a flower patch. (1)", "seedSunflower", Color.Beige, 10, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "sunflower",
+                    UseInt = 1 /* Level */,  UseInt2 = 10 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Marigold", "A bunch of marigolds.", "marigold", 255, 165, 0, 1));
+                itemsToAdd.Add(new Item("Sunflower", "A beautiful sunflower.", "sunflower", Color.Yellow, 5) { Alchemy = new(-6, -7, -8, -9, 1) });
                 
-                itemsToAdd.Add(new Item("Rosemary seed", "A rosemary seed - plant in a flower patch. (11)", "seedRosemary", 85, 107, 47, 98, true) {
-                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "rosemary",
-                    UseInt = 11 /* Level */,  UseInt2 = 79 /* Exp On Harvest */, UseInt3 = 1200 /* Growth time in seconds */ 
+                // Tulip
+                itemsToAdd.Add(new Item("Tulip seed", "A tulip seed - plant in a flower patch. (10)", "seedTulip", Color.Beige, 30, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "tulip",
+                    UseInt = 10 /* Level */,  UseInt2 = 20 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Rosemary", "Some rosemary.", "rosemary", 255, 165, 0, 2)); 
-
-                itemsToAdd.Add(new Item("Nasturtium seed", "A nasturtium seed - plant in a flower patch. (24)", "seedNasturtium", 245, 245, 220, 11, true) {
-                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "nasturtium",
-                    UseInt = 24 /* Level */,  UseInt2 = 130 /* Exp On Harvest */, UseInt3 = 1200 /* Growth time in seconds */ 
-
-                });
-                itemsToAdd.Add(new Item("Nasturtium", "A bunch of nasturtiums.", "nasturtium", 255, 0, 0, 4));
-
-                itemsToAdd.Add(new Item("Woad seed", "A woad seed - plant in a flower patch. (25)", "seedWoad", Color.Beige, 11, true) {
-                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "woad",
-                    UseInt = 25 /* Level */,  UseInt2 = 135 /* Exp On Harvest */, UseInt3 = 1200 /* Growth time in seconds */ 
+                itemsToAdd.Add(new Item("Tulip", "A beautiful tulip.", "tulip", ColorLib.PastelPink, 15) { Alchemy = new(-11, -4, 7, -7, 10) });
+                
+                // Orchid
+                itemsToAdd.Add(new Item("Orchid seed", "An orchid seed - plant in a flower patch. (20)", "seedOrchid", Color.Beige, 50, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "orchid",
+                    UseInt = 20 /* Level */,  UseInt2 = 30 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Woad leaf", "A slightly bluish leaf.", "woad", Color.DodgerBlue, 4, true));
-
-                itemsToAdd.Add(new Item("Limpwurt seed", "A limpwurt seed - plant in a flower patch. (7)", "seedLimpwurt", Color.SandyBrown, 11, true) {
-                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "limpwurt",
-                    UseInt = 7 /* Level */,  UseInt2 = 70 /* Exp On Harvest */, UseInt3 = 1200 /* Growth time in seconds */ 
+                itemsToAdd.Add(new Item("Orchid", "A beautiful orchid.", "orchid", ColorLib.Roman, 25) { Alchemy = new(-7, 6, 5, -10, 20) });
+                
+                // Chrysanthemum
+                itemsToAdd.Add(new Item("Chrysanthemum seed", "A chrysanthemum seed - plant in a flower patch. (30)", "seedChrysanthemum", Color.Beige, 100, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "chrysanthemum",
+                    UseInt = 30 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Limpwurt root", "The root of a limpwurt plant.", "limpwurt", Color.SandyBrown, 4, true));
+                itemsToAdd.Add(new Item("Chrysanthemum", "A beautiful chrysanthemum.", "chrysanthemum", Color.Orange, 50) { Alchemy = new(-5, 11, -6, 5, 30) });
+                
+                // Carnation
+                itemsToAdd.Add(new Item("Carnation seed", "A carnation seed - plant in a flower patch. (40)", "seedCarnation", Color.Beige, 300, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "carnation",
+                    UseInt = 40 /* Level */,  UseInt2 = 50 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
 
-                itemsToAdd.Add(new Item("White lily seed", "A white lily seed - plant in a flower patch. (52)", "seedWhiteLily", Color.DodgerBlue, 1250, true) {
-                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "ashes",
-                    UseInt = 52 /* Level */,  UseInt2 = 300 /* Exp On Harvest */, UseInt3 = 9600 /* Growth time in seconds */ 
+                });
+                itemsToAdd.Add(new Item("Carnation", "A beautiful carnation.", "carnation", Color.Crimson, 150) { Alchemy = new(9, 5, 7, -5, 40) });
+                
+                // Hydrangea
+                itemsToAdd.Add(new Item("Hydrangea seed", "A hydrangea seed - plant in a flower patch. (50)", "seedHydrangea", Color.Beige, 500, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "hydrangea",
+                    UseInt = 50 /* Level */,  UseInt2 = 60 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
 
-                }); 
+                });
+                itemsToAdd.Add(new Item("Hydrangea", "A beautiful hydrangea.", "hydrangea", Color.Lavender, 250) { Alchemy = new(6, -4, -10, -5, 50) });
+                
+                // Peony
+                itemsToAdd.Add(new Item("Peony seed", "A peony seed - plant in a flower patch. (60)", "seedPeony", Color.Beige, 1000, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "peony",
+                    UseInt = 60 /* Level */,  UseInt2 = 70 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Peony", "A beautiful peony.", "peony", Color.White, 500) { Alchemy = new(3, -7, 8, 6, 60) });
+                
+                // Daisy
+                itemsToAdd.Add(new Item("Daisy seed", "A daisy seed - plant in a flower patch. (70)", "seedDaisy", Color.Beige, 3000, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "daisy",
+                    UseInt = 70 /* Level */,  UseInt2 = 80 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Daisy", "A beautiful daisy.", "daisy", Color.Turquoise, 1500) { Alchemy = new(-10, 5, -4, 4, 70) });
+                
+                // Lily
+                itemsToAdd.Add(new Item("Lily seed", "A lily seed - plant in a flower patch. (80)", "seedLily", Color.Beige, 5000, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "lily",
+                    UseInt = 80 /* Level */,  UseInt2 = 90 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Lily", "A beautiful lily.", "lily", Color.LightYellow, 2500) { Alchemy = new(-5, -8, 3, -6, 80) });
+                
+                // Violet
+                itemsToAdd.Add(new Item("Violet seed", "A violet seed - plant in a flower patch. (90)", "seedViolet", Color.Beige, 10000, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "violet",
+                    UseInt = 90 /* Level */,  UseInt2 = 100 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Violet", "A beautiful violet.", "violet", Color.MediumPurple, 5000) { Alchemy = new(-8, -5, 5, -3, 90) });
+                
+                // Rose
+                itemsToAdd.Add(new Item("Rose seed", "A rose seed - plant in a flower patch. (100)", "seedRose", Color.Beige, 30000, true) {
+                    UseString = "PlantSeed", UseString2 = "Flower", UseString3 = "rose",
+                    UseInt = 100 /* Level */,  UseInt2 = 110 /* Exp On Harvest */, UseInt3 = 600 /* Growth time in seconds */ 
+
+                });
+                itemsToAdd.Add(new Item("Rose", "A beautiful rose.", "rose", Color.Red, 15000) { Alchemy = new(6, -4, 3, 7, 100) });
+                
             }
 
             
             // // Farming - Bush
             {
                 // Strawberry
-                itemsToAdd.Add(new Item("Strawberry seed", "A strawberry seed - plant in an allotment. (1)", "seedStrawberry", 255, 255, 0, 10, true) {
+                itemsToAdd.Add(new Item("Strawberry seed", "A strawberry bush seed - plant in a bush patch. (1)", "seedStrawberry", Color.SaddleBrown, 10, true) {
                     UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "strawberry",
-                    UseInt = 31 /* Level */,  UseInt2 = 100 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */ 
+                    UseInt = 1 /* Level */,  UseInt2 = 100 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */ 
 
                 });
-                itemsToAdd.Add(new Item("Strawberry", "A freshly picked strawberry.", "strawberry", 220, 20, 60, 20) { UseString = "Heal", UseInt = 4 });
-
-                // Blueberry
-                itemsToAdd.Add(new Item("Blueberry seed", "A blueberry bush seed - plant in a bush patch. (10)", "seedBlueberry", Color.PaleVioletRed, 5, true) {
-                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "blueberry",
-                    UseInt = 1 /* Level */,  UseInt2 = 10 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
-                });
-                itemsToAdd.Add(new Item("Blueberries", "Lovely blue berries.", "blueberry", Color.CadetBlue, 3)); 
+                itemsToAdd.Add(new Item("Strawberry", "A freshly picked strawberry.", "strawberry", Color.Crimson, 1) { SpoilTimer = 1008, Alchemy = new(8, 8, 5, 9, 1), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] });
 
                 // Nightshade
-                itemsToAdd.Add(new Item("Nightshade seed", "A nightshade bush seed - plant in a bush patch. (10)", "seedNightshade", Color.DimGray, 10, true) {
+                itemsToAdd.Add(new Item("Nightshade seed", "A nightshade bush seed - plant in a bush patch. (10)", "seedNightshade", Color.SaddleBrown, 30, true) {
                     UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "nightshade",
-                    UseInt = 10 /* Level */,  UseInt2 = 20 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                    UseInt = 10 /* Level */,  UseInt2 = 200 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
                 });
-                itemsToAdd.Add(new Item("Nightshade berries", "Deadly red berries.", "nightshade", Color.Red, 3)); 
+                itemsToAdd.Add(new Item("Nightshade berries", "Deadly red berries.", "nightshade", Color.Red, 3) { SpoilTimer = 1008, Alchemy = new(8, -9, -10, 2, 10), UseString = "Potion", Potion = [ new("Hurt", 1), new("Hunger", 5) ] }); 
 
-            }
+                // Blueberry
+                itemsToAdd.Add(new Item("Blueberry seed", "A blueberry bush seed - plant in a bush patch. (20)", "seedBlueberry", Color.SaddleBrown, 50, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "blueberry",
+                    UseInt = 20 /* Level */,  UseInt2 = 300 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Blueberry", "Blueberries, kinda hit or miss.", "blueberry", Color.DodgerBlue, 5) { SpoilTimer = 1008, Alchemy = new(4, 12, -5, -7, 20), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+               // Raspberry
+                itemsToAdd.Add(new Item("Raspberry seed", "A raspberry bush seed - plant in a bush patch. (30)", "seedRaspberry", Color.SaddleBrown, 100, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "raspberry",
+                    UseInt = 30 /* Level */,  UseInt2 = 400 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Raspberry", "Raspberries, kinda hit or miss.", "raspberry", Color.Salmon, 10) { SpoilTimer = 1008, Alchemy = new(-10, -6, -5, -6, 30), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+               // Blackcurrant
+                itemsToAdd.Add(new Item("Blackcurrant seed", "A blackcurrant bush seed - plant in a bush patch. (40)", "seedBlackcurrant", Color.SaddleBrown, 300, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "blackcurrant",
+                    UseInt = 40 /* Level */,  UseInt2 = 500 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Blackcurrant", "Tasty blackcurrant. Bold and self-sufficient.", "blackcurrant", Color.Purple, 30) { SpoilTimer = 1008, Alchemy = new(-5, -8, 7, 6, 40), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+               // Gooseberry
+                itemsToAdd.Add(new Item("Gooseberry seed", "A gooseberry bush seed - plant in a bush patch. (50)", "seedGooseberry", Color.SaddleBrown, 500, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "gooseberry",
+                    UseInt = 50 /* Level */,  UseInt2 = 600 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Gooseberry", "Like little beads of glass. A bit tastier than glass, though.", "gooseberry", Color.Orange, 50) { SpoilTimer = 1008, Alchemy = new(-7, -5, 9, 4, 50), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+               // Haskap
+                itemsToAdd.Add(new Item("Haskap seed", "A haskap bush seed - plant in a bush patch. (60)", "seedHaskap", Color.SaddleBrown, 1000, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "haskap",
+                    UseInt = 60 /* Level */,  UseInt2 = 700 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Haskap", "Sometimes also called honeyberries or fly honeysuckle. Sweet but tart.", "haskap", Color.BlueViolet, 100) { SpoilTimer = 1008, Alchemy = new(8, 3, 6, -7, 60), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+               // Grapevine
+                itemsToAdd.Add(new Item("Grapevine seed", "A grapevine seed - plant in a bush patch. (70)", "seedGrapevine", Color.SaddleBrown, 3000, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "grapes",
+                    UseInt = 70 /* Level */,  UseInt2 = 800 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Grapes", "Could probably be turned into wine.", "grapes", Color.Lime, 300) { SpoilTimer = 1008, Alchemy = new(6, 5, 5, -7, 70), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+               // Fig
+                itemsToAdd.Add(new Item("Fig seed", "A fig bush seed - plant in a bush patch. (80)", "seedFig", Color.SaddleBrown, 5000, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "fig",
+                    UseInt = 80 /* Level */,  UseInt2 = 900 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Fig", "Does not contain pork.", "fig", Color.MediumPurple, 500) { SpoilTimer = 1008, Alchemy = new(-9, 5, 3, 5, 80), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+               // Aronia
+                itemsToAdd.Add(new Item("Aronia seed", "An aronia bush seed - plant in a bush patch. (90)", "seedAronia", Color.SaddleBrown, 10000, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "aronia",
+                    UseInt = 90 /* Level */,  UseInt2 = 1000 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Aronia", "Also called chokeberries, quite astringent.", "aronia", Color.DimGray, 1000) { SpoilTimer = 1008, Alchemy = new(-5, -6, 4, -6, 90), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+               // Elderberry
+                itemsToAdd.Add(new Item("Elderberry seed", "A elderberry bush seed - plant in a bush patch. (100)", "seedElderberry", Color.SaddleBrown, 30000, true) {
+                    UseString = "PlantSeed", UseString2 = "Bush", UseString3 = "elderberry",
+                    UseInt = 100 /* Level */,  UseInt2 = 1100 /* Exp On Harvest */, UseInt3 = 6000 /* Growth time in seconds */, UseInt4 = 1200 /* Regrowth time in seconds */
+                });
+                itemsToAdd.Add(new Item("Elderberry", "Smells just like dad.", "elderberry", Color.IndianRed, 3000) { SpoilTimer = 1008, Alchemy = new(-5, 5, 4, -6, 100), UseString = "Potion", Potion = [ new("Heal", 1), new("Hunger", 5) ] }); 
+
+           }
 
 
             // // Farming - Mushrooms (Safe)
@@ -366,75 +565,13 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Plant pot", "A plant pot filled with soil.", "plantPot", 207, 185, 151, 1));
             // // Farming - Trees
             {
-                // Poplar
-                itemsToAdd.Add(new Item("Poplar seed", "A poplar seed - use on a plant pot to make a sapling.", "seedTreePoplar", ColorLib.Poplar, 25, true));
-                itemsToAdd.Add(new Item("Plant pot (poplar)", "A poplar sapling in a pot. Plant in a tree patch.", "plantPotPoplar", ColorLib.Poplar, 25) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logPoplar",
-                    UseInt = 1 /* Level */,  UseInt2 = 100 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Elm
-                itemsToAdd.Add(new Item("Elm seed", "An elm seed - use on a plant pot to make a sapling. (10)", "seedTreeElm", ColorLib.Elm, 50, true));
-                itemsToAdd.Add(new Item("Plant pot (elm)", "An elm sapling in a pot. Plant in a tree patch. (10)", "plantPotElm", ColorLib.Elm, 50) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logElm",
-                    UseInt = 10 /* Level */,  UseInt2 = 200 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Walnut
-                itemsToAdd.Add(new Item("Walnut seed", "A walnut seed - use on a plant pot to make a sapling. (20)", "seedTreeWalnut", ColorLib.Walnut, 75, true));
-                itemsToAdd.Add(new Item("Plant pot (walnut)", "A walnut sapling in a pot. Plant in a tree patch. (20)", "plantPotWalnut", ColorLib.Walnut, 75) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logWalnut",
-                    UseInt = 20 /* Level */,  UseInt2 = 300 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Holly
-                itemsToAdd.Add(new Item("Holly seed", "A holly seed - use on a plant pot to make a sapling. (30)", "seedTreeHolly", ColorLib.Holly, 100, true));
-                itemsToAdd.Add(new Item("Plant pot (holly)", "A holly sapling in a pot. Plant in a tree patch. (30)", "plantPotHolly", ColorLib.Holly, 100) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logHolly",
-                    UseInt = 30 /* Level */,  UseInt2 = 400 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Acacia
-                itemsToAdd.Add(new Item("Acacia seed", "An acacia seed - use on a plant pot to make a sapling. (40)", "seedTreeAcacia", ColorLib.Acacia, 125, true));
-                itemsToAdd.Add(new Item("Plant pot (acacia)", "An acacia sapling in a pot. Plant in a tree patch. (40)", "plantPotAcacia", ColorLib.Acacia, 125) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logAcacia",
-                    UseInt = 40 /* Level */,  UseInt2 = 500 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Birch
-                itemsToAdd.Add(new Item("Birch seed", "A birch seed - use on a plant pot to make a sapling. (50)", "seedTreeBirch", ColorLib.Birch, 150, true));
-                itemsToAdd.Add(new Item("Plant pot (birch)", "A birch sapling in a pot. Plant in a tree patch. (50)", "plantPotBirch", ColorLib.Birch, 150) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logBirch",
-                    UseInt = 50 /* Level */,  UseInt2 = 600 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Hickory
-                itemsToAdd.Add(new Item("Hickory seed", "A hickory seed - use on a plant pot to make a sapling. (60)", "seedTreeHickory", ColorLib.Hickory, 175, true));
-                itemsToAdd.Add(new Item("Plant pot (hickory)", "A hickory sapling in a pot. Plant in a tree patch. (60)", "plantPotHickory", ColorLib.Hickory, 175) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logHickory",
-                    UseInt = 60 /* Level */,  UseInt2 = 700 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Bloodwood
-                itemsToAdd.Add(new Item("Bloodwood seed", "A bloodwood seed - use on a plant pot to make a sapling. (70)", "seedTreeBloodwood", ColorLib.Bloodwood, 200, true));
-                itemsToAdd.Add(new Item("Plant pot (bloodwood)", "A bloodwood sapling in a pot. Plant in a tree patch. (70)", "plantPotBloodwood", ColorLib.Bloodwood, 200) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logBloodwood",
-                    UseInt = 70 /* Level */,  UseInt2 = 800 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Camatillo
-                itemsToAdd.Add(new Item("Camatillo seed", "A camatillo seed - use on a plant pot to make a sapling. (80)", "seedTreeCamatillo", ColorLib.Camatillo, 300, true));
-                itemsToAdd.Add(new Item("Plant pot (camatillo)", "A camatillo sapling in a pot. Plant in a tree patch. (80)", "plantPotCamatillo", ColorLib.Camatillo, 300) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logCamatillo",
-                    UseInt = 80 /* Level */,  UseInt2 = 900 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
-
-                // Katalox
-                itemsToAdd.Add(new Item("Katalox seed", "A katalox seed - use on a plant pot to make a sapling. (90)", "seedTreeKatalox", ColorLib.Katalox, 500, true));
-                itemsToAdd.Add(new Item("Plant pot (katalox)", "A katalox sapling in a pot. Plant in a tree patch. (90)", "plantPotKatalox", ColorLib.Katalox, 500) {
-                    UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "logKatalox",
-                    UseInt = 90 /* Level */,  UseInt2 = 1000 /* Exp On Harvest */, UseInt3 = 960 /* Growth time in seconds */, UseInt4 = 960 /* Regrowth time in seconds */
-                });
+                foreach (var wood in Materials.Woods) {
+                    itemsToAdd.Add(new Item(wood.Name + " seed", "A " + wood.Name.ToLower() + " seed - use on a plant pot to make a sapling. (" + wood.Level + ")", "seed" + wood.Name, Color.BurlyWood, wood.CostMultiplier * 2, true));
+                    itemsToAdd.Add(new Item("Plant pot (" + wood.Name.ToLower() + ")", "A " + wood.Name.ToLower() + " sapling in a pot. Plant in a tree patch. (" + wood.Level + ")", "plantPot" + wood.Name, wood.R, wood.G, wood.B, wood.CostMultiplier * 2) {
+                        UseString = "PlantSeed", UseString2 = "Tree", UseString3 = "log" + wood.Name,
+                        UseInt = wood.Level /* Level */,  UseInt2 = 15 * (int) wood.Tier /* Exp On Harvest */, UseInt3 = 900 /* Growth time in seconds */, UseInt4 = 900 /* Regrowth time in seconds */
+                    });
+                }
             }
 
             // // Farming - Fruit Trees

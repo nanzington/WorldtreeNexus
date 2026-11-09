@@ -58,11 +58,17 @@ namespace WorldtreeNexus.Hardcodes {
                     new ItemDrop("clueFauxleatherVambraces", 1, 20, 1, 1),
                     new ItemDrop("clueFauxleatherBoots", 1, 20, 1, 1),
                     new ItemDrop("clueShortfaux", 1, 20, 1, 1),
-                    new ItemDrop("arrowsCopper", 1, 4, 100, 200), 
-                    new ItemDrop("arrowsTutorial", 1, 4, 50, 100),
-                    new ItemDrop("boltsTutorial", 1, 4, 50, 100),
-                    new ItemDrop("knivesCopper", 1, 4, 200, 400),
-                    new ItemDrop("knivesTutorial", 1, 4, 100, 200)
+                    new ItemDrop("arrowsCopper", 1, 4, 20, 40), 
+                    new ItemDrop("arrowsTutorial", 1, 4, 10, 20),
+                    new ItemDrop("boltsTutorial", 1, 4, 10, 20),
+                    new ItemDrop("knivesCopper", 1, 4, 20, 40),
+                    new ItemDrop("knivesTutorial", 1, 4, 10, 20),
+                    new ItemDrop("talismanDestruction", 1, 4, 10, 20),
+                    new ItemDrop("talismanMetal", 1, 4, 10, 20),
+                    new ItemDrop("talismanWater", 1, 4, 10, 20),
+                    new ItemDrop("talismanWood", 1, 4, 10, 20),
+                    new ItemDrop("talismanFire", 1, 4, 10, 20),
+                    new ItemDrop("talismanEarth", 1, 4, 10, 20)
                 }
             });
 

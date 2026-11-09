@@ -3,7 +3,7 @@ using WorldtreeNexus.DataTypes;
 using WorldtreeNexus.HardcodedData;
 
 namespace WorldtreeNexus.Hardcodes {
-    public static class HardcodedItemsCrafting {
+    public static class ItemsCrafting {
         public static void InitItems(Dictionary<string, Item> ItemLibrary) {
             List<Item> itemsToAdd = new();
 
@@ -15,6 +15,7 @@ namespace WorldtreeNexus.Hardcodes {
              
             itemsToAdd.Add(new Item("Amulet mould", "Used to make amulets.", "mouldAmulet", Color.White, 5));
             itemsToAdd.Add(new Item("Bracelet mould", "Used to make bracelets and anklets.", "mouldBracelet", Color.White, 5)); 
+            itemsToAdd.Add(new Item("Brooch mould", "Used to make brooches.", "mouldBrooch", Color.White, 5));
             itemsToAdd.Add(new Item("Holy mould", "Used to make holy symbols of Saradomin.", "mouldHoly", Color.White, 5)); 
             itemsToAdd.Add(new Item("Necklace mould", "Used to make necklaces.", "mouldNecklace", Color.White, 5));
             itemsToAdd.Add(new Item("Ring mould", "Used to make rings.", "mouldRing", Color.White, 5));
@@ -29,6 +30,7 @@ namespace WorldtreeNexus.Hardcodes {
                 itemsToAdd.Add(new Item(mat.Name + " amulet (u)", "An unstrung amulet made from " + mat.Name.ToLower() + ". Can be strung with a ball of wool.", "amulet" + mat.Name + "U", mat.R, mat.G, mat.B, mat.CostMultiplier));
                 itemsToAdd.Add(new Item(mat.Name + " necklace", "A necklace made from " + mat.Name.ToLower() + ".", "necklace" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier) { EquipSlot = "Amulet" });
                 itemsToAdd.Add(new Item(mat.Name + " bracelet", "A bracelet made from " + mat.Name.ToLower() + ".", "bracelet" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item(mat.Name + " brooch", "A brooch made from " + mat.Name.ToLower() + ".", "brooch" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier) { EquipSlot = "Pocket" });
             }
 
             foreach (var mat in Materials.Metals) {
@@ -37,7 +39,21 @@ namespace WorldtreeNexus.Hardcodes {
                 itemsToAdd.Add(new Item(mat.Name + " amulet (u)", "An unstrung amulet made from " + mat.Name.ToLower() + ". Can be strung with a ball of wool.", "amulet" + mat.Name + "U", mat.R, mat.G, mat.B, mat.CostMultiplier));
                 itemsToAdd.Add(new Item(mat.Name + " necklace", "A necklace made from " + mat.Name.ToLower() + ".", "necklace" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier) { EquipSlot = "Amulet" });
                 itemsToAdd.Add(new Item(mat.Name + " bracelet", "A bracelet made from " + mat.Name.ToLower() + ".", "bracelet" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item(mat.Name + " brooch", "A brooch made from " + mat.Name.ToLower() + ".", "brooch" + mat.Name, mat.R, mat.G, mat.B, mat.CostMultiplier) { EquipSlot = "Pocket" });
             }
+
+            // Enchanted Jewellery
+            // Price: jewel + metal, +10% rounded up
+            // Function: maybe rotate slots? Teleport, skilling efficiency, combat efficiency, general utility, specific skill booster
+            { 
+                itemsToAdd.Add(new Item("Quartz ring (e)", "An enchanted quartz ring.", "ringQuartzE", Color.DarkGray, 72) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Quartz amulet (e)", "An enchanted quartz amulet.", "amuletQuartzE", Color.DarkGray, 72) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Quartz necklace (e)", "An enchanted quartz necklace.", "necklaceQuartzE", Color.DarkGray, 72) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Quartz bracelet (e)", "An enchanted quartz bracelet.", "braceletQuartzE", Color.DarkGray, 72) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Quartz brooch (e)", "An enchanted quartz brooch.", "broochQuartzE", Color.DarkGray, 72) { EquipSlot = "Pocket" });
+            }
+
+
                 
             itemsToAdd.Add(new Item("Unstrung symbol", "It needs a string so I can wear it.", "unstrungSymbol", Color.Gray, 200));
             itemsToAdd.Add(new Item("Unblessed symbol", "A symbol of Saradomin.", "unblessedSymbol", Color.Gray, 200) { EquipSlot = "Amulet" });
@@ -75,13 +91,14 @@ namespace WorldtreeNexus.Hardcodes {
             // Ranged Armor Factory  
             itemsToAdd.Add(new Item("Cowhide", "This should be tanned before I can use it.", "cowhide", 255, 255, 255, 10));
             itemsToAdd.Add(new Item("Soft leather", "Suitable for craftworks now.", "leatherSoft", 165, 42, 42, 10));
-            itemsToAdd.Add(new Item("Hard leather", "Might offer some real protection if made into armor.", "leatherHard", 139, 69, 19, 20)); 
+            itemsToAdd.Add(new Item("Minotaur hide", "Needs to be tanned before use.", "hideMinotaur", Color.BurlyWood, 30));
+            itemsToAdd.Add(new Item("Hard leather", "Tanned minotaur hide. Used in Crafting. (10)", "leatherHard", 139, 69, 19, 20)); 
 
-            List<MaterialDef> Leathers = new(Materials.Leathers) { Materials.Studded };
+            List<MaterialDef> Leathers = Materials.Leathers;
             foreach (var leather in Leathers) {
                 int fullMult = leather.CostMultiplier;
 
-                Item coif = new Item(leather.Name + " coif", "Provides " + leather.Descriptor + " ranged protection for the head.", "coif" + leather.Name, leather.R, leather.G, leather.B, fullMult * 2) {
+                Item coif = new Item(leather.Name + " coif", "Provides " + leather.Descriptor + " ranged protection for the head.", "coif" + leather.Name, leather.R, leather.G, leather.B, fullMult) {
                     EquipSlot = "Head",  EquipTier = leather.Tier, EquipSkill = "Defense", EquipLevel = leather.Level, MiscString = "DefenseRange"
                 };
                 itemsToAdd.Add(coif);
@@ -110,6 +127,30 @@ namespace WorldtreeNexus.Hardcodes {
                     EquipSlot = "Offhand",  EquipTier = leather.Tier, EquipSkill = "Defense", EquipLevel = leather.Level, MiscString = "DefenseRange"
                 };
                 itemsToAdd.Add(shield); 
+            }
+
+            foreach (var cloth in Materials.Cloths) { 
+                itemsToAdd.Add(new Item("Bolt of " + cloth.Name.ToLower(), "A bolt of cloth, used in Crafting. (" + cloth.Level + ")", "bolt" + cloth.Name, cloth.R, cloth.G, cloth.B, cloth.CostMultiplier));
+
+                itemsToAdd.Add(new Item(cloth.Name + " hood", "Provides " + cloth.Descriptor + " magic protection for the head.", "hood" + cloth.Name, cloth.R, cloth.G, cloth.B, cloth.CostMultiplier) {
+                    EquipSlot = "Head",  EquipTier = cloth.Tier, EquipSkill = "Defense", EquipLevel = cloth.Level, MiscString = "DefenseMagic"
+                });
+
+                itemsToAdd.Add(new Item(cloth.Name + " robe top", "Provides " + cloth.Descriptor + " magic protection for the torso.", "robeTop" + cloth.Name, cloth.R, cloth.G, cloth.B, cloth.CostMultiplier * 5) {
+                    EquipSlot = "Body",  EquipTier = cloth.Tier, EquipSkill = "Defense", EquipLevel = cloth.Level, MiscString = "DefenseMagic"
+                });
+
+                itemsToAdd.Add(new Item(cloth.Name + " robe bottom", "Provides " + cloth.Descriptor + " magic protection for the legs.", "robeBottom" + cloth.Name, cloth.R, cloth.G, cloth.B, cloth.CostMultiplier * 3) {
+                    EquipSlot = "Legs",  EquipTier = cloth.Tier, EquipSkill = "Defense", EquipLevel = cloth.Level, MiscString = "DefenseMagic"
+                });
+
+                itemsToAdd.Add(new Item(cloth.Name + " footwraps", "Provides " + cloth.Descriptor + " magic protection for the feet.", "footwraps" + cloth.Name, cloth.R, cloth.G, cloth.B, cloth.CostMultiplier) {
+                    EquipSlot = "Feet",  EquipTier = cloth.Tier, EquipSkill = "Defense", EquipLevel = cloth.Level, MiscString = "DefenseMagic"
+                });
+
+                itemsToAdd.Add(new Item(cloth.Name + " gloves", "Provides " + cloth.Descriptor + " magic protection for the hands.", "gloves" + cloth.Name, cloth.R, cloth.G, cloth.B, cloth.CostMultiplier) {
+                    EquipSlot = "Hands",  EquipTier = cloth.Tier, EquipSkill = "Defense", EquipLevel = cloth.Level, MiscString = "DefenseMagic"
+                });
             }
 
             for (int i = 0; i < itemsToAdd.Count; i++) {

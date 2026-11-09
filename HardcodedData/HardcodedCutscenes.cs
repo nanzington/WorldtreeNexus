@@ -5,39 +5,39 @@ namespace WorldtreeNexus.Hardcodes {
         public static void InitCutscenes(Dictionary<string, Cutscene> lib) {
             List<Cutscene> toAdd = new();
 
-            toAdd.Add(new("MI_rjButler", "Entering the Leptoc Mansion", new() {
+            toAdd.Add(new("MI_rjButler", "Entering the Leptoc Mansion", [
                 new("You stand outside a large elegant mansion just outside the west gates of Varrock. The landscaping around the building is fantastic, the hedges and flowers all perfectly maintained to project an air of wealth.",
-                new() {
+                [
                     "(You knock on the front door. After a moment a butler pulls the door open and looks you up and down.)",
                     "Leptoc Butler: You don't look like the cleaner. Really, showing up so late! It's important that the house be well maintained!",
                     "You: I'm... the cleaner? Yeah, here to clean.",
                     "Leptoc Butler: Preposterous. You aren't even dressed like a cleaner. If you really are, then have a tiny sliver of professionalism and go get your uniform!",
                     "Leptoc Butler: Really, showing up to clean without any uniform or supplies. What a waste of my time.",
                     "(The butler slams the door in your face. Perhaps you need a disguise to get in.)"
-                })
-            }, new() { new("Quest", "MI_RomeoJuliet", "", 10) }, null, null ));
+                ])
+            ], [ new("Quest", "MI_RomeoJuliet", "", 10) ], null, null ));
 
-            toAdd.Add(new("MI_rjNotStarted", "Entering the Leptoc Mansion", new() {
+            toAdd.Add(new("MI_rjNotStarted", "Entering the Leptoc Mansion", [
                 new("You stand outside a large elegant mansion just outside the west gates of Varrock. The landscaping around the building is fantastic, the hedges and flowers all perfectly maintained to project an air of wealth.",
-                new() {
+                [
                     "(You see no reason to disturb the Leptocs currently, and as such do not knock on the door.)"
-                })
-            }, null, null, [ new("QuestAt", -1, "MI_RomeoJuliet")] ));
+                ])
+            ], null, null, [ new("QuestAt", -1, "MI_RomeoJuliet")] ));
 
-            toAdd.Add(new("MI_rjSerenade", "A Moonlight Serenade", new() {
+            toAdd.Add(new("MI_rjSerenade", "A Moonlight Serenade", [
                 new("You stand outside a large elegant mansion just outside the west gates of Varrock. The landscaping around the building is fantastic, the hedges and flowers all perfectly maintained to project an air of wealth. /n /n It is the middle of the night and the moon is high. Romeo is on one knee below Juliet's balcony.",
-                new() {
+                [
                     "Romeo: Juliet, I call to thee!",
                     "Juliet: O Romeo, Romeo! Wherefore art thou Romeo?",
                     "Romeo: I am here, under your window my dear, which I believe has a crack in the glass.",
                     "Juliet: Oh, don't worry about that my love. I care only that you are here.",
                     "You: This may take some time..."
-                })
-            }, null, null, [ new("QuestAt", 50, "MI_RomeoJuliet")] ));
+                ])
+            ], null, null, [ new("QuestAt", 50, "MI_RomeoJuliet")] ));
 
-            toAdd.Add(new("MI_rjChapel", "A Sudden Wedding", new() {
+            toAdd.Add(new("MI_rjChapel", "A Sudden Wedding", [
                 new("You stand outside the Varrock Chapel, dedicated to Saradomin but decorated in Varrockian colors. From inside you can hear a small ruckus from what guests Romeo has managed to gather on such short notice.",
-                new() {
+                [
                     "Romeo: You came! Let us wed, my love!",
                     "(Romeo takes Juliet by the hand and begins to lead her into the Chapel.)",
                     "(As you follow, Romeo places a hand on your shoulder.)",
@@ -55,12 +55,12 @@ namespace WorldtreeNexus.Hardcodes {
                     "Romeo: This calls for celebration! To the ale house!",
                     "You: That's okay, I really have things to-",
                     "Romeo: I will hear nothing of it, drinks are on me!"
-                })
-            }, [ new("Quest", "MI_RomeoJuliet", "", 70) ], null, [ new("QuestAt", 60, "MI_RomeoJuliet")] ));
+                ])
+            ], [ new("Quest", "MI_RomeoJuliet", "", 70) ], null, [ new("QuestAt", 60, "MI_RomeoJuliet")] ));
 
-            toAdd.Add(new("MI_rjBlueMoon", "Celebrations at the Blue Moon", new() {
+            toAdd.Add(new("MI_rjBlueMoon", "Celebrations at the Blue Moon", [
                 new("A spacious, clean, and nicely decorated bar. There are six tables with two stools apiece placed around the room, and three more stools at the bar. A large ornate blue rug covers most of the floor in the common area. There is a fire roaring in the stone fireplace, which has a painting of a water mill hanging above it. Behind the bar is a cabinet containing a wide variety of colorful bottles of alcohol. There's a staircase up to the second floor, where the rooms are, and a door back to the kitchen. /n /n The guests who were actually allowed into the ceremony have been invited here as well and are partying.",
-                new() {
+                [
                     "Romeo: Come, my friend!",
                     "Romeo: Drinks are on me like I promised!",
                     "Romeo: In fact, a round for everyone!",
@@ -101,12 +101,12 @@ namespace WorldtreeNexus.Hardcodes {
                     "You: You could just run away.",
                     "Romeo: And leave my Juliet here to rot under her fathers iron-fist rule? I would never.",
                     "You: I never have a choice, do I? Leave it to me. I think I have an idea. I just need to see a man about a sword."
-                })
-            }, [ new("Quest", "MI_RomeoJuliet", "", 80) ], null, [ new("QuestAt", 70, "MI_RomeoJuliet")] ));
+                ])
+            ], [ new("Quest", "MI_RomeoJuliet", "", 80) ], null, [ new("QuestAt", 70, "MI_RomeoJuliet")] ));
 
-            toAdd.Add(new("MI_rjDuel", "A Duel for Romeo's Honor", new() {
+            toAdd.Add(new("MI_rjDuel", "A Duel for Romeo's Honor", [
                 new("A small crowd has gathered in Varrock Square, their murmuring covering the normal loud sloshing of the fountain. Even the merchants have fallen quiet as the two combatants approach eachother.",
-                new() {
+                [
                     "Romeo: I do not wish to do this, Tybalt.",
                     "Tybalt: Then perhaps the tales are true about house Gontamue. You are all cowards.",
                     "Romeo: ...",
@@ -134,12 +134,12 @@ namespace WorldtreeNexus.Hardcodes {
                     "(Romeo begins to walk away, toward Lumbridge.)",
                     "You: Where you are going?",
                     "Romeo: Pub."
-                })
-            }, [ new("Quest", "MI_RomeoJuliet", "", 120), new("Teleport", "MIST_GroatsFarm", "", 1) ], null, [ new("QuestAt", 110, "MI_RomeoJuliet")] ));
+                ])
+            ], [ new("Quest", "MI_RomeoJuliet", "", 120), new("Teleport", "MIST_GroatsFarm", "", 1) ], null, [ new("QuestAt", 110, "MI_RomeoJuliet")] ));
 
-            toAdd.Add(new("MI_rjFinal", "One Last Goodbye", new() {
+            toAdd.Add(new("MI_rjFinal", "One Last Goodbye", [
                 new("You stand outside a large elegant mansion just outside the west gates of Varrock. The landscaping around the building is fantastic, the hedges and flowers all perfectly maintained to project an air of wealth.",
-                    new() {
+                    [
                         "Juliet: Who goes there?",
                         "You: It's me!",
                         "Juliet: Oh, hello. What are you doing here?",
@@ -180,15 +180,15 @@ namespace WorldtreeNexus.Hardcodes {
                         "(After a moment, Father Lawrence returns upstairs to pray.)",
                         "You: Now's my chance!",
                         "(You walk down the stone staircase to the Varrock crypts.)"
-                    }
+                    ]
                 ),
-                new("The crypt below the Varrock Chapel. Rows of tombs and funeral slabs for nobles line the halls, the crypt dark and dreary. The newest addition to their ranks, Juliet, lies on a white marble slab.", new() {
+                new("The crypt below the Varrock Chapel. Rows of tombs and funeral slabs for nobles line the halls, the crypt dark and dreary. The newest addition to their ranks, Juliet, lies on a white marble slab.", [
                     "You: Let's go, sleepyhead.",
                     "(Picking up Juliet, you sneak back upstairs and through the church doors.)",
                     "You: This doesn't look suspicious at all.",
                     "(A fairly long walk later, with your arms starting to get a little tired from carrying Juliet all this way, you arrive at the Port Sarim docks.)"
-                }),
-                new("The bustling docks of Port Sarim surround you. There are many ships loading and unloading cargo and passangers, bound for many other ports. Romeo appears to have been waiting here nervously for quite a while.", new() {
+                ]),
+                new("The bustling docks of Port Sarim surround you. There are many ships loading and unloading cargo and passangers, bound for many other ports. Romeo appears to have been waiting here nervously for quite a while.", [
                     "Romeo: Juliet!",
                     "(Romeo rushes towards you, tears in his eyes once again.",
                     "Romeo: Is she-",
@@ -213,8 +213,8 @@ namespace WorldtreeNexus.Hardcodes {
                     "(Romeo and Juliet board the ship.)",
                     "(The ship sails away from Port Sarim.)",
                     "You: Well. At least one of us got a happy ending."
-                })
-            }, [ new("Quest", "MI_RomeoJuliet", "", 150), new("Teleport", "ASG_PortSarimDocks", "", 1) ], null, [ new("QuestAt", 140, "MI_RomeoJuliet"), new("Item", 1, "potionSleeping", true)] ));
+                ])
+            ], [ new("Quest", "MI_RomeoJuliet", "", 150), new("Teleport", "ASG_PortSarimDocks", "", 1) ], null, [ new("QuestAt", 140, "MI_RomeoJuliet"), new("Item", 1, "potionSleeping", true)] ));
 
             for (int i = 0; i < toAdd.Count; i++) {
                 lib.TryAdd(toAdd[i].ID, toAdd[i]);

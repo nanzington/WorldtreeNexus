@@ -18,6 +18,8 @@ namespace WorldtreeNexus.DataTypes {
         public string MiscString = "";
         public bool Stolen = false;
 
+        public int SpoilTimer = -1;  
+
         [JsonIgnore]
         public Item? Library = null; 
 
@@ -42,6 +44,7 @@ namespace WorldtreeNexus.DataTypes {
             MiscString = wrap.MiscString;
 
             Stolen = wrap.Stolen;
+            SpoilTimer = wrap.SpoilTimer;
 
             if (wrap.Alchemy != null) {
                 Alchemy = new(wrap.Alchemy);
@@ -75,6 +78,7 @@ namespace WorldtreeNexus.DataTypes {
             MiscString = other.MiscString;
 
             Stolen = other.Stolen;
+            SpoilTimer = other.SpoilTimer;
 
             if (other.Alchemy != null) {
                 Alchemy = new(other.Alchemy);
@@ -95,7 +99,7 @@ namespace WorldtreeNexus.DataTypes {
 
                     clone.Alchemy = Alchemy;
                     clone.Stolen = Stolen;
-
+                    clone.SpoilTimer = SpoilTimer;
 
                     return clone;
                 }
@@ -105,22 +109,23 @@ namespace WorldtreeNexus.DataTypes {
             return null;
         }
 
-        public bool StacksWith(ItemWrapper otherWrap) {
+        public bool StacksWith(ItemWrapper otherWrap, bool stackOverride = false) {
             if (ID != otherWrap.ID) { return false; }
             if (Alchemy != null && otherWrap.Alchemy != null && !Alchemy.CheckMatch(otherWrap.Alchemy)) { return false; }
             if (Charges != otherWrap.Charges) { return false; }
             if (Noted != otherWrap.Noted) { return false; }
             if (Stolen != otherWrap.Stolen) { return false; }
+            if (SpoilTimer != otherWrap.SpoilTimer) { return false; }
 
             if (GetRef() is Item self && otherWrap.GetRef() is Item other) {
-                if (!self.Stackable) { return false; }
+                if ((!self.Stackable && !stackOverride) && !otherWrap.Noted) { return false; }
             } 
             
             return true;
         }
 
-        public bool StacksWith(Item other) {
-            return StacksWith(new ItemWrapper(other));
+        public bool StacksWith(Item other, bool stackOverride = false) {
+            return StacksWith(new ItemWrapper(other), stackOverride);
         }
 
         public void TryConsume() {

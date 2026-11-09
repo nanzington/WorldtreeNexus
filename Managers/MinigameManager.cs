@@ -75,6 +75,7 @@ namespace WorldtreeNexus.Managers {
                                     if (player.HasAllItems(["hammer,1", "saw,1"])) {
                                         player.ConsumeItems(mats);
                                         hot.Repaired = true;
+                                        player.CozyPointTotal += (MH_Tier + 1);
                                     } else { 
                                         GameLoop.WTN.Log.AddMessage("You have all the materials, but need a hammer and saw to repair that.", Color.Crimson);
                                     }

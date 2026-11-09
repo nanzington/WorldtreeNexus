@@ -5,11 +5,10 @@ namespace WorldtreeNexus.Hardcodes {
         public static void InitQuests(Dictionary<string, Quest> QuestLib) {
             List<Quest> toAdd = new();
 
-            toAdd.Add(new("TI_OnTheJobTraining", "On the Job Training", "Very Short", "Novice", "You have been tasked with collecting a set of items to be able to leave the island: /n - Copper bar /n - Illusion talisman /n - Attack potion /n - Cleansed bones /n - Small coin pouch /n - Poplar shortbow /n - Cozy Cottages teleport /n - Fish and Chips", 180, new() { "Tutorial Island" }) {
+            toAdd.Add(new("TI_OnTheJobTraining", "On the Job Training", "Very Short", "Novice", "You have been tasked with collecting a set of items to be able to leave the island: /n - Copper bar /n - Illusion talisman /n - Attack potion /n - Cleansed bones /n - Small coin pouch /n - Poplar shortbow /n - Cozy Cottages teleport /n - Fish and Chips", 180, [ "Tutorial Island" ]) {
                 StartNPC = "guyTutorial",
                 StartLoc = "TI_StartHut",
                 DateFullyImplemented = 20260828,
-                Rewards = { new("Item", "Gold", 1000) },
                 QuestPoints = 1,
                 Stages = new() {
                     { 0, new("I have spoken with Tutorial Guy, and been given a list of items to collect before I can leave the island: /n - Copper bar /n - Illusion talisman /n - Attack potion /n - Cleansed bones /n - Small coin pouch /n - Poplar shortbow /n - Cozy Cottages teleport /n - Fish and Chips /n /n He said I can try to figure out all the items myself in any order, but suggested that I speak to Farming Guy at his farmstead first if I want some guidance.", 10, quickDesc: "Speak to Farming Guy at his farmstead to learn about Farming.")},
@@ -30,7 +29,9 @@ namespace WorldtreeNexus.Hardcodes {
                     { 150, new("The fish bit somewhat handled, though I need to batter it before I can fry it to make proper fishsticks. Batter needs at least an egg and some flour. Everything I need should be at the farmstead.", 160, "PickupItem", "fishSticks", quickDesc: "Get a pot and bowl from the Kitchen, then go to the farmstead. Pick up an egg and use it on the bowl, then pick wheat and use the Windmill to turn it into flour. Use the flour on the bowl of egg to make a bowl of batter. Use the pollock fillet on the batter to batter it, then cook it in the Kitchen with the Deep Fryer.") },
                     { 160, new("My victory is close at hand! I just have to use the fish sticks on the fried potato sticks to turn them into fish and chips. I should be careful not to accidentally eat them, though!", 170, "PickupItem", "mealFishChips", quickDesc: "Use the fish sticks on the fried potato sticks to make fish and chips. Be careful not to activate them, as that will cause you to eat them.") },
                     { 170, new("That's every item on the list! I just have to go speak to Wizard Atrel to turn them all in.", 180, quickDesc: "Take all of the items from the list to Wizard Atrel in his hut to complete the quest.") },
-                    { 180, new("What a romp! I feel equipped to make my way in the world now", 180, quickDesc: "Items turned in, and quest completed. You may leave the island at any time now.") },
+                    { 180, new("What a romp! I feel equipped to make my way in the world now", 180, quickDesc: "Items turned in, and quest completed. You may leave the island at any time now.") { 
+                        Rewards = { new("Item", "Gold", 1000) }
+                    } },
                 }
             }); 
 

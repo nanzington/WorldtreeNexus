@@ -10,14 +10,20 @@ namespace WorldtreeNexus {
     class GameLoop {
         public const int GameWidth = 150;
         public const int GameHeight = 50;
-        public const bool DemoMode = true;
+
+        #if DEBUG
+            public const bool DemoMode = false;
+        #else 
+            public const bool DemoMode = true;
+        #endif 
+        
         public const bool BuildingWithoutMusic = false; // If you've cloned this from the repo and weren't specifically given the music files, set this to true while testing or it won't build.
 
 #pragma warning disable CS8618
         public static SadFont SquareFont;
         public static UIManager UIManager;
         public static Random rand;
-        public static SoundManager SoundManager; 
+        public static SoundManager SoundManager;
         public static SaveFile GlobalOptions;
 
         public static WorldtreeNexus WTN;
@@ -30,6 +36,11 @@ namespace WorldtreeNexus {
 
             Game.Instance.Run();
             Game.Instance.Dispose();
+
+            if (SteamManager.SteamInitialized) {
+                Steamworks.SteamClient.Shutdown();
+            }
+
         }
 
         private static void Init(object? sender, GameHost e) {
@@ -47,9 +58,11 @@ namespace WorldtreeNexus {
 
             UIManager.Init();
 
+            SteamManager.InitSteamClient();
+
             if (!BuildingWithoutMusic) {
-                SoundManager.LoadMusic(); 
-                SoundManager.PickMusic("Gymnopedie 1", true);
+            //    SoundManager.LoadMusic(); 
+            //    SoundManager.PickMusic("Gymnopedie 1", true);
             }
         }
 
@@ -58,8 +71,9 @@ namespace WorldtreeNexus {
                 Helper.ProcessedClick = false;
             }
 
-            if (!BuildingWithoutMusic)
-                SoundManager.UpdateSounds();
+            if (!BuildingWithoutMusic) {
+            //    SoundManager.UpdateSounds();
+            }
         }
 
         public static void SaveGlobalPrefs() {
@@ -70,6 +84,6 @@ namespace WorldtreeNexus {
             if (File.Exists("./globalOptions.json")) {
                 GlobalOptions = Helper.DeserializeFromFile<SaveFile>("./globalOptions.json");
             }
-        }
+        } 
     }
 }

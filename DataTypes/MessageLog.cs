@@ -22,7 +22,7 @@ namespace WorldtreeNexus.DataTypes {
         public void AddMessage(ColoredString msg) {
             if (Log.Count > 0) {
                 if (Log[^1].Message.String == msg.String) {
-                    Log[^1].Count++;
+                    Log[^1].Count++; 
                 }
                 else {
                     Log.Add(new(msg));

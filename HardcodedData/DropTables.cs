@@ -32,12 +32,21 @@ namespace WorldtreeNexus.HardcodedData {
             new("seedNarangi", y: 100), new("seedAka", y: 100)
         ];
 
+        public static List<ItemDrop> SeedsFiberLow = [ new("seedXiangdao", y: 10), new("seedVeneficus", y: 20), new("seedZauberer", y: 30), new("seedVolshebnik", y: 40) ];
+        public static List<ItemDrop> SeedsFlowersLow = [ new("seedSunflower", y: 10), new("seedTulip", y: 20), new("seedOrchid", y: 30), new("seedChrysanthemum", y: 40) ];
+        public static List<ItemDrop> SeedsBushLow = [ new("seedStrawberry", y: 10), new("seedNightshade", y: 20), new("seedBlueberry", y: 30), new("seedRaspberry", y: 40) ];
+        public static List<ItemDrop> SeedsMushroomsSafeLow = [ new("seedShaggyMane", y: 10), new("seedHoneycap", y: 20), new("seedDeafcup", y: 30), new("seedConiferTuft", y: 40) ];
+        public static List<ItemDrop> SeedsMushroomsToxicLow = [ new("seedShabbyMane", y: 10), new("seedHoneycup", y: 20), new("seedDeathcap", y: 30), new("seedConiformTuft", y: 40) ];
+        public static List<ItemDrop> SeedsTreesLow = [ new("seedPoplar", y: 10), new("seedElm", y: 20), new("seedWalnut", y: 30), new("seedHolly", y: 40) ];
+
         public static List<ItemDrop> SeedsAllotmentLow = [
             new("seedPotato", y:10), new("seedOnion", y:10), new("seedCabbage", y:10), new("seedTomato", y:10), new("seedSweetcorn", y:10), new("seedLettuce", y:10), 
             new("seedBroccoli", y:10), new("seedCauliflower", y:10), new("seedBellpepper", y:10), new("seedCarrot", y:10), new("seedCucumber", y:10), new("seedSweetpeas", y:10)
         ];
 
 
-        public static List<ItemDrop> SeedsAllLow = [ ..SeedsHerbLow, ..SeedsAllotmentLow ];
+        public static List<ItemDrop> SeedsAllLow = [ 
+            ..SeedsHerbLow, ..SeedsAllotmentLow, ..SeedsFiberLow, ..SeedsFlowersLow, ..SeedsBushLow, ..SeedsMushroomsSafeLow, ..SeedsMushroomsToxicLow, ..SeedsTreesLow 
+        ];
     }
 }

@@ -26,14 +26,12 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Feather", "I could probably make arrows with this. Or put one in my cap!", "feather", 255, 255, 255, 2, true)); 
             itemsToAdd.Add(new Item("Iron studs", "A set of studs for leather armour.", "studsIron", ColorLib.Iron, 45)); 
             itemsToAdd.Add(new Item("Shears", "Necessary to de-wool sheep.", "shears", ColorLib.Steel, 5, misc: "Shears")); 
-            itemsToAdd.Add(new Item("Waterskin (0)", "A completely empty waterskin - you'll need to fill it up.", "waterskin0", Color.Khaki, 15));
-            itemsToAdd.Add(new Item("Waterskin (1)", "A nearly empty waterskin with one portion of water.", "waterskin1", Color.Khaki, 18));
-            itemsToAdd.Add(new Item("Waterskin (2)", "A half empty waterskin with two portions of water.", "waterskin2", Color.Khaki, 24));
-            itemsToAdd.Add(new Item("Waterskin (3)", "A nearly full waterskin with three portions of water.", "waterskin3", Color.Khaki, 27));
-            itemsToAdd.Add(new Item("Waterskin (4)", "A full waterskin with four portions of water.", "waterskin4", Color.Khaki, 30));
+            itemsToAdd.Add(new Item("Waterskin", "A waterskin, capable of holding water.", "waterskin", Color.Khaki, 30) { UseString = "Potion", UsesCharges = true, ShattersAtZeroCharges = false, UseInt4 = 4, Potion = [new("Thirst", 30)] });
             itemsToAdd.Add(new Item("Rope", "A coil of rope.", "rope", Color.SaddleBrown, 18));
             itemsToAdd.Add(new Item("Compass", "Points to any map within 20 connections. Only considers usable primary connection destinations. May not result in fastest possible route.", "compass", ColorLib.Steel, 100) { UseString = "CompassMenu", ConsumedOnUse = false });
-             
+            itemsToAdd.Add(new Item("Bedroll", "A bedroll, allows you to skip time ahead by resting one hour at a time.", "bedroll", Color.BurlyWood, 100) { UseString = "Bedroll", ConsumedOnUse = false });
+            itemsToAdd.Add(new Item("Travel ration", "Doesn't taste great but at least it won't go bad.", "rationTravel", Color.SaddleBrown, 200) { UseString = "Potion", Potion = [ new("Hunger", 30)]  });
+
             itemsToAdd.Add(new Item("Cozy Cottages contract", "A note detailing your current active Cozy Cottages contract, if any. Activate to check.", "cozyCottagesContract", Color.Beige, 1, trade: false) { UseString = "CozyCottages", ConsumedOnUse = false});
             itemsToAdd.Add(new Item("John Henry's Hammer", "The iconic tool of a true steel-drivin' man.", "hammerEquippable", ColorLib.Steel, 1000, trade: false) {
                 EquipSlot = "Weapon", CountsAsIDs = [ "hammer" ]
@@ -159,19 +157,10 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Empty oil lantern", "An oil lantern with no oil in it.", "oilLanternEmpty", ColorLib.Steel, 125)); 
             itemsToAdd.Add(new Item("Oil lantern (lit)", "It lights your way through the dark places of the earth.", "oilLanternLit", Color.Yellow, 125) { UseString = "Extinguish", UseString2 = "oilLantern", ConsumedOnUse = false, ProvidesLight = true });
             itemsToAdd.Add(new Item("Oil lantern", "An unlit oil lantern.", "oilLantern", ColorLib.Steel, 125) { UseString = "Light", UseString2 = "oilLanternLit", ConsumedOnUse = false });
+            itemsToAdd.Add(new Item("Flask of oil", "Use to refill an oil lamp or lantern.", "oilFlask", ColorLib.Iron, 10));
             
 
             itemsToAdd.Add(new Item("Tutorial Island cape", "A cape signifying you completed all challenges on Tutorial Island. Congratulations!", "capeCompTI", 135, 206, 235, 0, trade: false) { EquipSlot = "Cape", EquipTier = 1, MiscString = "OmniBoost" });
-            
-            {
-                // ordinary wizard
-                itemsToAdd.Add(new Item("Blue wizard hat", "A silly pointed hat.", "wizardBlueHat", 0, 157, 196, 2) { EquipSlot = "Head", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Blue wizard shirt", "I can do better magic in this.", "wizardBlueRobe", 0, 157, 196, 15) { EquipSlot = "Body", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Blue wizard skirt", "I can do better magic in this.", "wizardBlueBottom", 0, 157, 196, 15) { EquipSlot = "Legs", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard hat", "A silly pointed hat.", "wizardBlackHat", Color.DimGray, 2) { EquipSlot = "Head", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard shirt", "I can do better magic in this.", "wizardBlackRobe", Color.DimGray, 15) { EquipSlot = "Body", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-                itemsToAdd.Add(new Item("Black wizard skirt", "I can do better magic in this.", "wizardBlackBottom", Color.DimGray, 15) { EquipSlot = "Legs", EquipTier = 1, EquipSkill = "Defense", EquipLevel = 1, MiscString = "DefenseMagic" });
-            }
 
             itemsToAdd.Add(new Item("Herb sack", "You can store grimy herbs in here, up to 30 of each kind.", "sackHerb", Color.SandyBrown, 1, trade: false) {  UseString = "ViewInventory", ConsumedOnUse = false, ContainerStacksUnstackable = true, ContainerMaxStack = 30, ContainerSlots = 30, ContainableIDs = [ "herbGrimyArbuck", "herbGrimyAvantoe", "herbGrimyBloodweed", "herbGrimyCadantine", "herbGrimyDwarfweed", "herbGrimyFellstalk", "herbGrimyGuam", "herbGrimyHarralander", "herbGrimyIrit", "herbGrimyKwuarm", "herbGrimyLantadyme", "herbGrimyMarrentill", "herbGrimyRanarr", "herbGrimySnapdragon", "herbGrimySpiritweed", "herbGrimyTarromin", "herbGrimyToadflax", "herbGrimyTorstol", "herbGrimyWergali" ] });
             
@@ -200,7 +189,7 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Huger club", "Where did that zombie even get such a large bone? You can barely move this thing.", "clubHuger", 255, 255, 255, 5000) {
                 EquipSlot = "Weapon",  EquipTier = 4, EquipSkill = "Attack", EquipLevel = 10, EquipDamageType = "Crush", EquipElement = "Earth", AttackSpeed = 2
             });
-            itemsToAdd.Add(new Item("Rotten flesh", "This doesn't really seem edible...", "fleshRotten", 150, 100, 50, 4) { UseString = "Heal", UseInt = 2, Potion = new() { new("Attack", -3) } });
+            itemsToAdd.Add(new Item("Rotten flesh", "This doesn't really seem edible...", "fleshRotten", 150, 100, 50, 4) { UseString = "Potion", Potion = [new("Heal", 1), new("Attack", -3)] });
             
             
             
@@ -208,9 +197,6 @@ namespace WorldtreeNexus.Hardcodes {
             
             
             itemsToAdd.Add(new Item("Unicorn horn", "This horn has restorative properties.", "unicornHorn", Color.SandyBrown, 20));
-            itemsToAdd.Add(new Item("Chocolate bar", "Mmmmmmmm chocolate.", "chocolateBar", Color.Chocolate, 10));
-            itemsToAdd.Add(new Item("Chocolate dust", "It's ground up chocolate.", "chocolateDust", Color.Chocolate, 10) { Alchemy = new(13, 7, -5, -5, 1) });
-
             
             itemsToAdd.Add(new Item("Coins", "Filthy lucre. Activate to add to your coin pouch.", "coins", Color.Goldenrod, 1, true) { UseString = "Gold" });
             itemsToAdd.Add(new Item("Key (clue step)", "Used to open the container you need to access for your clue step.", "keyClue", Color.Goldenrod, 0, trade: false));
@@ -220,7 +206,7 @@ namespace WorldtreeNexus.Hardcodes {
             
 
 
-            itemsToAdd.Add(new Item("Daily Sprout #0 (10-30-2026)", "The inaugural issue of The Daily Sprout.", "newspaper0", Color.AntiqueWhite, 1) { ConsumedOnUse = false, UseString = "Newspaper", UseString2 = "exampleDontUse" });
+            itemsToAdd.Add(new Item("Daily Sprout (10-30-2026)", "The inaugural issue of The Daily Sprout.", "newspaper0", Color.AntiqueWhite, 1) { ConsumedOnUse = false, UseString = "Newspaper", UseString2 = "exampleDontUse" });
             
 
             for (int i = 0; i < itemsToAdd.Count; i++) {

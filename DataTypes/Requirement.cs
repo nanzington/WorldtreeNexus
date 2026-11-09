@@ -39,10 +39,10 @@
             }
 
             if (RequirementType == "QuestAt") {
-                if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
-                    if (req != null) {
-                        if (req.CompleteStage == MiscInt)
-                            return "Completed Quest: " + req.Name;
+                if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req) && req != null) {
+                    if (req.Stages.TryGetValue(MiscInt, out QuestStage? stage) && stage != null) {
+                        if (stage.EndStage == 1)
+                            return "Completed Quest: " + req.Name + " [stage " + MiscInt + "]";
                         else
                             return "Quest: " + req.Name + " [stage " + MiscInt + "]";
                     }
@@ -52,10 +52,10 @@
             }
 
             if (RequirementType == "QuestNot") {
-                if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
-                    if (req != null) {
-                        if (req.CompleteStage == MiscInt)
-                            return "Not completed Quest: " + req.Name;
+                if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req) && req != null) {
+                    if (req.Stages.TryGetValue(MiscInt, out QuestStage? stage) && stage != null) {
+                        if (stage.EndStage == 1)
+                            return "Not completed Quest: " + req.Name + " [stage " + MiscInt + "]";
                         else
                             return "Quest: " + req.Name + " [not stage " + MiscInt + "]";
                     }
@@ -74,10 +74,10 @@
                 return "Incomplete " + MiscString;
             }
 
-            if (RequirementType == "QuestPast") {
+            if (RequirementType == "QuestVisited") {
                 if (GameLoop.WTN.QuestLibrary.TryGetValue(MiscString, out Quest? req)) {
                     if (req != null) {
-                        return "Quest: " + req.Name + " [At or Above Stage " + MiscInt + "]";
+                        return "Quest: " + req.Name + " [Visited Stage " + MiscInt + "]";
                     }
                 }
 
@@ -259,9 +259,9 @@
                 }
             }
 
-            if (RequirementType == "QuestPast") {
+            if (RequirementType == "QuestVisited") {
                 if (p.QuestLog.TryGetValue(MiscString, out QuestStatus? quest)) {
-                    if (quest.CurrentStage >= MiscInt) {
+                    if (quest.StageHistory.Contains(MiscInt)) {
                         return true;
                     }
                 }

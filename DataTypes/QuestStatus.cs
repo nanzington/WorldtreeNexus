@@ -7,6 +7,8 @@ namespace WorldtreeNexus.DataTypes {
         public string QuestID = "";
         public int CurrentStage = -1;
         public int NumTracker = 0; // If you have to do a thing multiple times, like kill a monster, gather an item, etc
+
+        public List<int> StageHistory = new();
           
         public QuestStatus(string id, int stage) {
             QuestID = id;

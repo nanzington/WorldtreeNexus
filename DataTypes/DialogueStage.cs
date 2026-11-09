@@ -15,7 +15,7 @@
         
 
         public DialogueStage(string t, List<DialogueChoice> choices, string quest = "", int questStage = 0, List<string>? items = null, List<RunAction>? acts = null, string altSpeaker = "") {
-            Text = new() { new(t) };
+            Text = [ new(t) ];
             Choices = choices;
             AltSpeaker = altSpeaker;
 

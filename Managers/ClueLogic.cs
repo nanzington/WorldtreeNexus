@@ -4,7 +4,7 @@ using WorldtreeNexus.DataTypes;
 namespace WorldtreeNexus.Managers {
     public static class ClueLogic {
         public static bool GenericStep(Player player, MessageLog Log, string clueType, string interacted = "") { 
-            List<string> ClueDiffs = new() { "Tutorial", "Beginner", "Easy", "Medium", "Hard", "Elite", "Master" }; 
+            List<string> ClueDiffs = [ "Tutorial", "Beginner", "Easy", "Medium", "Hard", "Elite", "Master" ]; 
             ref string clueID = ref player.CurrentClueTutorial;
 
             foreach (var diff in ClueDiffs) {

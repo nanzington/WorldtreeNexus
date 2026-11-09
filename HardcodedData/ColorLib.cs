@@ -33,5 +33,14 @@
         public static Color PastelBlue = new Color(179, 235, 242);
         public static Color PastelGreen = new Color(128, 239, 128);
 
+        // Assorted Colors
+        public static Color Chinese = new Color(205, 7, 30);
+        public static Color Roman = new Color(84, 44, 93);
+        public static Color German = new Color(255, 204, 0);
+        public static Color Russian = new Color(0, 54, 167);
+        public static Color Irish = new Color(22, 155, 98);
+        public static Color Arabian = new Color(109, 3, 78);
+        public static Color Portuguese = new Color(4, 106, 56);
+
     }
 }

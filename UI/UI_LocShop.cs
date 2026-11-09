@@ -33,9 +33,10 @@ namespace WorldtreeNexus.UI {
             }
 
             for (int i = ActivityItemTop; i < curr.ShopItemsHere.Count && resourceY < 35; i++) {
-                if (GameLoop.WTN.ItemLibrary.ContainsKey(curr.ShopItemsHere[i])) {
-                    Item shop = new(GameLoop.WTN.ItemLibrary[curr.ShopItemsHere[i]]); 
-                    mini.Con.Print(resourceX + 2, resourceY, "|");
+                if (GameLoop.WTN.ItemLibrary.TryGetValue(curr.ShopItemsHere[i], out Item? shop) && shop != null) { 
+                    mini.Con.PrintClickable(resourceX + 2, resourceY, new ColoredString("?", Color.MediumPurple, Color.Black), () => {
+                        Log.AddMessage(shop.ExamineText, Color.SandyBrown);
+                    });
                     int spaceAfterName = 33 - shop.GetName(1, 0, shop.UseInt4).Length;
 
                     int qty = 1;

@@ -71,11 +71,30 @@ namespace WorldtreeNexus.Managers {
             }
 
             mini.Con.Print(0, 2, "    HP: " + player.CurrentHP.ToString().Align(HorizontalAlignment.Right, 4, ' ') + " / " + player.Skills["Hitpoints"].Level.ToString().Align(HorizontalAlignment.Right, 4, ' '), Color.Crimson);
-            mini.Con.Print(0, 3, "Prayer: " + player.CurrentPrayer.ToString().Align(HorizontalAlignment.Right, 4, ' ') + " / " + player.GetMaxPrayer().ToString().Align(HorizontalAlignment.Right, 4, ' '), prayerTicking ? Color.White : Color.DodgerBlue);
+            mini.Con.Print(0, 3, "Prayer: " + player.CurrentPrayer.ToString().Align(HorizontalAlignment.Right, 4, ' ') + " / " + player.GetMaxPrayer().ToString().Align(HorizontalAlignment.Right, 4, ' '), prayerTicking ? Color.White : Color.Aquamarine);
             
             
+            if (player.HungerMode == 2) {
+                mini.Con.Print(1, 4, "---" + 22.AsString(), Color.Lime);
+            } else { 
+                mini.Con.Print(1, 4, player.HungerBar.ToString().Align(HorizontalAlignment.Right, 3) + 22.AsString(), Color.Lime);
+            }
 
-            mini.Con.Print(0, 5, " Level: " + player.GetCombatLevel(), Color.Yellow); 
+            if (player.ThirstMode == 2) {
+                mini.Con.Print(9, 4, "---" + 23.AsString(), Color.DodgerBlue);
+            } else { 
+                mini.Con.Print(9, 4, player.ThirstBar.ToString().Align(HorizontalAlignment.Right, 3) + 23.AsString(), Color.DodgerBlue);
+            }
+
+            if (player.RestMode == 2) {
+                mini.Con.Print(16, 4, "---" + 24.AsString(), Color.Crimson);
+            } else { 
+                mini.Con.Print(16, 4, player.RestBar.ToString().Align(HorizontalAlignment.Right, 3) + 24.AsString(), Color.Crimson);
+            }
+
+
+
+            mini.Con.Print(0, 6, "Level: " + player.GetCombatLevel(), Color.Yellow); 
 
             bool magic = player.IsMaging();
 
@@ -85,8 +104,8 @@ namespace WorldtreeNexus.Managers {
 
             dmgDisp += " " + player.GetDamageElement();
 
-            mini.Con.Print(0, 6, "MaxHit: " + player.MaxDamage() + " " + dmgDisp, Color.Yellow); 
-            mini.Con.Print(0, 7, "DR: " + player.TotalArmorValue("Melee") + 20.AsString() + " / " + player.TotalArmorValue("Magic") + 19.AsString() + " / " + player.TotalArmorValue("Ranged") + 18.AsString(), Color.Yellow); 
+            mini.Con.Print(0, 7, "MaxHit: " + player.MaxDamage() + " " + dmgDisp, Color.Yellow); 
+            mini.Con.Print(0, 8, "DR: " + player.TotalArmorValue("Melee") + 20.AsString() + " / " + player.TotalArmorValue("Magic") + 19.AsString() + " / " + player.TotalArmorValue("Ranged") + 18.AsString(), Color.Yellow); 
 
 
             if (player.CombatCasting != null) {
@@ -100,7 +119,7 @@ namespace WorldtreeNexus.Managers {
                     else if (player.CombatSpell5 != null && player.CombatSpell5.Equals(player.CombatCasting)) { castingWhich += "5"; }
                     else { castingWhich += "E"; }
                     
-                    mini.Con.PrintClickable(0, 9, new ColoredString("*" + castingWhich.Align(HorizontalAlignment.Center, 18) + "*", Color.SkyBlue, Color.Black), () => { player.CombatCasting = null; });
+                    mini.Con.PrintClickable(0, 10, new ColoredString("*" + castingWhich.Align(HorizontalAlignment.Center, 18) + "*", Color.SkyBlue, Color.Black), () => { player.CombatCasting = null; });
                 } else {
                     player.CombatCasting = null;
                 }
@@ -224,7 +243,7 @@ namespace WorldtreeNexus.Managers {
                 hx = hx + 1;
                 mini.Con.PrintClickable(hx, 13, new ColoredString("MUS", SidebarMenu == "Music" ? Color.Yellow : Color.White, Color.Black), () => { 
                     SidebarMenu = "Music"; 
-
+                    /*
                     int scrollTop = 0;
                     List<KeyValuePair<string, IrrKlang.ISoundSource>> songs = GameLoop.SoundManager.Songs.OrderBy(o => o.Key).ToList();
 
@@ -234,7 +253,7 @@ namespace WorldtreeNexus.Managers {
                         }
                     }
                     
-                    SidebarScrollTop = Math.Clamp(scrollTop, 0, songs.Count);
+                    SidebarScrollTop = Math.Clamp(scrollTop, 0, songs.Count); */
                     //SidebarScrollTop = Math.Clamp(scrollTop, 0, songs.Count - 18);
                 });
 
@@ -339,7 +358,7 @@ namespace WorldtreeNexus.Managers {
                                 }
 
                                 foreach (var kv in GameLoop.WTN.QuestLibrary) {
-                                    kv.Value.CheckProgress(player, "ExamineItem", player.Inventory[i].ID, 0);
+                                    player.TryProgressQuest("ExamineItem", player.Inventory[i].ID);
                                 }
                             });
 
@@ -1214,17 +1233,34 @@ namespace WorldtreeNexus.Managers {
                         mini.Con.PrintClickable(46, 33, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage("Magic damage is based on spell tier and Magic level, but spell tier is capped by the tier of your equipped weapon.", Color.Yellow); });
                     } else {
                         List<Spell> spells = new();
+                        string playerRegion = player.GetRegion();
 
                         foreach (var kv in GameLoop.WTN.SpellLibrary) {
-                            if (kv.Value.Book == player.MagicBook && kv.Value.Category == MagicTab) {
+                            if ((kv.Value.Book == "Standard" || kv.Value.Book == playerRegion) && kv.Value.Category == MagicTab) {
                                 spells.Add(kv.Value);
                             }
                         }
 
-                        for (int i = 0; i < spells.Count; i++) {
+                        spells = spells.OrderBy(o => o.Level).ThenBy(o => o.Name).ToList();
+
+                        int qty = 1;
+                        if (Helper.EitherShift())
+                            qty *= 5;
+                        if (Helper.EitherControl())
+                            qty *= 10;
+
+                        if (spells.Count > 18) {
+                            if (Helper.ScrolledUp()) { SidebarScrollTop = Math.Clamp(SidebarScrollTop - qty, 0, spells.Count - 18); }
+                            if (Helper.ScrolledDown()) { SidebarScrollTop = Math.Clamp(SidebarScrollTop + qty, 0, spells.Count - 18); }
+                        } else {
+                            SidebarScrollTop = 0;
+                        }
+
+                        for (int i = SidebarScrollTop; i < spells.Count && i < SidebarScrollTop + 18; i++) {
+                            int adj = i - SidebarScrollTop;
                             string cast = player.CanCast(spells[i]);
 
-                            mini.Con.PrintClickable(6, 17 + i, new ColoredString(spells[i].Name, cast.Contains("cooldown") ? Color.Yellow : cast.Contains("Magic") ? Color.DarkSlateGray : cast != "" ? Color.Crimson : Color.White, Color.Black), () => { 
+                            mini.Con.PrintClickable(7, 17 + adj, new ColoredString(spells[i].Name, cast.Contains("cooldown") ? Color.Yellow : cast.Contains("Magic") ? Color.DarkSlateGray : cast != "" ? Color.Crimson : Color.White, Color.Black), () => { 
                                 if (cast == "") {
                                     if (MagicTab == "Tele") {
                                         if (spells[i].ID != "teleHome") {
@@ -1237,7 +1273,7 @@ namespace WorldtreeNexus.Managers {
                                     }
 
                                     if (MagicTab == "Utility") {
-                                        if (spells[i].ID == "utilBonesBananas" || spells[i].ID == "utilBonesPeaches" || spells[i].ID == "utilSuperheat" || spells[i].ID.Contains("utilEnchant")) {
+                                        if (spells[i].ID == "utilBonesBananas" || spells[i].ID == "utilBonesPeaches" || spells[i].ID == "utilSuperheat" || spells[i].ID.Contains("utilEnchant") || spells[i].ID.Contains("utilCure")) {
                                             foreach (var act in spells[i].CastActions) {
                                                 act.Execute();
                                             } 
@@ -1256,8 +1292,8 @@ namespace WorldtreeNexus.Managers {
                                 }
                             });
 
-                            mini.Con.Print(1, 17+i, spells[i].Level.ToString().Align(HorizontalAlignment.Right, 2));
-                            mini.Con.PrintClickable(4, 17+i, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage(spells[i].Description); });
+                            mini.Con.Print(1, 17+adj, spells[i].Level.ToString().Align(HorizontalAlignment.Right, 3));
+                            mini.Con.PrintClickable(5, 17+adj, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage(spells[i].Description); });
                         }
                     }
                 } else if (SidebarMenu == "Log") {
@@ -1342,7 +1378,7 @@ namespace WorldtreeNexus.Managers {
                         mini.Con.Print(1, printY++, "(no active potion effects)", Color.DarkSlateGray);
                     }
                 }
-                else if (SidebarMenu == "Music") { 
+                else if (SidebarMenu == "Music") { /*
                     mini.Con.PrintClickable(1, 15, new ColoredString("Auto", player.MusicMode == "Auto" ? Color.Yellow : Color.White, Color.Black), () => {
                         player.MusicMode = "Auto";
                         GameLoop.SoundManager.CurrentSong = "";
@@ -1385,7 +1421,7 @@ namespace WorldtreeNexus.Managers {
                                 GameLoop.SoundManager.PickMusic(songs[i].Key);
                             }
                         });
-                    }
+                    } */
                 } else if (SidebarMenu == "Prayer") {
                     mini.Con.Print(7, 15, "Prayer Name", Color.White);
                     mini.Con.Print(1, 15, "Lvl", Color.White);

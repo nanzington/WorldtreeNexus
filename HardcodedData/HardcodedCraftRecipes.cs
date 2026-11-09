@@ -49,6 +49,14 @@ namespace WorldtreeNexus.Hardcodes {
                 toAdd.Add(new("Needle", "Crafting", leather.Level, leather.ExpMultiplier * 2, [leather.SimpleName + "," + 2], "shield" + leather.Name, tool: "needle"));
             }
 
+            foreach (var cloth in Materials.Cloths) { 
+                toAdd.Add(new("Needle", "Crafting", cloth.Level, cloth.ExpMultiplier, ["bolt" + cloth.Name + "," + 1], "hood" + cloth.Name, tool: "needle"));
+                toAdd.Add(new("Needle", "Crafting", cloth.Level, cloth.ExpMultiplier * 5, ["bolt" + cloth.Name + "," + 5], "robeTop" + cloth.Name, tool: "needle"));
+                toAdd.Add(new("Needle", "Crafting", cloth.Level, cloth.ExpMultiplier * 3, ["bolt" + cloth.Name + "," + 3], "robeBottom" + cloth.Name, tool: "needle"));
+                toAdd.Add(new("Needle", "Crafting", cloth.Level, cloth.ExpMultiplier, ["bolt" + cloth.Name + "," + 1], "gloves" + cloth.Name, tool: "needle"));
+                toAdd.Add(new("Needle", "Crafting", cloth.Level, cloth.ExpMultiplier, ["bolt" + cloth.Name + "," + 1], "footwraps" + cloth.Name, tool: "needle"));
+            }
+
              
             foreach (var wood in Materials.Woods) { 
                 toAdd.Add(new("Knife", "Fletching", wood.Level, (int) (wood.Tier * 5), ["log" + wood.Name + "," + 1], "arrowshaft", 15, "knife"));
@@ -88,6 +96,7 @@ namespace WorldtreeNexus.Hardcodes {
                 toAdd.Add(new("Casting", "Crafting", mat.Level, mat.ExpMultiplier * 2, mats, "ring" + mat.Name, 1, "mouldRing")); 
                 toAdd.Add(new("Casting", "Crafting", mat.Level, mat.ExpMultiplier * 2, mats, "bracelet" + mat.Name, 1, "mouldBracelet")); 
                 toAdd.Add(new("Casting", "Crafting", mat.Level, mat.ExpMultiplier * 2, mats, "necklace" + mat.Name, 1, "mouldNecklace")); 
+                toAdd.Add(new("Casting", "Crafting", mat.Level, mat.ExpMultiplier * 2, mats, "brooch" + mat.Name, 1, "mouldBrooch")); 
             }
 
             foreach (var mat in Materials.Metals) {
@@ -98,6 +107,7 @@ namespace WorldtreeNexus.Hardcodes {
                 toAdd.Add(new("Casting", "Crafting", mat.Level, mat.ExpMultiplier / 10, mats, "ring" + mat.Name, 1, "mouldRing")); 
                 toAdd.Add(new("Casting", "Crafting", mat.Level, mat.ExpMultiplier / 10, mats, "bracelet" + mat.Name, 1, "mouldBracelet")); 
                 toAdd.Add(new("Casting", "Crafting", mat.Level, mat.ExpMultiplier / 10, mats, "necklace" + mat.Name, 1, "mouldNecklace")); 
+                toAdd.Add(new("Casting", "Crafting", mat.Level, mat.ExpMultiplier / 10, mats, "brooch" + mat.Name, 1, "mouldBrooch")); 
             }
 
             toAdd.Add(new("Casting", "Crafting", 23, 53, ["barSilver,1"], "unstrungSymbol", 1, "mouldHoly")); 

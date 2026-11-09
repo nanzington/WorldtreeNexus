@@ -55,6 +55,18 @@ namespace WorldtreeNexus.Hardcodes {
             tiles.Add(new GatheringTile("stallSeedLow", "Seed Stall", "Steal from", 30, 10, "Thieving", 1, 10, items: [ ..DropTables.SeedsAllLow ]));
             tiles.Add(new GatheringTile("stallBaker", "Baker Stall", "Steal from", 30, 10, "Thieving", 1, 10, items: [ ..DropTables.SeedsAllLow ]));
             
+            
+            tiles.Add(new GatheringTile("jobHandyHaversack", "The Handy Haversack", "Work at", 100, 0, reqs: [ new("TimeBetween", 540, miscint2: 1260)], actions: [ new("HourlyJob", "The Handy Haversack", "", 100)], customLog: "_"));
+            tiles.Add(new GatheringTile("jobFarmersMarket", "The Farmer's Market", "Work at", 100, 0, reqs: [ new("TimeBetween", 540, miscint2: 1260)], actions: [ new("HourlyJob", "The Farmer's Market", "", 100)], customLog: "_"));
+            tiles.Add(new GatheringTile("jobFeedSeed", "Feed and Seed", "Work at", 100, 0, reqs: [ new("TimeBetween", 540, miscint2: 1260)], actions: [ new("HourlyJob", "Feed and Seed", "Farming", 50)], customLog: "_"));
+            tiles.Add(new GatheringTile("jobPotentPotables", "Potent Potables", "Work at", 100, 0, reqs: [ new("TimeBetween", 540, miscint2: 1260)], actions: [ new("HourlyJob", "Potent Potables", "Alchemy", 50)], customLog: "_"));
+            tiles.Add(new GatheringTile("jobCraftyCrafters", "Crafty Crafters", "Work at", 100, 0, reqs: [ new("TimeBetween", 540, miscint2: 1260)], actions: [ new("HourlyJob", "Crafty Crafters", "Crafting", 50)], customLog: "_"));
+            tiles.Add(new GatheringTile("jobMeatCute", "Meat Cute", "Work at", 100, 0, reqs: [ new("TimeBetween", 540, miscint2: 1260)], actions: [ new("HourlyJob", "Meat Cute", "Cooking", 50)], customLog: "_"));
+
+            tiles.Add(new GatheringTile("innSleepMorning", "(100gp)", "Sleep until Morning", 100, 0, reqs: [ new("Item", 100, "Gold") ], actions: [ new("SleepInn", "Morning", "", 100)], customLog: "_"));
+            tiles.Add(new GatheringTile("innSleepAfternoon", "(100gp)", "Sleep until Noon", 100, 0, reqs: [ new("Item", 100, "Gold") ], actions: [ new("SleepInn", "Afternoon", "", 100)], customLog: "_"));
+            tiles.Add(new GatheringTile("innSleepNight", "(100gp)", "Sleep until Night", 100, 0, reqs: [ new("Item", 100, "Gold") ], actions: [ new("SleepInn", "Night", "", 100)], customLog: "_"));
+            tiles.Add(new GatheringTile("innSleepMidnight", "(100gp)", "Sleep until Midnight", 100, 0, reqs: [ new("Item", 100, "Gold") ], actions: [ new("SleepInn", "Midnight", "", 100)], customLog: "_"));
 
 
             tiles.Add(new GatheringTile("sheep", "Sheep", "Shear", 100, 5, "Farming", 0, 0, "Shears", items: [ new("woolRaw") ]));

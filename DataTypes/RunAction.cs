@@ -35,6 +35,12 @@ namespace WorldtreeNexus.DataTypes {
                     player.TryAddPotionEffect(MiscString, MiscInt); 
                 }
 
+                if (ActionID == "UnlockAchievement") {
+                    if (SteamManager.TryUnlockAchievement("Main_TutorialCompletion")) {  
+                        GameLoop.WTN.Log.AddMessage("Achievement unlocked: Obtain the Tutorial Island Completionist cape.");
+                    }
+                }
+
                 if (ActionID == "OpenUI") {
                     if (MiscString == "Shop") {
                         ExtraWindows.Shop.IsVisible = true;
@@ -66,19 +72,38 @@ namespace WorldtreeNexus.DataTypes {
                         player.UnlockedSongs.Add(MiscString); 
                         Log.AddMessage("You have unlocked the song: " + MiscString, Color.Turquoise);
                     }
-
+                    /*
                     if (player.MusicMode == "Auto" && GameLoop.SoundManager.CurrentSong != MiscString && GameLoop.SoundManager.PlayingSounds.Count == 0) {
                         GameLoop.SoundManager.PickMusic(MiscString);
+                    } */
+                }
+
+                if (ActionID == "CureSpell") {
+                    if (player.CureCooldown <= 0) {
+                        if (player.CurrentHP != player.GetEffectiveSkillLevel("Hitpoints")) {
+                            if (GameLoop.WTN.SpellLibrary.TryGetValue(MiscString2, out Spell? cure) && cure != null) {
+                                cure.Cast(player, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+                                player.CurrentHP = Math.Clamp(player.CurrentHP + MiscInt, player.CurrentHP, player.GetEffectiveSkillLevel("Hitpoints"));
+                                player.CureCooldown = 60;
+                                GameLoop.WTN.Log.AddMessage("You cast " + cure.Name + ", healing for " + MiscInt + " hitpoints.", Color.Lime);
+                            }
+                        } else {
+                            GameLoop.WTN.Log.AddMessage("You are already at full health, and have no need to heal yourself.", Color.Crimson);
+                        }
+                    } else {
+                        GameLoop.WTN.Log.AddMessage("You cast a cure spell too recently to do that. (" + player.CureCooldown + "s remaining)", Color.Crimson);
                     }
                 }
 
                 if (ActionID == "CustomLog") {
-                    Color col = Color.White;
-                    if (MiscInt == 1) { col = Color.Lime; }
-                    else if (MiscInt == 2) { col = Color.Crimson; }
-                    else if (MiscInt == 3) { col = Color.Turquoise; }
-                    else if (MiscInt == 4) { col = Color.Yellow; }
-                    Log.AddMessage(MiscString, col);
+                    if (MiscString != "" && MiscString != "_") {
+                        Color col = Color.White;
+                        if (MiscInt == 1) { col = Color.Lime; }
+                        else if (MiscInt == 2) { col = Color.Crimson; }
+                        else if (MiscInt == 3) { col = Color.Turquoise; }
+                        else if (MiscInt == 4) { col = Color.Yellow; } 
+                        Log.AddMessage(MiscString, col);
+                    }
                 } 
 
                 if (ActionID == "RefillPrayer") {
@@ -100,21 +125,27 @@ namespace WorldtreeNexus.DataTypes {
                     }
                 }
 
-                if (ActionID == "HansTime") {
-                    int totalSeconds = player.SecondsPlayed;
-                    int days = (totalSeconds > 86400 ? totalSeconds / 86400 : 0);
-                    totalSeconds -= (days * 86400);
-                    int hours = (totalSeconds > 3600 ? totalSeconds / 3600 : 0);
-                    totalSeconds -= (hours * 3600);
-                    int minutes = (totalSeconds > 60 ? totalSeconds / 60 : 0);
-                    totalSeconds -= (minutes * 60);
+                if (ActionID == "MaxStatz") {
+                    if (MiscString == "Time") {
+                        int totalSeconds = player.SecondsPlayed;
+                        int days = (totalSeconds > 86400 ? totalSeconds / 86400 : 0);
+                        totalSeconds -= (days * 86400);
+                        int hours = (totalSeconds > 3600 ? totalSeconds / 3600 : 0);
+                        totalSeconds -= (hours * 3600);
+                        int minutes = (totalSeconds > 60 ? totalSeconds / 60 : 0);
+                        totalSeconds -= (minutes * 60);
 
-                    string time = (days > 1 ? days + " days, " : days > 0 ? days + " day, " : "") +
-                                    (hours > 1 ? hours + " hours, " : hours > 0 ? hours + " hour, " : "") +
-                                    (minutes > 1 ? minutes + " minutes, " : minutes > 0 ? minutes + " minute, " : "") +
-                                    (totalSeconds > 1 ? totalSeconds + " seconds" : totalSeconds > 0 ? totalSeconds + " second" : "") + ".";
+                        string time = (days > 1 ? days + " days, " : days > 0 ? days + " day, " : "") +
+                                        (hours > 1 ? hours + " hours, " : hours > 0 ? hours + " hour, " : "") +
+                                        (minutes > 1 ? minutes + " minutes, " : minutes > 0 ? minutes + " minute, " : "") +
+                                        (totalSeconds > 1 ? totalSeconds + " seconds" : totalSeconds > 0 ? totalSeconds + " second" : "") + ".";
 
-                    Log.AddMessage("You've played for a total of " + time, Color.DodgerBlue);
+                        Log.AddMessage("You have played for a total of " + time, Color.DodgerBlue);
+                    }
+
+                    if (MiscString == "Steps") { 
+                        Log.AddMessage("You have changed maps " + $"{player.MapTraversals:n00}" + " times.", Color.DodgerBlue);
+                    }
                 }
 
                 if (ActionID == "Minigame") {
@@ -223,9 +254,10 @@ namespace WorldtreeNexus.DataTypes {
 
                 if (ActionID == "Teleport") { 
                     if (player.GetRegion() == "Tutorial Island") { 
-                        if (player.QuestCompleted("TI_OnTheJobTraining")) {
+                        if (player.QuestCompleted("TI_OnTheJobTraining") && MiscString2 != "nexusReturnal") {
                             if (GameLoop.WTN.Atlas.TryGetValue(MiscString, out Location? dest)) { 
                                 player.NavLoc = MiscString;
+                                player.MapTraversals++;
 
                                 // TODO: Add an achievement for doing this
 
@@ -238,11 +270,14 @@ namespace WorldtreeNexus.DataTypes {
                             } 
                         } else {
                             player.NavLoc = "TI_Main";
+                            player.MapTraversals++;
                             GameLoop.WTN.Log.AddMessage("The pull of the island distorts your magic and you appear in the center of Tutorial Island.", Color.MediumPurple);
                         }
                     } else {
                         if (GameLoop.WTN.Atlas.TryGetValue(MiscString, out Location? dest)) { 
                             player.NavLoc = MiscString;
+                            player.MapTraversals++;
+
                             if (MiscInt != 1)
                                 GameLoop.WTN.Log.AddMessage("You teleport to " + dest.DisplayName + ".", Color.MediumPurple);
                             else
@@ -335,6 +370,40 @@ namespace WorldtreeNexus.DataTypes {
                             }
                         }
                     }
+                }
+
+                if (ActionID == "HourlyJob") {
+                    if (MiscString2 == "") {
+                        Log.AddMessage("You work for an hour at " + MiscString + ", earning " + MiscInt + " gold for your time.");
+                        player.GiveGold(MiscInt);
+
+                        for (int i = 0; i < 60; i++) {
+                            GameLoop.WTN.TickTime();
+                        }
+                    } else {
+                        Log.AddMessage("You work for an hour at " + MiscString + ", earning " + MiscInt + " gold and " + 100 + " " + MiscString2 + " experience for your time.");
+                        player.GiveGold(MiscInt);
+                        player.TryGrantExp(MiscString2, 100, Log, SidebarManager.RecentlyTrainedSkills);
+
+                        for (int i = 0; i < 60; i++) {
+                            GameLoop.WTN.TickTime();
+                        }
+                    }
+                }
+
+                if (ActionID == "SleepInn") {
+                    int targetTime = 360;
+
+                    if (MiscString == "Afternoon") { targetTime = 720; }
+                    if (MiscString == "Night") { targetTime = 1080; }
+                    if (MiscString == "Midnight") { targetTime = 0; }
+                     
+                    while ((GameLoop.WTN.player.Clock.Hour * 60) + GameLoop.WTN.player.Clock.Minute != targetTime) {
+                        GameLoop.WTN.TickTime(true);
+                    }
+                    
+                    Log.AddMessage("You sleep until " + MiscString + " at the inn.");
+                    player.TakeGold(MiscInt);
                 }
             }
         }

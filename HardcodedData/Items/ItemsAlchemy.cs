@@ -45,24 +45,26 @@ namespace WorldtreeNexus.Hardcodes {
             itemsToAdd.Add(new Item("Water-filled vial pack", "A pack containing 100 vials of water.", "vialWaterPack", Color.SandyBrown, 200) { UseString = "ItemPack", UseString2 = "vialWater", UseInt = 100});
             itemsToAdd.Add(new Item("Eye of cuy pack", "A pack containing 100 cuy eyes.", "eyeCuyPack", Color.SandyBrown, 300) { UseString = "ItemPack", UseString2 = "eyeCuy", UseInt = 100});
              
-            itemsToAdd.Add(new Item("Attack potion", "Temporarily boosts your Attack level by 5.", "potionAttack", Color.Crimson, 25) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Attack", 5) } });
-            itemsToAdd.Add(new Item("Strength potion", "Temporarily boosts your Strength level by 5.", "potionStrength", Color.Goldenrod, 5) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Strength", 5) } });
-            itemsToAdd.Add(new Item("Defense potion", "Temporarily boosts your Defense level by 5.", "potionDefense", ColorLib.Iron, 50) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Defense", 5) } });
-            itemsToAdd.Add(new Item("Magic potion", "Temporarily boosts your Magic level by 5.", "potionMagic", Color.CadetBlue, 80) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Magic", 5) } });
-            itemsToAdd.Add(new Item("Ranged potion", "Temporarily boosts your Ranged level by 5.", "potionRanged", Color.ForestGreen, 90) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Ranged", 5) } });
-            itemsToAdd.Add(new Item("Melee potion", "Temporarily boosts your Attack and Strength levels by 5 each.", "potionMelee", Color.SpringGreen, 70) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Attack", 5), new("Strength", 5) } });
+            itemsToAdd.Add(new Item("Attack potion", "Temporarily boosts your Attack level by 5.", "potionAttack", Color.Crimson, 15) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Attack", 5) ] });
+            itemsToAdd.Add(new Item("Strength potion", "Temporarily boosts your Strength level by 5.", "potionStrength", Color.Goldenrod, 22) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Strength", 5) ] });
+            itemsToAdd.Add(new Item("Defense potion", "Temporarily boosts your Defense level by 5.", "potionDefense", ColorLib.Iron, 26) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Defense", 5) ] });
+            itemsToAdd.Add(new Item("Magic potion", "Temporarily boosts your Magic level by 5.", "potionMagic", Color.CadetBlue, 5) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Magic", 5) ] });
+            itemsToAdd.Add(new Item("Ranged potion", "Temporarily boosts your Ranged level by 5.", "potionRanged", Color.ForestGreen, 7) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Ranged", 5) ] });
+            itemsToAdd.Add(new Item("Melee potion", "Temporarily boosts your Attack and Strength levels by 5 each.", "potionMelee", Color.SpringGreen, 44) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Attack", 5), new("Strength", 5) ] });
+            itemsToAdd.Add(new Item("Combat potion", "Temporarily boosts your Attack, Strength, Defense, Ranged, and Magic levels by 5 each.", "potionCombat", ColorLib.Silver, 15) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Attack", 5), new("Strength", 5), new("Defense", 5), new("Magic", 5), new("Ranged", 5) ] });
             
-            itemsToAdd.Add(new Item("Super attack potion", "Temporarily boosts your Attack level by 10.", "potionSuperAttack", Color.Red, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Attack", 10) } });
-            itemsToAdd.Add(new Item("Super strength potion", "Temporarily boosts your Strength level by 10.", "potionSuperStrength", Color.Yellow, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Strength", 10) } });
-            itemsToAdd.Add(new Item("Super defense potion", "Temporarily boosts your Defense level by 10.", "potionSuperDefense", ColorLib.Steel, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Defense", 10) } });
-            itemsToAdd.Add(new Item("Super magic potion", "Temporarily boosts your Magic level by 10.", "potionSuperMagic", Color.DodgerBlue, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Magic", 10) } });
-            itemsToAdd.Add(new Item("Super ranged potion", "Temporarily boosts your Ranged level by 10.", "potionSuperRanged", Color.LimeGreen, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Ranged", 10) } });
-            itemsToAdd.Add(new Item("Super melee potion", "Temporarily boosts your Attack and Strength levels by 10 each.", "potionSuperMelee", Color.SpringGreen, 70) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Attack", 10), new("Strength", 10) } });
-             
-            itemsToAdd.Add(new Item("Cooking potion", "Temporarily boosts your Cooking level by 5.", "potionCooking", Color.Orange, 50) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Cooking", 5) } });
-            itemsToAdd.Add(new Item("Energy potion", "Energizes you to receive up to 5% additional experience from all actions.", "potionEnergy", Color.DeepPink.GetDark(), 50) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Experience", 5) } });
-            itemsToAdd.Add(new Item("Restore potion", "Restores reduced stats by up to 5 levels per sip.", "potionRestore", Color.Salmon, 30) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Restore", 5) } });
-            itemsToAdd.Add(new Item("Antipoison", "Cures poison and provides immunity to poison for two minutes.", "potionAntipoison", Color.Lime, 90) { UsesCharges = true, UseString = "Potion", UseInt4 = 3, ItemReturned = "vialEmpty", Potion = new() { new("Antipoison", 2) } });
+            itemsToAdd.Add(new Item("Super attack potion", "Temporarily boosts your Attack level by 10.", "potionSuperAttack", Color.Red, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Attack", 10) ] });
+            itemsToAdd.Add(new Item("Super strength potion", "Temporarily boosts your Strength level by 10.", "potionSuperStrength", Color.Yellow, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Strength", 10) ] });
+            itemsToAdd.Add(new Item("Super defense potion", "Temporarily boosts your Defense level by 10.", "potionSuperDefense", ColorLib.Steel, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Defense", 10) ] });
+            itemsToAdd.Add(new Item("Super magic potion", "Temporarily boosts your Magic level by 10.", "potionSuperMagic", Color.DodgerBlue, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Magic", 10) ] });
+            itemsToAdd.Add(new Item("Super ranged potion", "Temporarily boosts your Ranged level by 10.", "potionSuperRanged", Color.LimeGreen, 110) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Ranged", 10) ] });
+            itemsToAdd.Add(new Item("Super melee potion", "Temporarily boosts your Attack and Strength levels by 10 each.", "potionSuperMelee", Color.SpringGreen, 70) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Attack", 10), new("Strength", 10) ] });
+            itemsToAdd.Add(new Item("Super combat potion", "Temporarily boosts your Attack, Strength, Defense, Ranged, and Magic levels by 10 each.", "potionSuperCombat", Color.White, 70) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Attack", 10), new("Strength", 10), new("Defense", 10), new("Magic", 10), new("Ranged", 10) ] });
+            
+            itemsToAdd.Add(new Item("Cooking potion", "Temporarily boosts your Cooking level by 5.", "potionCooking", Color.Orange, 50) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Cooking", 5) ] });
+            itemsToAdd.Add(new Item("Energy potion", "Energizes you to receive up to 5% additional experience from all actions.", "potionEnergy", Color.DeepPink.GetDark(), 50) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Experience", 5) ] });
+            itemsToAdd.Add(new Item("Restore potion", "Restores reduced stats by up to 5 levels per sip.", "potionRestore", Color.Salmon, 30) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Restore", 5) ] });
+            itemsToAdd.Add(new Item("Antipoison", "Cures poison and provides immunity to poison for two minutes.", "potionAntipoison", Color.Lime, 90) { UsesCharges = true, UseString = "Potion", UseInt4 = 4, ItemReturned = "vialEmpty", Potion = [ new("Antipoison", 2) ] });
             
             // Secretions
             itemsToAdd.Add(new Item("Blood vial (cuy)", "A vial of blood extracted from a giant guinea pig.", "bloodCuy", Color.Crimson, 10) { Alchemy = new(-3, -7, 9, -11, 1, "vialEmpty") }); 
@@ -81,119 +83,122 @@ namespace WorldtreeNexus.Hardcodes {
 
             // Japanese herb set
             itemsToAdd.Add(new Item("Midori seed", "A midori seed - plant in an herb patch (1).", "seedMidori", Color.ForestGreen, 10, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyMidori", UseInt = 1 /* Level */,  UseInt2 = 20 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyMidori", UseInt = 1 /* Level */,  UseInt2 = 80 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Kiiro seed", "A kiiro seed - plant in an herb patch (10).", "seedKiiro", Color.ForestGreen, 20, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKiiro", UseInt = 10 /* Level */,  UseInt2 = 30 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Kiiro seed", "A kiiro seed - plant in an herb patch (10).", "seedKiiro", Color.ForestGreen, 30, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKiiro", UseInt = 10 /* Level */,  UseInt2 = 160 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Murasaki seed", "A murasaki seed - plant in an herb patch (20).", "seedMurasaki", Color.ForestGreen, 30, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyMurasaki", UseInt = 20 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Murasaki seed", "A murasaki seed - plant in an herb patch (20).", "seedMurasaki", Color.ForestGreen, 50, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyMurasaki", UseInt = 20 /* Level */,  UseInt2 = 240 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Mazent seed", "A mazent seed - plant in an herb patch (30).", "seedMazent", Color.ForestGreen, 40, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyMazent", UseInt = 30 /* Level */,  UseInt2 = 50 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Mazent seed", "A mazent seed - plant in an herb patch (30).", "seedMazent", Color.ForestGreen, 100, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyMazent", UseInt = 30 /* Level */,  UseInt2 = 320 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Kuriiro seed", "A kuriiro seed - plant in an herb patch (40).", "seedKuriiro", Color.ForestGreen, 50, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKuriiro", UseInt = 40 /* Level */,  UseInt2 = 60 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Kuriiro seed", "A kuriiro seed - plant in an herb patch (40).", "seedKuriiro", Color.ForestGreen, 300, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKuriiro", UseInt = 40 /* Level */,  UseInt2 = 400 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Kusa seed", "A kusa seed - plant in an herb patch (50).", "seedKusa", Color.ForestGreen, 60, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKusa", UseInt = 50 /* Level */,  UseInt2 = 70 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Kusa seed", "A kusa seed - plant in an herb patch (50).", "seedKusa", Color.ForestGreen, 500, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKusa", UseInt = 50 /* Level */,  UseInt2 = 480 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Nokoribi seed", "A nokoribi seed - plant in an herb patch (60).", "seedNokoribi", Color.ForestGreen, 70, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyNokoribi", UseInt = 60 /* Level */,  UseInt2 = 80 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Nokoribi seed", "A nokoribi seed - plant in an herb patch (60).", "seedNokoribi", Color.ForestGreen, 1000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyNokoribi", UseInt = 60 /* Level */,  UseInt2 = 560 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Ao seed", "An ao seed - plant in an herb patch (70).", "seedAo", Color.ForestGreen, 80, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyAo", UseInt = 70 /* Level */,  UseInt2 = 90 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Ao seed", "An ao seed - plant in an herb patch (70).", "seedAo", Color.ForestGreen, 3000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyAo", UseInt = 70 /* Level */,  UseInt2 = 640 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Umi seed", "An umi seed - plant in an herb patch (80).", "seedUmi", Color.ForestGreen, 90, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyUmi", UseInt = 80 /* Level */,  UseInt2 = 100 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Umi seed", "An umi seed - plant in an herb patch (80).", "seedUmi", Color.ForestGreen, 5000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyUmi", UseInt = 80 /* Level */,  UseInt2 = 720 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Aka seed", "An aka seed - plant in an herb patch (90).", "seedAka", Color.ForestGreen, 100, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyAka", UseInt = 90 /* Level */,  UseInt2 = 110 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Aka seed", "An aka seed - plant in an herb patch (90).", "seedAka", Color.ForestGreen, 10000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyAka", UseInt = 90 /* Level */,  UseInt2 = 800 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Kuro seed", "A kuro seed - plant in an herb patch (100).", "seedKuro", Color.ForestGreen, 100, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKuro", UseInt = 100 /* Level */,  UseInt2 = 120 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Kuro seed", "A kuro seed - plant in an herb patch (100).", "seedKuro", Color.ForestGreen, 30000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKuro", UseInt = 100 /* Level */,  UseInt2 = 880 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
 
-            itemsToAdd.Add(new Item("Grimy midori", "A green herb, used in Alchemy (1).", "grimyMidori", Color.ForestGreen, 40) { UseString = "CleanHerb", ItemReturned = "cleanMidori", UseInt = 1, UseInt2 = 3 });
-            itemsToAdd.Add(new Item("Grimy kiiro", "A yellow herb, used in Alchemy (10).", "grimyKiiro", Color.Yellow, 90) { UseString = "CleanHerb", ItemReturned = "cleanKiiro", UseInt = 10, UseInt2 = 4 });
-            itemsToAdd.Add(new Item("Grimy murasaki", "A purple herb, used in Alchemy (20).", "grimyMurasaki", Color.MediumPurple, 190) { UseString = "CleanHerb", ItemReturned = "cleanMurasaki", UseInt = 20, UseInt2 = 5 });
-            itemsToAdd.Add(new Item("Grimy mazent", "A pink herb, used in Alchemy (30).", "grimyMazent", Color.LightPink, 290) { UseString = "CleanHerb", ItemReturned = "cleanMazent", UseInt = 30, UseInt2 = 6 });
-            itemsToAdd.Add(new Item("Grimy kuriiro", "A maroon herb, used in Alchemy (40).", "grimyKuriiro", Color.Maroon, 390) { UseString = "CleanHerb", ItemReturned = "cleanKuriiro", UseInt = 40, UseInt2 = 7 });
-            itemsToAdd.Add(new Item("Grimy kusa", "A light green herb, used in Alchemy (50).", "grimyKusa", Color.Lime, 490) { UseString = "CleanHerb", ItemReturned = "cleanKusa", UseInt = 50, UseInt2 = 8 });
-            itemsToAdd.Add(new Item("Grimy nokoribi", "An orange herb, used in Alchemy (60).", "grimyNokoribi", Color.Orange, 590) { UseString = "CleanHerb", ItemReturned = "cleanNokoribi", UseInt = 60, UseInt2 = 9 });
-            itemsToAdd.Add(new Item("Grimy ao", "A blue herb, used in Alchemy (70).", "grimyAo", Color.DodgerBlue, 690) { UseString = "CleanHerb", ItemReturned = "cleanAo", UseInt = 70, UseInt2 = 10 });
-            itemsToAdd.Add(new Item("Grimy umi", "A bluish-green herb, used in Alchemy (80).", "grimyUmi", Color.AnsiCyan, 790) { UseString = "CleanHerb", ItemReturned = "cleanUmi", UseInt = 80, UseInt2 = 11 });
-            itemsToAdd.Add(new Item("Grimy aka", "A red herb, used in Alchemy (90).", "grimyAka", Color.Crimson, 890) { UseString = "CleanHerb", ItemReturned = "cleanAka", UseInt = 90, UseInt2 = 12 });
-            itemsToAdd.Add(new Item("Grimy kuro", "A black herb, used in Alchemy (100).", "grimyKuro", Color.DimGray, 990) { UseString = "CleanHerb", ItemReturned = "cleanKuro", UseInt = 100, UseInt2 = 13 });
+            itemsToAdd.Add(new Item("Grimy midori", "A green herb, used in Alchemy (1).", "grimyMidori", Color.ForestGreen, 4) { UseString = "CleanHerb", ItemReturned = "cleanMidori", UseInt = 1, UseInt2 = 3 });
+            itemsToAdd.Add(new Item("Grimy kiiro", "A yellow herb, used in Alchemy (10).", "grimyKiiro", Color.Yellow, 12) { UseString = "CleanHerb", ItemReturned = "cleanKiiro", UseInt = 10, UseInt2 = 4 });
+            itemsToAdd.Add(new Item("Grimy murasaki", "A purple herb, used in Alchemy (20).", "grimyMurasaki", Color.MediumPurple, 20) { UseString = "CleanHerb", ItemReturned = "cleanMurasaki", UseInt = 20, UseInt2 = 5 });
+            itemsToAdd.Add(new Item("Grimy mazent", "A pink herb, used in Alchemy (30).", "grimyMazent", Color.LightPink, 40) { UseString = "CleanHerb", ItemReturned = "cleanMazent", UseInt = 30, UseInt2 = 6 });
+            itemsToAdd.Add(new Item("Grimy kuriiro", "A maroon herb, used in Alchemy (40).", "grimyKuriiro", Color.Maroon, 120) { UseString = "CleanHerb", ItemReturned = "cleanKuriiro", UseInt = 40, UseInt2 = 7 });
+            itemsToAdd.Add(new Item("Grimy kusa", "A light green herb, used in Alchemy (50).", "grimyKusa", Color.Lime, 200) { UseString = "CleanHerb", ItemReturned = "cleanKusa", UseInt = 50, UseInt2 = 8 });
+            itemsToAdd.Add(new Item("Grimy nokoribi", "An orange herb, used in Alchemy (60).", "grimyNokoribi", Color.Orange, 400) { UseString = "CleanHerb", ItemReturned = "cleanNokoribi", UseInt = 60, UseInt2 = 9 });
+            itemsToAdd.Add(new Item("Grimy ao", "A blue herb, used in Alchemy (70).", "grimyAo", Color.DodgerBlue, 1200) { UseString = "CleanHerb", ItemReturned = "cleanAo", UseInt = 70, UseInt2 = 10 });
+            itemsToAdd.Add(new Item("Grimy umi", "A bluish-green herb, used in Alchemy (80).", "grimyUmi", Color.AnsiCyan, 2000) { UseString = "CleanHerb", ItemReturned = "cleanUmi", UseInt = 80, UseInt2 = 11 });
+            itemsToAdd.Add(new Item("Grimy aka", "A red herb, used in Alchemy (90).", "grimyAka", Color.Crimson, 4000) { UseString = "CleanHerb", ItemReturned = "cleanAka", UseInt = 90, UseInt2 = 12 });
+            itemsToAdd.Add(new Item("Grimy kuro", "A black herb, used in Alchemy (100).", "grimyKuro", Color.DimGray, 12000) { UseString = "CleanHerb", ItemReturned = "cleanKuro", UseInt = 100, UseInt2 = 13 });
 
-            itemsToAdd.Add(new Item("Clean midori", "A green herb, used in Alchemy (1).", "cleanMidori", Color.ForestGreen, 50) {         Alchemy = new(-4, -3,  3,  5,   1) });
-            itemsToAdd.Add(new Item("Clean kiiro", "A yellow herb, used in Alchemy (10).", "cleanKiiro", Color.Yellow, 100) {             Alchemy = new( 2, -3, -5, -4,  10) });
-            itemsToAdd.Add(new Item("Clean murasaki", "A purple herb, used in Alchemy (20).", "cleanMurasaki", Color.MediumPurple, 200) { Alchemy = new(-1, -3,  2, -7,  20) });
-            itemsToAdd.Add(new Item("Clean mazent", "A pink herb, used in Alchemy (30).", "cleanMazent", Color.LightPink, 300) {          Alchemy = new( 2, -4, -3,  3,  30) });
-            itemsToAdd.Add(new Item("Clean kuriiro", "A maroon herb, used in Alchemy (40).", "cleanKuriiro", Color.Maroon, 400) {         Alchemy = new(-3, -5, -2,  1,  40) });
-            itemsToAdd.Add(new Item("Clean kusa", "A light green herb, used in Alchemy (50).", "cleanKusa", Color.Lime, 500) {            Alchemy = new(-2,  2, -2,  4,  50) });
-            itemsToAdd.Add(new Item("Clean nokoribi", "An orange herb, used in Alchemy (60).", "cleanNokoribi", Color.Orange, 600) {      Alchemy = new(-3, -3,  0,  3,  60) });
-            itemsToAdd.Add(new Item("Clean ao", "A blue herb, used in Alchemy (70).", "cleanAo", Color.DodgerBlue, 700) {                 Alchemy = new(-2, -2, -1,  3,  70) });
-            itemsToAdd.Add(new Item("Clean umi", "A bluish-green herb, used in Alchemy (80).", "cleanUmi", Color.AnsiCyan, 800) {         Alchemy = new(-2, -1,  2,  2,  80) });
-            itemsToAdd.Add(new Item("Clean aka", "A red herb, used in Alchemy (90).", "cleanAka", Color.Crimson, 900) {                   Alchemy = new(-1, -2, -1, -2,  90) });
-            itemsToAdd.Add(new Item("Clean kuro", "A black herb, used in Alchemy (100).", "cleanKuro", Color.DimGray, 1000) {             Alchemy = new( 1,  3, -1,  0, 100) });
+            itemsToAdd.Add(new Item("Clean midori", "A green herb, used in Alchemy (1).", "cleanMidori", Color.ForestGreen, 5) {         Alchemy = new(-4, -3,  3,  5,   1) });
+            itemsToAdd.Add(new Item("Clean kiiro", "A yellow herb, used in Alchemy (10).", "cleanKiiro", Color.Yellow, 15) {             Alchemy = new( 2, -3, -5, -4,  10) });
+            itemsToAdd.Add(new Item("Clean murasaki", "A purple herb, used in Alchemy (20).", "cleanMurasaki", Color.MediumPurple, 25) { Alchemy = new(-1, -3,  2, -7,  20) });
+            itemsToAdd.Add(new Item("Clean mazent", "A pink herb, used in Alchemy (30).", "cleanMazent", Color.LightPink, 50) {          Alchemy = new( 2, -4, -3,  3,  30) });
+            itemsToAdd.Add(new Item("Clean kuriiro", "A maroon herb, used in Alchemy (40).", "cleanKuriiro", Color.Maroon, 150) {         Alchemy = new(-3, -5, -2,  1,  40) });
+            itemsToAdd.Add(new Item("Clean kusa", "A light green herb, used in Alchemy (50).", "cleanKusa", Color.Lime, 250) {            Alchemy = new(-2,  2, -2,  4,  50) });
+            itemsToAdd.Add(new Item("Clean nokoribi", "An orange herb, used in Alchemy (60).", "cleanNokoribi", Color.Orange, 500) {      Alchemy = new(-3, -3,  0,  3,  60) });
+            itemsToAdd.Add(new Item("Clean ao", "A blue herb, used in Alchemy (70).", "cleanAo", Color.DodgerBlue, 1500) {                 Alchemy = new(-2, -2, -1,  3,  70) });
+            itemsToAdd.Add(new Item("Clean umi", "A bluish-green herb, used in Alchemy (80).", "cleanUmi", Color.AnsiCyan, 2500) {         Alchemy = new(-2, -1,  2,  2,  80) });
+            itemsToAdd.Add(new Item("Clean aka", "A red herb, used in Alchemy (90).", "cleanAka", Color.Crimson, 5000) {                   Alchemy = new(-1, -2, -1, -2,  90) });
+            itemsToAdd.Add(new Item("Clean kuro", "A black herb, used in Alchemy (100).", "cleanKuro", Color.DimGray, 15000) {             Alchemy = new( 1,  3, -1,  0, 100) });
              
             
             // Hindi herb set
             itemsToAdd.Add(new Item("Neela seed", "A neela seed - plant in an herb patch (1).", "seedNeela", Color.ForestGreen, 10, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyNeela", UseInt = 1 /* Level */,  UseInt2 = 20 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyNeela", UseInt = 1 /* Level */,  UseInt2 = 80 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Nimbu seed", "A nimbu seed - plant in an herb patch (10).", "seedNimbu", Color.ForestGreen, 20, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyNimbu", UseInt = 10 /* Level */,  UseInt2 = 30 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Nimbu seed", "A nimbu seed - plant in an herb patch (10).", "seedNimbu", Color.ForestGreen, 30, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyNimbu", UseInt = 10 /* Level */,  UseInt2 = 160 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Baingani seed", "A baingani seed - plant in an herb patch (20).", "seedBaingani", Color.ForestGreen, 30, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyBaingani", UseInt = 20 /* Level */,  UseInt2 = 40 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Baingani seed", "A baingani seed - plant in an herb patch (20).", "seedBaingani", Color.ForestGreen, 50, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyBaingani", UseInt = 20 /* Level */,  UseInt2 = 240 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Lal seed", "A lal seed - plant in an herb patch (30).", "seedLal", Color.ForestGreen, 40, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyLal", UseInt = 30 /* Level */,  UseInt2 = 50 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Lal seed", "A lal seed - plant in an herb patch (30).", "seedLal", Color.ForestGreen, 100, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyLal", UseInt = 30 /* Level */,  UseInt2 = 320 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Hara seed", "A hara seed - plant in an herb patch (40).", "seedHara", Color.ForestGreen, 50, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyHara", UseInt = 40 /* Level */,  UseInt2 = 60 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Hara seed", "A hara seed - plant in an herb patch (40).", "seedHara", Color.ForestGreen, 300, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyHara", UseInt = 40 /* Level */,  UseInt2 = 400 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Gulabi seed", "A gulabi seed - plant in an herb patch (50).", "seedGulabi", Color.ForestGreen, 60, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyGulabi", UseInt = 50 /* Level */,  UseInt2 = 70 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Gulabi seed", "A gulabi seed - plant in an herb patch (50).", "seedGulabi", Color.ForestGreen, 500, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyGulabi", UseInt = 50 /* Level */,  UseInt2 = 480 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Siyan seed", "A siyan seed - plant in an herb patch (60).", "seedSiyan", Color.ForestGreen, 70, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimySiyan", UseInt = 60 /* Level */,  UseInt2 = 80 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Siyan seed", "A siyan seed - plant in an herb patch (60).", "seedSiyan", Color.ForestGreen, 1000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimySiyan", UseInt = 60 /* Level */,  UseInt2 = 560 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Sharab seed", "A sharab seed - plant in an herb patch (70).", "seedSharab", Color.ForestGreen, 80, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimySharab", UseInt = 70 /* Level */,  UseInt2 = 90 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Sharab seed", "A sharab seed - plant in an herb patch (70).", "seedSharab", Color.ForestGreen, 3000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimySharab", UseInt = 70 /* Level */,  UseInt2 = 640 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Peela seed", "A peela seed - plant in an herb patch (80).", "seedPeela", Color.ForestGreen, 90, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyPeela", UseInt = 80 /* Level */,  UseInt2 = 100 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Peela seed", "A peela seed - plant in an herb patch (80).", "seedPeela", Color.ForestGreen, 5000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyPeela", UseInt = 80 /* Level */,  UseInt2 = 720 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
-            itemsToAdd.Add(new Item("Narangi seed", "A narangi seed - plant in an herb patch (90).", "seedNarangi", Color.ForestGreen, 100, true) {
-                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyNarangi", UseInt = 90 /* Level */,  UseInt2 = 110 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            itemsToAdd.Add(new Item("Kala seed", "A kala seed - plant in an herb patch (90).", "seedKala", Color.ForestGreen, 10000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyKala", UseInt = 90 /* Level */,  UseInt2 = 800 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
+            });
+            itemsToAdd.Add(new Item("Narangi seed", "A narangi seed - plant in an herb patch (100).", "seedNarangi", Color.ForestGreen, 30000, true) {
+                UseString = "PlantSeed", UseString2 = "Herb", UseString3 = "grimyNarangi", UseInt = 100 /* Level */,  UseInt2 = 880 /* Exp On Harvest */, UseInt3 = 4800 /* Growth time in seconds */ 
             });
 
-            itemsToAdd.Add(new Item("Grimy neela", "A blue herb, used in Alchemy (1).", "grimyNeela", Color.DodgerBlue, 40) { UseString = "CleanHerb", ItemReturned = "cleanNeela", UseInt = 1, UseInt2 = 3 });
-            itemsToAdd.Add(new Item("Grimy nimbu", "A light green herb, used in Alchemy (10).", "grimyNimbu", Color.Lime, 90) { UseString = "CleanHerb", ItemReturned = "cleanNimbu", UseInt = 10, UseInt2 = 4 });
-            itemsToAdd.Add(new Item("Grimy baingani", "A purple herb, used in Alchemy (20).", "grimyBaingani", Color.MediumPurple, 190) { UseString = "CleanHerb", ItemReturned = "cleanBaingani", UseInt = 20, UseInt2 = 5 });
-            itemsToAdd.Add(new Item("Grimy lal", "A red herb, used in Alchemy (30).", "grimyLal", Color.Crimson, 290) { UseString = "CleanHerb", ItemReturned = "cleanLal", UseInt = 30, UseInt2 = 6 });
-            itemsToAdd.Add(new Item("Grimy hara", "A green herb, used in Alchemy (40).", "grimyHara", Color.ForestGreen, 390) { UseString = "CleanHerb", ItemReturned = "cleanHara", UseInt = 40, UseInt2 = 7 });
-            itemsToAdd.Add(new Item("Grimy gulabi", "A pink herb, used in Alchemy (50).", "grimyGulabi", Color.LightPink, 490) { UseString = "CleanHerb", ItemReturned = "cleanGulabi", UseInt = 50, UseInt2 = 8 });
-            itemsToAdd.Add(new Item("Grimy siyan", "A bluish-green herb, used in Alchemy (60).", "grimySiyan", Color.AnsiCyan, 590) { UseString = "CleanHerb", ItemReturned = "cleanSiyan", UseInt = 60, UseInt2 = 9 });
-            itemsToAdd.Add(new Item("Grimy sharab", "A maroon herb, used in Alchemy (70).", "grimySharab", Color.Maroon, 690) { UseString = "CleanHerb", ItemReturned = "cleanSharab", UseInt = 70, UseInt2 = 10 });
-            itemsToAdd.Add(new Item("Grimy peela", "A yellow herb, used in Alchemy (80).", "grimyPeela", Color.Yellow, 790) { UseString = "CleanHerb", ItemReturned = "cleanPeela", UseInt = 80, UseInt2 = 11 });
-            itemsToAdd.Add(new Item("Grimy kala", "A black herb, used in Alchemy (90).", "grimyKala", Color.DimGray, 890) { UseString = "CleanHerb", ItemReturned = "cleanKala", UseInt = 90, UseInt2 = 12 });
-            itemsToAdd.Add(new Item("Grimy narangi", "An orange herb, used in Alchemy (100).", "grimyNarangi", Color.Orange, 990) { UseString = "CleanHerb", ItemReturned = "cleanNarangi", UseInt = 100, UseInt2 = 13 });
+            itemsToAdd.Add(new Item("Grimy neela", "A blue herb, used in Alchemy (1).", "grimyNeela", Color.DodgerBlue, 4) { UseString = "CleanHerb", ItemReturned = "cleanNeela", UseInt = 1, UseInt2 = 3 });
+            itemsToAdd.Add(new Item("Grimy nimbu", "A light green herb, used in Alchemy (10).", "grimyNimbu", Color.Lime, 12) { UseString = "CleanHerb", ItemReturned = "cleanNimbu", UseInt = 10, UseInt2 = 4 });
+            itemsToAdd.Add(new Item("Grimy baingani", "A purple herb, used in Alchemy (20).", "grimyBaingani", Color.MediumPurple, 20) { UseString = "CleanHerb", ItemReturned = "cleanBaingani", UseInt = 20, UseInt2 = 5 });
+            itemsToAdd.Add(new Item("Grimy lal", "A red herb, used in Alchemy (30).", "grimyLal", Color.Crimson, 40) { UseString = "CleanHerb", ItemReturned = "cleanLal", UseInt = 30, UseInt2 = 6 });
+            itemsToAdd.Add(new Item("Grimy hara", "A green herb, used in Alchemy (40).", "grimyHara", Color.ForestGreen, 120) { UseString = "CleanHerb", ItemReturned = "cleanHara", UseInt = 40, UseInt2 = 7 });
+            itemsToAdd.Add(new Item("Grimy gulabi", "A pink herb, used in Alchemy (50).", "grimyGulabi", Color.LightPink, 200) { UseString = "CleanHerb", ItemReturned = "cleanGulabi", UseInt = 50, UseInt2 = 8 });
+            itemsToAdd.Add(new Item("Grimy siyan", "A bluish-green herb, used in Alchemy (60).", "grimySiyan", Color.AnsiCyan, 400) { UseString = "CleanHerb", ItemReturned = "cleanSiyan", UseInt = 60, UseInt2 = 9 });
+            itemsToAdd.Add(new Item("Grimy sharab", "A maroon herb, used in Alchemy (70).", "grimySharab", Color.Maroon, 1200) { UseString = "CleanHerb", ItemReturned = "cleanSharab", UseInt = 70, UseInt2 = 10 });
+            itemsToAdd.Add(new Item("Grimy peela", "A yellow herb, used in Alchemy (80).", "grimyPeela", Color.Yellow, 2000) { UseString = "CleanHerb", ItemReturned = "cleanPeela", UseInt = 80, UseInt2 = 11 });
+            itemsToAdd.Add(new Item("Grimy kala", "A black herb, used in Alchemy (90).", "grimyKala", Color.DimGray, 4000) { UseString = "CleanHerb", ItemReturned = "cleanKala", UseInt = 90, UseInt2 = 12 });
+            itemsToAdd.Add(new Item("Grimy narangi", "An orange herb, used in Alchemy (100).", "grimyNarangi", Color.Orange, 12000) { UseString = "CleanHerb", ItemReturned = "cleanNarangi", UseInt = 100, UseInt2 = 13 });
 
-            itemsToAdd.Add(new Item("Clean neela", "A blue herb, used in Alchemy (1).", "cleanNeela", Color.DodgerBlue, 50) {             Alchemy = new(-5,  1, -6,  3,   1) });
-            itemsToAdd.Add(new Item("Clean nimbu", "A light green herb, used in Alchemy (10).", "cleanNimbu", Color.Lime, 100) {          Alchemy = new(-2,  2,  6,  4,  10) });
-            itemsToAdd.Add(new Item("Clean baingani", "A purple herb, used in Alchemy (20).", "cleanBaingani", Color.MediumPurple, 200) { Alchemy = new( 4, -1,  6,  2,  20) });
-            itemsToAdd.Add(new Item("Clean lal", "A red herb, used in Alchemy (30).", "cleanLal", Color.Crimson, 300) {                   Alchemy = new( 1, -3, -2,  6,  30) });
-            itemsToAdd.Add(new Item("Clean hara", "A green herb, used in Alchemy (40).", "cleanHara", Color.ForestGreen, 400) {           Alchemy = new(-1,  3,  3,  4,  40) });
-            itemsToAdd.Add(new Item("Clean gulabi", "A pink herb, used in Alchemy (50).", "cleanGulabi", Color.LightPink, 500) {          Alchemy = new( 4,  1,  2,  3,  50) });
-            itemsToAdd.Add(new Item("Clean siyan", "A bluish-green herb, used in Alchemy (60).", "cleanSiyan", Color.AnsiCyan, 600) {     Alchemy = new(-3, -2,  3,  1,  60) });
-            itemsToAdd.Add(new Item("Clean sharab", "A maroon herb, used in Alchemy (70).", "cleanSharab", Color.Maroon, 700) {           Alchemy = new( 2,  4, -2,  0,  70) });
-            itemsToAdd.Add(new Item("Clean peela", "A yellow herb, used in Alchemy (80).", "cleanPeela", Color.Yellow, 800) {             Alchemy = new( 1,  2, -2, -2,  80) });
-            itemsToAdd.Add(new Item("Clean kala", "A black herb, used in Alchemy (90).", "cleanKala", Color.DimGray, 900) {               Alchemy = new(-2, -1,  0, -3,  90) });
-            itemsToAdd.Add(new Item("Clean narangi", "An orange herb, used in Alchemy (100).", "cleanNarangi", Color.Orange, 1000) {      Alchemy = new( 1, -3,  0, -1, 100) });
+            itemsToAdd.Add(new Item("Clean neela", "A blue herb, used in Alchemy (1).", "cleanNeela", Color.DodgerBlue, 5) {             Alchemy = new(-5,  1, -6,  3,   1) });
+            itemsToAdd.Add(new Item("Clean nimbu", "A light green herb, used in Alchemy (10).", "cleanNimbu", Color.Lime, 15) {          Alchemy = new(-2,  2,  6,  4,  10) });
+            itemsToAdd.Add(new Item("Clean baingani", "A purple herb, used in Alchemy (20).", "cleanBaingani", Color.MediumPurple, 25) { Alchemy = new( 4, -1,  6,  2,  20) });
+            itemsToAdd.Add(new Item("Clean lal", "A red herb, used in Alchemy (30).", "cleanLal", Color.Crimson, 50) {                   Alchemy = new( 1, -3, -2,  6,  30) });
+            itemsToAdd.Add(new Item("Clean hara", "A green herb, used in Alchemy (40).", "cleanHara", Color.ForestGreen, 150) {           Alchemy = new(-1,  3,  3,  4,  40) });
+            itemsToAdd.Add(new Item("Clean gulabi", "A pink herb, used in Alchemy (50).", "cleanGulabi", Color.LightPink, 250) {          Alchemy = new( 4,  1,  2,  3,  50) });
+            itemsToAdd.Add(new Item("Clean siyan", "A bluish-green herb, used in Alchemy (60).", "cleanSiyan", Color.AnsiCyan, 500) {     Alchemy = new(-3, -2,  3,  1,  60) });
+            itemsToAdd.Add(new Item("Clean sharab", "A maroon herb, used in Alchemy (70).", "cleanSharab", Color.Maroon, 1500) {           Alchemy = new( 2,  4, -2,  0,  70) });
+            itemsToAdd.Add(new Item("Clean peela", "A yellow herb, used in Alchemy (80).", "cleanPeela", Color.Yellow, 2500) {             Alchemy = new( 1,  2, -2, -2,  80) });
+            itemsToAdd.Add(new Item("Clean kala", "A black herb, used in Alchemy (90).", "cleanKala", Color.DimGray, 5000) {               Alchemy = new(-2, -1,  0, -3,  90) });
+            itemsToAdd.Add(new Item("Clean narangi", "An orange herb, used in Alchemy (100).", "cleanNarangi", Color.Orange, 15000) {      Alchemy = new( 1, -3,  0, -1, 100) });
             
 
             for (int i = 0; i < itemsToAdd.Count; i++) {

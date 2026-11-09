@@ -33,7 +33,7 @@ namespace WorldtreeNexus.UI {
                     }
 
                     mini.Con.PrintClickable(resourceX + 2, resourceY, "| " + thisOne.Name, () => { 
-                        if (!ClueLogic.GenericStep(player, Log, "Speak", thisOne.ID) && !ClueLogic.GenericStep(player, Log, "Anagram", thisOne.ID)) {
+                        if (!ClueLogic.GenericStep(player, Log, "Speak", thisOne.ID) && !ClueLogic.GenericStep(player, Log, "Anagram", thisOne.ID) && !ClueLogic.GenericStep(player, Log, "Item", thisOne.ID)) {
                             CurrDialogueStage = 0;
                             ConversationPartner = thisOne;
 

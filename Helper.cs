@@ -936,7 +936,7 @@ namespace WorldtreeNexus {
 
             foreach (ColoredString word in words) {
                 if (line.Length + word.Length < width && word.String != "/n") {
-                    line += word + " ";  
+                    line += (line.String == "" ? "" : " ") + word;  
                 }
                 else { 
                     instance.Print(cX, cY++, line);
@@ -944,7 +944,7 @@ namespace WorldtreeNexus {
                     if (word.String == "/n") {
                         line = new("");
                     } else {
-                        line = word + " ";
+                        line = word;
                     } 
                 }
             }

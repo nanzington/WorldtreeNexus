@@ -20,7 +20,7 @@ namespace WorldtreeNexus.Managers {
                             player.TryAddPotionEffect(item.Potion[i].Stat, item.Potion[i].Change + (item.Potion[i].Change > 0 ? player.CurrentRestedBuff : 0));
                         } 
                     }
-                }  else if (item.UseString == "Hurt") {
+                } else if (item.UseString == "Hurt") {
                     player.CurrentHP = Math.Clamp(player.CurrentHP - item.UseInt, 0, player.CurrentHP);
                     GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the " + item.Name.ToLowerInvariant() + ". It tastes... painful. You lose " + item.UseInt + " health.", Color.Goldenrod, Color.Black));
 
@@ -29,45 +29,17 @@ namespace WorldtreeNexus.Managers {
                             player.TryAddPotionEffect(item.Potion[i].Stat, item.Potion[i].Change + (item.Potion[i].Change > 0 ? player.CurrentRestedBuff : 0));
                         } 
                     }
-                } else if (item.UseString == "Kebab") {
-                    int num = GameLoop.rand.Next(32) + 1;
-                    if (num == 1) { 
-                        player.CurrentHP = Math.Clamp(player.CurrentHP + 7, player.CurrentHP, player.Skills["Hitpoints"].Level);
-                        player.TryAddPotionEffect("Attack", 2);
-                        player.TryAddPotionEffect("Strength", 2);
-                        player.TryAddPotionEffect("Defense", 2);
-                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. Wow, that was an amazing kebab! You feel really invigorated.", Color.Lime, Color.Black));
-                    } else if (num <= 9) {
-                        player.CurrentHP = Math.Clamp(player.CurrentHP + 6, player.CurrentHP, player.Skills["Hitpoints"].Level);
-                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. That was a good kebab. You feel a lot better.", Color.Green, Color.Black));
-                    } else if (num <= 29) {
-                        player.CurrentHP = Math.Clamp(player.CurrentHP + 3, player.CurrentHP, player.Skills["Hitpoints"].Level);
-                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. It heals some health.", Color.Green, Color.Black));
-                    } else if (num <= 30) {
-                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. That kebab didn't seem to do a lot.", Color.Yellow, Color.Black));
-                    } else if (num <= 31) { 
-                        string randSkill = player.Skills.Keys.ToList()[GameLoop.rand.Next(player.Skills.Count)];
-                        while (randSkill == "Hitpoints") { 
-                            randSkill = player.Skills.Keys.ToList()[GameLoop.rand.Next(player.Skills.Count)];
-                        }
-                        player.TryAddPotionEffect(randSkill, -3);
-                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. That tasted a bit dodgy. You feel a bit ill.", Color.Crimson, Color.Black));
-                        GameLoop.WTN.Log.AddMessage(new ColoredString("Eating the kebab has damaged your " + randSkill + " stat.", Color.Crimson, Color.Black));
-                    } else if (num <= 32) {
-                        string randSkill = player.Skills.Keys.ToList()[GameLoop.rand.Next(player.Skills.Count)];
-                        while (randSkill == "Hitpoints") { 
-                            randSkill = player.Skills.Keys.ToList()[GameLoop.rand.Next(player.Skills.Count)];
-                        }
-                        player.TryAddPotionEffect(randSkill, -4);
-                        player.TryAddPotionEffect("Attack", -3);
-                        player.TryAddPotionEffect("Strength", -3);
-                        player.TryAddPotionEffect("Defense", -3);
-                        GameLoop.WTN.Log.AddMessage(new ColoredString("You eat the kebab. That tasted very dodgy. You feel very ill.", Color.Crimson, Color.Black));
-                        GameLoop.WTN.Log.AddMessage(new ColoredString("Eating the kebab has done damage to some of your stats.", Color.Crimson, Color.Black));
-                    }
                 } else if (item.UseString == "FillPot") {
                     if (GameLoop.WTN.ItemLibrary.TryGetValue("plantPot", out Item? filledPot) && filledPot != null) {
-                        player.TryPickup(filledPot, 1);
+                        if (GameLoop.WTN.Atlas.TryGetValue(player.NavLoc, out Location? curr) && curr != null) {
+                            if (curr.FarmingPatchesHere.Count > 0) {
+                                player.TryPickup(filledPot, 1);
+                            } else {
+                                GameLoop.WTN.Log.AddMessage(new ColoredString("You can only fill up plant pots with soil at farm plots.", Color.Crimson, Color.Black));
+                            }
+                        } else {
+                            return false;
+                        }
                     } else {
                         return false;
                     }
@@ -229,11 +201,27 @@ namespace WorldtreeNexus.Managers {
 
                                 bool newToLog = false;
                                 if (rolledItems[i].AltLog == "") {
+                                    bool logFinished =  player.CollectionLogClues[item.ID].LogComplete();
                                     player.CollectionLogClues[item.ID].DropsObtained[rolledItems[i].ItemID] += 1;
+                                    if ( player.CollectionLogClues[item.ID].DropsObtained[rolledItems[i].ItemID] == 1) { newToLog = true; }
+
+                                    if (!logFinished && player.CollectionLogClues[item.ID].LogComplete() && player.DropMultiplier == 1) {
+                                        if (SteamManager.TryUnlockAchievement("Collection_Clue_" + item.ID.Replace("casket", ""))) {  
+                                            GameLoop.WTN.Log.AddMessage("Achievement unlocked: Collect all items in the " + item.ID.Replace("casket", "") + " clue log.");
+                                        }
+                                    }
                                 } else {
                                     if (player.CollectionLogClues.TryGetValue(rolledItems[i].AltLog, out CollectionLogEntry? log) && log != null) {
+                                        bool logFinished = log.LogComplete();
+
                                         log.DropsObtained[rolledItems[i].ItemID] += 1;
                                         if (log.DropsObtained[rolledItems[i].ItemID] == 1) { newToLog = true; }
+
+                                        if (!logFinished && log.LogComplete() && player.DropMultiplier == 1) {
+                                            if (SteamManager.TryUnlockAchievement("Collection_Clue_" + rolledItems[i].AltLog)) {  
+                                                GameLoop.WTN.Log.AddMessage("Achievement unlocked: Collect all items in the " + rolledItems[i].AltLog + " clue log.");
+                                            }
+                                        }
                                     }
                                 }
 
@@ -319,7 +307,7 @@ namespace WorldtreeNexus.Managers {
                     GameLoop.WTN.Log.AddMessage(new ColoredString(item.MiscString, Color.SandyBrown, Color.Black));
 
                     foreach (var kv in GameLoop.WTN.QuestLibrary) {
-                        kv.Value.CheckProgress(player, "ExamineItem", item.ID, 0);
+                        player.TryProgressQuest("ExamineItem", item.ID);
                     }
                 } else if (item.UseString == "CleanHerb") {
                     if (player.Skills.TryGetValue("Alchemy", out Skill? herb) && herb != null) {
@@ -344,13 +332,27 @@ namespace WorldtreeNexus.Managers {
                         for (int i = 0; i < item.Potion.Count; i++) {
                             if (item.Potion[i].Stat == "Heal") { 
                                 player.CurrentHP = Math.Clamp(player.CurrentHP + item.Potion[i].Change, player.CurrentHP, player.Skills["Hitpoints"].Level);
-                                GameLoop.WTN.Log.AddMessage(new ColoredString("The " + item.Name.ToLowerInvariant() + " restores some Hitpoints.", Color.Goldenrod, Color.Black)); 
+                                GameLoop.WTN.Log.AddMessage("The " + item.Name.ToLower() + " heals you for " + item.Potion[i].Change + " hitpoints.", Color.Goldenrod); 
+                            } else if (item.Potion[i].Stat == "Hurt") { 
+                                player.CurrentHP = Math.Clamp(player.CurrentHP - item.Potion[i].Change, 0, player.CurrentHP);
+                                GameLoop.WTN.Log.AddMessage("The " + item.Name.ToLower() + " damages you for " + item.Potion[i].Change + " hitpoints.", Color.Crimson); 
+                            } else if (item.Potion[i].Stat == "Poison") {
+                                if (player.PotionStatus("Antipoison") == 0) {
+                                    player.PoisonStatus = item.Potion[i].Change;
+                                    GameLoop.WTN.Log.AddMessage("The " + item.Name.ToLower() + " poisons you!", Color.Crimson);
+                                }
                             } else if (item.Potion[i].Stat == "Restore") {  
                                 foreach (var pot in player.ActivePotions) {
                                     if (pot.Change < 0) {
                                         pot.Change = Math.Clamp(pot.Change + item.Potion[i].Change + (item.Potion[i].Change > 0 ? player.CurrentRestedBuff : 0), pot.Change, 0);
                                     }
                                 }
+                            } else if (item.Potion[i].Stat == "Hunger") {
+                                player.HungerBar = Math.Clamp(player.HungerBar + item.Potion[i].Change, 0, 100);
+                            } else if (item.Potion[i].Stat == "Thirst") {
+                                player.ThirstBar = Math.Clamp(player.ThirstBar + item.Potion[i].Change, 0, 100);
+                            } else if (item.Potion[i].Stat == "Rest") {
+                                player.RestBar = Math.Clamp(player.RestBar + item.Potion[i].Change, 0, 100);
                             } else {
                                 bool found = false;
                                 for (int j = 0; j < player.ActivePotions.Count; j++) {
@@ -560,6 +562,16 @@ namespace WorldtreeNexus.Managers {
                 } else if (item.UseString == "Bones") { 
                     GameLoop.WTN.Log.AddMessage("You lay the " + item.Name.ToLower() + " to rest, gaining " + item.UseInt + " Prayer experience.", Color.Yellow);
                     player.TryGrantExp("Prayer", item.UseInt, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
+                } else if (item.UseString == "Bedroll") {
+                    if (GameLoop.WTN.Atlas.TryGetValue(player.NavLoc, out Location? curr) && curr != null) {
+                        if (curr.MonstersHere.Count == 0) {
+                            for (int i = 0; i < 60; i++) {
+                                GameLoop.WTN.TickTime(true);
+                            }
+                        } else {
+                            GameLoop.WTN.Log.AddMessage("You may not rest when enemies are nearby.", Color.Crimson);
+                        }
+                    }
                 }
 
                 return true;

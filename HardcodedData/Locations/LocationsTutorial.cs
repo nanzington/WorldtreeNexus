@@ -59,6 +59,7 @@ namespace WorldtreeNexus.Hardcodes {
                     new("TI_DungeonEntrance", exp: 5, skill: "Agility") 
                 ],
                 ProcessingStations = [ "Furnace", "Anvil" ],
+                ItemSpawns = [ new("pickaxeCopper", 5), new("hammer", 5) ],
                 GatheringSpots = [ "oreCopper", "oreCopper", "oreCopper", "oreCopper", "rockGemCommon", "rockClay", "rockClay" ],
                 NPCsHere = [ "guySmithing" ]
             });
@@ -170,6 +171,7 @@ namespace WorldtreeNexus.Hardcodes {
                 ItemSpawns = [ new("bucketEmpty", 5), new("eggChicken", 1, count: 2) ],
                 AreaMonsters = [ "cow", "cow", "cow", "chicken", "chicken", "chicken", "ram" ],
                 FarmingPatchesHere = [ "TI_allotment1", "TI_allotment2", "TI_allotment3" ],
+                CozyTown = "Tutorial Island",
                 CCHotspots = [ "shelf", "bedSmall", "chair", "table", "desk", "lighting", "lighting", "portrait", "drawers", "bookcase" ]
             });
 

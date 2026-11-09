@@ -141,7 +141,7 @@ namespace WorldtreeNexus.DataTypes {
                 p.TryGrantExp(ExpTo, ExpGranted, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills, false); 
             p.NavLoc = Destination;
 
-            
+            /*
             if (GameLoop.SoundManager.MusicEnabled && p.MusicMode == "Auto") {
                 if (GameLoop.WTN.Atlas.TryGetValue(Destination, out Location? dest)) {
                     if (dest.SongHere != "" && GameLoop.SoundManager.CurrentSong != dest.SongHere) {
@@ -150,7 +150,7 @@ namespace WorldtreeNexus.DataTypes {
                         GameLoop.SoundManager.PickMusic(dest.SongHere);
                     }
                 }
-            }
+            } */
 
             if (ExtraWindows.CompassRoute.Count > 0 && ExtraWindows.CompassRoute[0] == Destination) {
                 ExtraWindows.CompassRoute.RemoveAt(0);
@@ -164,6 +164,8 @@ namespace WorldtreeNexus.DataTypes {
 
             UI_LocCombat.AttackingBoss = false;
             UI_LocCombat.AttackingMonster = null;
+
+            p.MapTraversals++;
 
             foreach (var kv in CutscenesOnTraverse) {
                 if (GameLoop.WTN.CutsceneLibrary.TryGetValue(kv, out Cutscene? cut)) {

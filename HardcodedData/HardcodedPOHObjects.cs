@@ -3,14 +3,14 @@ using WorldtreeNexus.HardcodedData;
 
 namespace WorldtreeNexus.Hardcodes {
     public static class HardcodedPOHObjects {
-        public static List<POH_Room> RoomTypes = new() {
+        public static List<POH_Room> RoomTypes = [
             new("Parlor", ["Bookcase", "Chair", "Curtains", "Fireplace", "Rug", "Teleport Focus"], 1_000, 1),
             new("Garden", ["Big Plant", "Small Plant", "Small Plant", "Tree", "Plot"], 1_000, 1),
             new("Kitchen", ["Keg", "Cat Basket", "Larder", "Shelf", "Sink", "Spice Rack", "Stove", "Counter"], 5_000, 5),
             new("Dining Room", ["Curtains", "Decoration", "Fireplace", "Seating", "Table"], 5_000, 10),
             new("Workshop", ["Primary Station", "Secondary Station", "Tool Rack", "Repair Bench"], 10_000, 15), // TODO: Re-add clockwork bench when it matters for quests
             new("Bedroom", ["Bed", "Corner", "Curtains", "Dresser", "Fireplace", "Rug", "Wardrobe"], 10_000, 20)
-        }; 
+        ]; 
         // Missing Skill Hall, Games Room, Combat Room, Quest Hall, Menagerie, Costume Room, Formal Garden, Throne Room, Superior Garden, and Achievement Gallery
         // Some have to be workshopped a bit to give them an actual valuable use
 
@@ -19,7 +19,7 @@ namespace WorldtreeNexus.Hardcodes {
 
             List<MaterialDef> Woods = Materials.Woods;
 
-            for (int i = 0; i < 10; i++) { // Tiered items
+            for (int i = 0; i < 11; i++) { // Tiered items
                 toAdd.Add(new("Bookcase", Woods[i].Name + " bookcase", "A" + (Helper.VowelStart(Woods[i].Name.ToLower()) ? "n " : " ") + Woods[i].Name.ToLower() + " bookcase. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",3", "nails" + Woods[i].Descriptor + ",6" ], ["hammer,1", "saw,1"], (30 * (int) Woods[i].Tier) * 3, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier, "clueBookcase"));
                 toAdd.Add(new("Chair", Woods[i].Name + " chair", "A" + (Helper.VowelStart(Woods[i].Name.ToLower()) ? "n " : " ") + Woods[i].Name.ToLower() + " chair. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",2", "nails" + Woods[i].Descriptor + ",4" ], ["hammer,1", "saw,1"], (30 * (int) Woods[i].Tier) * 2, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier));
                 toAdd.Add(new("Chair", Woods[i].Name + " armchair", "A" + (Helper.VowelStart(Woods[i].Name.ToLower()) ? "n " : " ") + Woods[i].Name.ToLower() + " armchair. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",3", "nails" + Woods[i].Descriptor + ",6" ], ["hammer,1", "saw,1"], (30 * (int) Woods[i].Tier) * 3, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level + 5, "Construction")], (int) Woods[i].Tier));
@@ -39,12 +39,12 @@ namespace WorldtreeNexus.Hardcodes {
                     toAdd.Add(new("Telescope", Woods[i].Name + " telescope", "Used for observing heavenly bodies. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",2", "nails" + Woods[i].Descriptor + ",4", "glassMolten,1" ], ["hammer,1", "saw,1"], (30 * (int) Woods[i].Tier) * 2, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier, activateText: "You peer through the telescope at the night sky.", acts: [ new("POH", "Telescope", "", 0) ]));
                 
                 } else {
-                    toAdd.Add(new("Bed", "Gilded katalox bed", "Great for sleeping in. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",5", "nails" + Woods[i].Descriptor + ",10", "goldLeaf,2" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 5) + 600, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier, acts: [ new("POH", "Rest", "", 0)] ));
-                    toAdd.Add(new("Corner", "Gilded katalox clock", "Time is a tool you can put on the wall or wear it on your rizt. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",2", "nails" + Woods[i].Descriptor + ",4", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 2) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level + 5, "Construction")], (int) Woods[i].Tier));
-                    toAdd.Add(new("Dresser", "Gilded katalox dresser", "To help you do your hair. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",2", "nails" + Woods[i].Descriptor + ",4", "glassMolten,2", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 2) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier));
-                    toAdd.Add(new("Wardrobe", "Gilded katalox wardrobe", "A place to keep all your clothes. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",3", "nails" + Woods[i].Descriptor + ",6", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 3) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier));
-                    toAdd.Add(new("Globe", "Gilded katalox globe", "A wooden planet of your very own. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",3", "nails" + Woods[i].Descriptor + ",6", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 3) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier));
-                    toAdd.Add(new("Telescope", "Gilded katalox telescope", "Used for observing heavenly bodies. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",2", "nails" + Woods[i].Descriptor + ",4", "glassMolten,1", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 2) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier, activateText: "You peer through the telescope at the night sky.", acts: [ new("POH", "Telescope", "", 0) ]));
+                    toAdd.Add(new("Bed", "Gilded " + Woods[i].Name + " bed", "Great for sleeping in. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",5", "nails" + Woods[i].Descriptor + ",10", "goldLeaf,2" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 5) + 600, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier, acts: [ new("POH", "Rest", "", 0)] ));
+                    toAdd.Add(new("Corner", "Gilded " + Woods[i].Name + " clock", "Time is a tool you can put on the wall or wear it on your rizt. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",2", "nails" + Woods[i].Descriptor + ",4", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 2) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level + 5, "Construction")], (int) Woods[i].Tier));
+                    toAdd.Add(new("Dresser", "Gilded " + Woods[i].Name + " dresser", "To help you do your hair. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",2", "nails" + Woods[i].Descriptor + ",4", "glassMolten,2", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 2) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier));
+                    toAdd.Add(new("Wardrobe", "Gilded " + Woods[i].Name + " wardrobe", "A place to keep all your clothes. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",3", "nails" + Woods[i].Descriptor + ",6", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 3) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier));
+                    toAdd.Add(new("Globe", "Gilded " + Woods[i].Name + " globe", "A wooden planet of your very own. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",3", "nails" + Woods[i].Descriptor + ",6", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 3) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier));
+                    toAdd.Add(new("Telescope", "Gilded " + Woods[i].Name + " telescope", "Used for observing heavenly bodies. Provides " + (int) Woods[i].Tier + " comfort.", [ "plank" + Woods[i].Name + ",2", "nails" + Woods[i].Descriptor + ",4", "glassMolten,1", "goldLeaf,1" ], ["hammer,1", "saw,1"], ((30 * (int) Woods[i].Tier) * 2) + 300, Woods[i].R, Woods[i].G, Woods[i].B, [ new("Skill", Woods[i].Level, "Construction")], (int) Woods[i].Tier, activateText: "You peer through the telescope at the night sky.", acts: [ new("POH", "Telescope", "", 0) ]));
                 }
             }
 

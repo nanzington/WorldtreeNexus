@@ -27,6 +27,7 @@ namespace WorldtreeNexus.Managers {
 
         public static Window Guide;
         public static string GuideTab = "Introduction";
+        public static int GuidePage = 0;
          
         public static Window Quests;
         public static string QuestFilter = "All";
@@ -272,27 +273,88 @@ namespace WorldtreeNexus.Managers {
             Guide.Print(2, 0, "[Zero Players Online Guidebook]");
             Guide.DrawLine(new Point(20, 1), new Point(20, 28), 179);
 
-            Guide.PrintClickable(2, 2, new ColoredString("Introduction", GuideTab == "Introduction" ? Color.Yellow : Color.White, Color.Black), () => { GuideTab = "Introduction"; });
-            Guide.PrintClickable(2, 4, new ColoredString("Combat", GuideTab == "Combat" ? Color.Yellow : Color.White, Color.Black), () => { GuideTab = "Combat"; });
-            Guide.PrintClickable(2, 6, new ColoredString("Skilling", GuideTab == "Skilling" ? Color.Yellow : Color.White, Color.Black), () => { GuideTab = "Skilling"; });
-            Guide.PrintClickable(2, 8, new ColoredString("Shops", GuideTab == "Shops" ? Color.Yellow : Color.White, Color.Black), () => { GuideTab = "Shops"; });
-            Guide.PrintClickable(2, 10, new ColoredString("NPC Dialogue", GuideTab == "NPC Dialogue" ? Color.Yellow : Color.White, Color.Black), () => { GuideTab = "NPC Dialogue"; });
+            List<string> GuideTabs = ["Introduction", "Difficulty", "Combat", "Skilling", "Shops", "NPC Dialogue", "Quests", "Collection Logs" ];
+            int tabY = 1;
 
-            int printY = 2;
+            foreach (var str in GuideTabs) {
+                Guide.PrintClickable(1, tabY++, new ColoredString(GuideTab == str ? "-> " + str : "   " + str, GuideTab == str ? Color.Yellow : Color.DarkSlateGray, Color.Black), () => { GuideTab = str; GuidePage = 0; });
+            } 
+            int printY = 1;
 
-            if (GuideTab == "Introduction") {
-
+            if (GuideTab == "Introduction") { 
                 printY = Guide.PrintMultiLine(22, printY,
                     "Welcome to Zero Players Online! The interface can be a little intimidating but this guide will hopefully ease you into the process of playing the game." + " /n /n " +
                     "The area to the top left contains your important stats readout, including HP and Gold, and skills you've recently gained experience in." + " /n /n " +
                     "Below this readout is the content area, containing tabs you can switch between at the top to view your inventory, equipment, and more." + " /n /n " +
                     "Underneath this and the width of the screen is your message log, where important messages are sent by the game." + " /n /n " +
                     "The top of the right side of the screen is your current location, listing its description and title." + " /n /n " +
-                    "To the left below this are connected locations and monsters at this location. You can click a connected location to move to it." + " /n /n " +
+                    "To the left below this are connected locations and monsters at this location. You can click a connected location to move to it, or a monster to attack it." + " /n /n " +
                     "Finally to the right is the activity box, containing resources you can collect, items on the ground, NPCs, shop items, and processing stations at this location. Pressing TAB will cycle the tab shown here, or you can click on the letters at the top to change to specific tabs." + " /n /n " +
                     "This is all a lot to take in, but hopefully with some practice it will become more natural to navigate."
                     , 78);
             }
+
+            if (GuideTab == "Difficulty") { 
+                printY = Guide.PrintMultiLine(22, printY, "This section of the guide explains each difficulty option available during character creation, and in gray your current selection for that option.", 78); 
+                Guide.DrawLine(new Point(22, printY), new Point(98, printY++), 196, Color.White); 
+
+                if (GuidePage == 0) { 
+                    string tradeHall = GameLoop.WTN.player.TradeHallLimit == 1 ? "Bronze" : GameLoop.WTN.player.TradeHallLimit == 0 ? "Full" : "None"; 
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Trade Hall: ", Color.Yellow, Color.Black) + new ColoredString("Whether or not you can use the Trade Hall to buy and sell items. Bronze means you can only trade items you've already acquired naturally at least once.") + new ColoredString(" (" + tradeHall + ")", Color.DarkSlateGray, Color.Black), 78);
+                    printY++; 
+
+                    string deathPenalty = GameLoop.WTN.player.DeathMode == 1 ? "Drop Inv" : GameLoop.WTN.player.DeathMode == 0 ? "None" : "Permadeath"; 
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Death Penalty: ", Color.Yellow, Color.Black) + new ColoredString("What happens when you die. None (just respawn), Drop Inv (drop items where you died), or Permadeath (lose all progress and respawn at your spawnpoint)") + new ColoredString(" (" + deathPenalty + ")", Color.DarkSlateGray, Color.Black), 78);
+                    printY++;
+
+                    string instadeath = GameLoop.WTN.player.NightmareMode ? "On" : "Off"; 
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Nightmare Mode: ", Color.Yellow, Color.Black) + new ColoredString("If you take any damage, you die.") + new ColoredString(" (" + instadeath + ")", Color.DarkSlateGray, Color.Black), 78);
+                    printY++;
+                  
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Exp Multiplier: ", Color.Yellow, Color.Black) + new ColoredString("All experience gained is multiplied by this number. Disables level-based achievements if set higher than 1.") + new ColoredString(" (" + GameLoop.WTN.player.ExpMultiplier + ")", Color.DarkSlateGray, Color.Black), 78);
+                    printY++;
+
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Coin Pouch: ", Color.Yellow, Color.Black) + new ColoredString("The ability to hold and use coins without them taking up an inventory slot. Optionally drop these coins on death too.") + new ColoredString(" (" + (GameLoop.WTN.player.CoinPouch ? "On" : "Off") + ", " + (GameLoop.WTN.player.CoinPouchDeath ? "Drop" : "Keep") +")", Color.DarkSlateGray, Color.Black), 78);
+                    printY++;
+
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("GP to Buy 1 EXP: ", Color.Yellow, Color.Black) + new ColoredString("Allows you to spend coins to level skills, by clicking their name in the skill menu. Number determines gold cost per exp point.") + new ColoredString(" (" + GameLoop.WTN.player.PayToWin + ")", Color.DarkSlateGray, Color.Black), 78);
+                    printY++;
+
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Only Pay To Win: ", Color.Yellow, Color.Black) + new ColoredString("Disables gaining experience in any way except by purchasing it with coins.") + new ColoredString(" (" + (GameLoop.WTN.player.OnlyPayToWin ? "On" : "Off") + ")", Color.DarkSlateGray, Color.Black), 78);
+                    printY++; 
+                } else if (GuidePage == 1) {
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Drop Multiplier: ", Color.Yellow, Color.Black) + new ColoredString("Multiplies drop chance for nearly all sources by this number. 'Dry Protection' makes it so that if you haven't obtained an item by the drop rate (ex 10 kills on a 1/10), it is guaranteed. 'No RNG Drops' makes drops *only* happen at increments of the drop rate. Multipliers over 1 disable collection achievements, the other two options do not.") + new ColoredString(" (" + GameLoop.WTN.player.DropMultiplier + (GameLoop.WTN.player.DropModifier == 0 ? "" : GameLoop.WTN.player.DropModifier == 1 ? ", Dry" : ", No RNG") + ")", Color.DarkSlateGray, Color.Black), 77);
+                    printY++;
+
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Max Kills Per Monster: ", Color.Yellow, Color.Black) + new ColoredString("Change by hovering mouse over it and scrolling, optionally holding shift and control to move faster. If not set to -1, after a monster is killing this many times then you will no longer receive experience or drops from fighting it.") + new ColoredString(" (" + GameLoop.WTN.player.KillLimit + ")", Color.DarkSlateGray, Color.Black), 77);
+                    printY++;
+
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Inventory Slots: ", Color.Yellow, Color.Black) + new ColoredString("Change by hovering mouse over it and scrolling, optionally holding shift and control to move faster. You can only hold this many items at once, max of 20, minimum of 1.") + new ColoredString(" (" + GameLoop.WTN.player.InventoryLimit + ")", Color.DarkSlateGray, Color.Black), 77);
+                    printY++;
+
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Can Use Banks: ", Color.Yellow, Color.Black) + new ColoredString("Whether or not you are permitted to store items at banks.") + new ColoredString(" (" + (GameLoop.WTN.player.CanUseBanks ? "Yes" : "No") + ")", Color.DarkSlateGray, Color.Black), 77);
+                    printY++;
+
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Can Use Shops: ", Color.Yellow, Color.Black) + new ColoredString("Whether or not you are permitted to buy and sell items at shops. By default shops only pay full price for items they sell, but optionally all shops can buy at full price. The final toggle makes it so that shops will only pay anything for items they also sell.") + new ColoredString(" (" + (GameLoop.WTN.player.CanUseShops ? "Yes" : "No") + ", " + (GameLoop.WTN.player.ShopsAlwaysFullPrice ? "100%" : "50%") + ", " + (GameLoop.WTN.player.ShopsOnlyStocked ? "Stocked" : "All") + ")", Color.DarkSlateGray, Color.Black), 77);
+                    printY++;
+                } else if (GuidePage == 2) {
+                    string farmTime = GameLoop.WTN.player.FarmGrowthIncrement == 1 ? "Slow" : GameLoop.WTN.player.FarmGrowthIncrement == 60 ? "Normal" : GameLoop.WTN.player.FarmGrowthIncrement == 1000 ? "Fast" : "Instant";
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Farm Growth Time: ", Color.Yellow, Color.Black) + new ColoredString("How fast planted seeds mature. Slow (real time, tens of minutes or even several hours to grow), Normal (60x, most things grow in a few minutes), Fast (1000x, most things grow in a few seconds), Instant (10000x, nearly everything grows within a second)") + new ColoredString(" (" + farmTime + ")", Color.DarkSlateGray, Color.Black), 77);
+                    printY++;
+
+                    printY = Guide.PrintMultiLine(22, printY, new ColoredString("Skip Tutorial Island: ", Color.Yellow, Color.Black) + new ColoredString("Allows you to start in Worldtree Nexus Plaza instead of on Tutorial Island. Yes just completes 'On The Job Training', Cape also sets all skills to level 10 and fills out the Tutorial Clue and Huge Zombie logs. You receive the Tutorial cape, but no other items."), 77);
+                    printY++;
+                }
+                 
+                if (GuidePage > 0) { Guide.PrintClickable(22, 28, "[PREV PAGE]", () => { GuidePage--; }); }
+                if (GuidePage < 2) { Guide.PrintClickable(87, 28, "[NEXT PAGE]", () => { GuidePage++; }); }
+            } else if (GuideTab == "Combat") {
+
+            }
+            
+             
+            Guide.PrintClickable(99, 0, new ColoredString("X", Color.Crimson, Color.Black), () => { Guide.IsVisible = false; });
+            if (Helper.HotkeyDown(Keys.Escape)) { Guide.IsVisible = false; }
         }
          
 
@@ -401,6 +463,30 @@ namespace WorldtreeNexus.Managers {
                     "Lv 90 (" + DebugIngredients90.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
                     "Lv100 (" + DebugIngredients100.ToString().Align(HorizontalAlignment.Right, 3) + ") | " +
                     "Total (" + DebugIngredientsTotal.ToString().Align(HorizontalAlignment.Right, 5) + ")");
+
+                Debug.Print(29, 19, "".Align(HorizontalAlignment.Right, 5, (char) 254), Color.White);
+                Debug.Print(29, 20, 254.AsString(), Color.White);
+                Debug.Print(29, 21, 254.AsString(), Color.White);
+                Debug.Print(33, 20, 254.AsString(), Color.White);
+                Debug.Print(33, 21, 254.AsString(), Color.White);
+                Debug.Print(29, 22, "".Align(HorizontalAlignment.Right, 5, (char) 254), Color.White);
+                Debug.Print(30, 20, "OVR", Color.Crimson);
+                Debug.Print(30, 21, "P2W", Color.Crimson); 
+
+                Debug.Print(39, 19, "".Align(HorizontalAlignment.Right, 8, (char) 254), Color.White);
+                Debug.Print(39, 20, 254.AsString(), Color.White);
+                Debug.Print(39, 21, 254.AsString(), Color.White);
+                Debug.Print(39, 22, 254.AsString(), Color.White);
+                Debug.Print(39, 23, 254.AsString(), Color.White);
+                Debug.Print(46, 20, 254.AsString(), Color.White);
+                Debug.Print(46, 21, 254.AsString(), Color.White); 
+                Debug.Print(46, 22, 254.AsString(), Color.White);
+                Debug.Print(46, 23, 254.AsString(), Color.White); 
+                Debug.Print(40, 20, "123456", Color.Crimson);
+                Debug.Print(40, 21, "123456", Color.Crimson); 
+                Debug.Print(40, 22, "123456", Color.Crimson); 
+                Debug.Print(40, 23, "123456", Color.Crimson); 
+                Debug.Print(39, 24, "".Align(HorizontalAlignment.Right, 8, (char) 254), Color.White);
             } else if (DebugMenu == "Exp Chart") {  
                 
                 for (int i = 1; i < 101; i++) {
@@ -612,7 +698,7 @@ namespace WorldtreeNexus.Managers {
                 }
 
                 foreach (var item in kv.Value.ShopItemsHere) {
-                    if (!GameLoop.WTN.ItemLibrary.ContainsKey(item)) {
+                    if (!GameLoop.WTN.ItemLibrary.ContainsKey(item) && item != "" && item[0] != '_') {
                         findings.Add(new("Loc: " + kv.Value.ID + ": Shop Item (" + item + ")", "", "", "", "", 0));
                     }
                 }
@@ -645,17 +731,30 @@ namespace WorldtreeNexus.Managers {
                             findings.Add(new("Item: " + kv.Value.ID + ": Drop Table (" + loot.ItemID + ")", "", "", "", "", 0));
                         }
                     }
+                }
 
-                    foreach (var tp in kv.Value.TeleportLocations) {
-                        if (tp != "" && !GameLoop.WTN.Atlas.ContainsKey(tp)) {
-                            findings.Add(new("Item: " + kv.Value.ID + ": TeleLoc (" + tp + ")", "", "", "", "", 0));
-                        }
+                foreach (var tp in kv.Value.TeleportLocations) {
+                    if (tp != "" && !GameLoop.WTN.Atlas.ContainsKey(tp)) {
+                        findings.Add(new("Item: " + kv.Value.ID + ": TeleLoc (" + tp + ")", "", "", "", "", 0));
+                    }
+                }
+
+                if (kv.Value.Alchemy != null && kv.Value.Alchemy.ReturnID != "") {
+                    if (!GameLoop.WTN.ItemLibrary.ContainsKey(kv.Value.Alchemy.ReturnID)) { 
+                        findings.Add(new("Item: " + kv.Value.ID + ": Alchemy Return (" + kv.Value.Alchemy.ReturnID + ")", "", "", "", "", 0));
+                    }
+                }
+
+                if (kv.Value.Potion != null && kv.Value.Potion.Count > 0) { 
+                    bool heals = false;
+                    bool feeds = false;
+                    foreach (var pot in kv.Value.Potion) {
+                        if (pot.Stat == "Hunger") { feeds = true; }
+                        if (pot.Stat == "Heal") { heals = true; }
                     }
 
-                    if (kv.Value.Alchemy != null && kv.Value.Alchemy.ReturnID != "") {
-                        if (!GameLoop.WTN.ItemLibrary.ContainsKey(kv.Value.Alchemy.ReturnID)) { 
-                            findings.Add(new("Item: " + kv.Value.ID + ": Alchemy Return (" + kv.Value.Alchemy.ReturnID + ")", "", "", "", "", 0));
-                        }
+                    if (heals && feeds && kv.Value.SpoilTimer == -1) { 
+                        findings.Add(new("Item: " + kv.Value.ID + ": Should probably spoil but spoil timer not set.", "", "", "", "", 0));
                     }
                 }
             }
@@ -787,10 +886,12 @@ namespace WorldtreeNexus.Managers {
             }
 
             foreach (var kv in GameLoop.WTN.QuestLibrary) {   
-                foreach (var reward in kv.Value.Rewards) {
-                    if (reward.RewardType == "Item" && reward.MiscString != "" && reward.MiscString != "Gold" && !GameLoop.WTN.ItemLibrary.ContainsKey(reward.MiscString)) {
-                        findings.Add(new("Quest: " + kv.Value.ID + " Reward (" + reward.MiscString + ")", "", "", "", "", 0));
-                    }  
+                foreach (var stage in kv.Value.Stages) {
+                    foreach (var reward in stage.Value.Rewards) {
+                        if (reward.RewardType == "Item" && reward.MiscString != "" && reward.MiscString != "Gold" && !GameLoop.WTN.ItemLibrary.ContainsKey(reward.MiscString)) {
+                            findings.Add(new("Quest: " + kv.Value.ID + " Reward (" + reward.MiscString + ")", "", "", "", "", 0));
+                        }  
+                    }
                 }
             } 
 
@@ -802,6 +903,12 @@ namespace WorldtreeNexus.Managers {
                     foreach (var two in alchs) {
                         if (one.ID != two.ID && recipe.Value.ReqsMet(one.Alchemy.Plus(two.Alchemy))) {
                             perfects++;
+                            if (!recipe.Key.Contains("ink") && !recipe.Key.Contains("oil") && !recipe.Key.Contains("essence")) {
+                                int val = (int) Math.Floor(((one.Value + two.Value) / 2) * (recipe.Value.LevelForPerfect > 1 ? (1 + (recipe.Value.LevelForPerfect / 100.0)) : 1)); 
+                                if (GameLoop.WTN.ResolveItem(recipe.Key) is Item potion && potion.Value != val) { 
+                                    findings.Add(new("Nonstandard potion value: (" + recipe.Key + ") should be worth [" + val + "]", "", "", "", "", 0));
+                                } 
+                            }
                         }
                     }
                 }
@@ -1951,7 +2058,7 @@ namespace WorldtreeNexus.Managers {
 
                     if (GameLoop.WTN.player.QuestLog.TryGetValue(quests[i].ID, out QuestStatus? questProg) && questProg != null) {
                         if (questProg.CurrentStage != -1) { col = Color.Yellow; } 
-                        if (questProg.CurrentStage == quests[i].CompleteStage) { col = Color.Lime; }
+                        if (GameLoop.WTN.player.QuestCompleted(quests[i].ID, true)) { col = Color.Lime; }
                     } 
 
                     Compendium.PrintClickable(2, sidebarY++, new ColoredString(quests[i].Name, (CompendiumViewingID == quests[i].ID ? Color.Turquoise : col), Color.Black), () => { ResetAllCompendiumValues(); CompendiumCat = "Quests"; CompendiumViewingID = quests[i].ID; });
@@ -2012,27 +2119,7 @@ namespace WorldtreeNexus.Managers {
                             Compendium.Print(32, questY++, "| (no requirements)", Color.DarkSlateGray);  
                         }
                     } else if (CompendiumViewingID2 == "Rewards") {
-                        if (quest.Rewards != null && quest.Rewards.Count > 0) {
-                            int dropQty = 1;
-                            if (Helper.EitherShift())
-                                dropQty *= 5;
-                            if (Helper.EitherControl())
-                                dropQty *= 10;
-
-
-                            if (quest.Rewards.Count > 10) {
-                                if (Helper.ScrolledUp()) { CompendiumDropTop = Math.Clamp(CompendiumDropTop - dropQty, 0, quest.Rewards.Count - 10); }
-                                if (Helper.ScrolledDown()) { CompendiumDropTop = Math.Clamp(CompendiumDropTop + dropQty, 0, quest.Rewards.Count - 10); }
-                            } else {
-                                CompendiumDropTop = 0;
-                            } 
-
-                            for (int i = CompendiumDropTop; i < quest.Rewards.Count && i < CompendiumDropTop + 10 && questY < 29; i++) { 
-                                Compendium.Print(32, questY++, "| " + quest.Rewards[i].GetSummary(), Color.White);
-                            }
-                        } else {
-                            Compendium.Print(32, questY++, "| (no rewards)", Color.DarkSlateGray);  
-                        }
+                        // TODO: redo this section now that rewards live in stages instead of the quest object itself
                     }  else if (CompendiumViewingID2 == "Stages") {
                         if (quest.Stages != null && quest.Stages.Count > 0) {  
                             int qx = 32;
@@ -2796,10 +2883,12 @@ namespace WorldtreeNexus.Managers {
             }
 
             foreach (var kv in GameLoop.WTN.QuestLibrary) {
-                if (kv.Value.Rewards != null) {
-                    for (int i = 0; i < kv.Value.Rewards.Count; i++) {
-                        if (kv.Value.Rewards[i].RewardType == "Item" && kv.Value.Rewards[i].MiscString == id) {
-                            sources.Add(new("Quest Reward: " + kv.Value.Name, "Quests", "", kv.Value.ID, "", 0));
+                foreach (var stage in kv.Value.Stages) {
+                    if (stage.Value.Rewards != null) {
+                        for (int i = 0; i < stage.Value.Rewards.Count; i++) {
+                            if (stage.Value.Rewards[i].RewardType == "Item" && stage.Value.Rewards[i].MiscString == id) {
+                                sources.Add(new("Quest Reward: " + kv.Value.Name, "Quests", "", kv.Value.ID, "", 0));
+                            }
                         }
                     }
                 }
@@ -2881,13 +2970,13 @@ namespace WorldtreeNexus.Managers {
             foreach (var kv in GameLoop.WTN.Atlas) {
                 if (kv.Value.SongHere != "") { SongsPlaced.Add(kv.Value.SongHere); } 
             }
-            
+            /*
             foreach (var song in GameLoop.SoundManager.Songs.Keys.OrderBy(o => o).ToList()) {
                 if (!SongsPlaced.Contains(song)) { 
                     sources.Add(new(song, "", "", "", "", 0, 0));
                 }
             }
-
+            */
             return sources;
         }
 
@@ -3391,7 +3480,7 @@ namespace WorldtreeNexus.Managers {
                         col = Color.Yellow;
                     }
 
-                    if (QuestsInFilter[i].CurrentStage() == QuestsInFilter[i].CompleteStage) {
+                    if (QuestsInFilter[i].AtAnEnd(true)) {
                         col = Color.Lime;
                     }
 
@@ -3428,55 +3517,53 @@ namespace WorldtreeNexus.Managers {
                         if (currQuest.CurrentStage() != -1) {
                             Quests.PrintClickable(19, afterDesc, "[View Quest Log]", () => { QuestOverview = false; QuestBlockScrollTop = 0; });
 
-                            if (currQuest.CurrentStage() == currQuest.CompleteStage)
+                            if (currQuest.AtAnEnd()) {
                                 Quests.Print(19, afterDesc + 2, "Quest Complete!", Color.Lime);
-                        }
-                    } else {
-                        int visibleStages = 0;
-                        
-                        foreach (var kv in currQuest.Stages) {
-                            if (kv.Key <= currQuest.CurrentStage()) {
-                                visibleStages++;
+                            } else if (currQuest.AtAnEnd(true)) {
+                                Quests.Print(19, afterDesc + 2, "Quest Complete?", Color.Lime);
                             }
                         }
+                    } else {
+                        if (GameLoop.WTN.player.QuestLog.TryGetValue(currQuest.ID, out QuestStatus? status)) {
+                            List<QuestStage> VisibleStages = currQuest.Stages.Where(o => status.StageHistory.Contains(o.Key)).Select(o => o.Value).ToList();
+                            VisibleStages.Reverse();
 
-                        if (Helper.ScrolledDown()) { QuestBlockScrollTop = Math.Clamp(QuestBlockScrollTop - 1, 0, visibleStages - 1); }
-                        if (Helper.ScrolledUp()) { QuestBlockScrollTop = Math.Clamp(QuestBlockScrollTop + 1, 0, visibleStages - 1); }
+                            if (VisibleStages.Count > 2) {
+                                if (Helper.ScrolledDown()) { QuestBlockScrollTop = Math.Clamp(QuestBlockScrollTop - 1, 0, VisibleStages.Count - 1); }
+                                if (Helper.ScrolledUp()) { QuestBlockScrollTop = Math.Clamp(QuestBlockScrollTop + 1, 0, VisibleStages.Count - 1); }
+                            } else {
+                                QuestBlockScrollTop = 0;
+                            }
 
+                            Quests.PrintClickable(19, 1, "[View Quest Overview]", () => { QuestOverview = true; });
+                            Quests.PrintClickable(85, 1, new ColoredString("[Quick Guide]", QuestQuickGuide ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { QuestQuickGuide = !QuestQuickGuide; });
 
-                        Quests.PrintClickable(19, 1, "[View Quest Overview]", () => { QuestOverview = true; });
-                        Quests.PrintClickable(85, 1, new ColoredString("[Quick Guide]", QuestQuickGuide ? Color.Lime : Color.DarkSlateGray, Color.Black), () => { QuestQuickGuide = !QuestQuickGuide; });
+                            int printY = 28;
+                            int count = -1; 
 
-                        int printY = 28;
-                        int count = -1; 
-
-                        foreach (var kv in currQuest.Stages.Reverse()) {
-                            if (kv.Key <= currQuest.CurrentStage()) {
-                                count++;
-                                if (count < QuestBlockScrollTop) { continue; }
-
-                                Color col = kv.Key == currQuest.CurrentStage() ? Color.White : Color.DarkSlateGray;
+                            for (int i = QuestBlockScrollTop; i < VisibleStages.Count && printY > 2; i++) { 
+                                Color col = i == 0 ? Color.White : Color.DarkSlateGray;
 
                                 //if (kv.Value.Description.Length >= 80) { printY -= (kv.Value.Description.Length / 75); } 
 
                                 if (!QuestQuickGuide) {
-                                    int simPrint = Quests.PrintMultiLine(19, printY, kv.Value.Description, 80, col.R, col.G, col.B, justSim: true); 
+                                    int simPrint = Quests.PrintMultiLine(19, printY, VisibleStages[i].Description, 80, col.R, col.G, col.B, justSim: true); 
                                     printY -= (simPrint - printY) + 1; 
                                     if (printY < 2) { break; } 
-                                    Quests.PrintMultiLine(19, printY, kv.Value.Description, 80, col.R, col.G, col.B);
+                                    Quests.PrintMultiLine(19, printY, VisibleStages[i].Description, 80, col.R, col.G, col.B);
                                 } else {
-                                    int simPrint = Quests.PrintMultiLine(19, printY, kv.Value.QuickDesc, 80, col.R, col.G, col.B, justSim: true); 
+                                    int simPrint = Quests.PrintMultiLine(19, printY, VisibleStages[i].QuickDesc, 80, col.R, col.G, col.B, justSim: true); 
                                     printY -= (simPrint - printY) + 1; 
                                     if (printY < 2) { break; } 
-                                    Quests.PrintMultiLine(19, printY, kv.Value.QuickDesc, 80, col.R, col.G, col.B);
+                                    Quests.PrintMultiLine(19, printY, VisibleStages[i].QuickDesc, 80, col.R, col.G, col.B);
                                 }
-                            }
-                        } 
+                            } 
 
-                        if (currQuest.CurrentStage() == currQuest.CompleteStage)
-                            Quests.Print(19, 28, "Quest Complete!", Color.Lime);
+                            if (currQuest.CurrentStage() == currQuest.CompleteStage)
+                                Quests.Print(19, 28, "Quest Complete!", Color.Lime);
 
-                        Quests.DrawLine(new Point(1, 29), (98, 29), 196, Color.White);
+                            Quests.DrawLine(new Point(1, 29), (98, 29), 196, Color.White);
+                        }
                     }
                 } 
             }
@@ -4695,6 +4782,9 @@ namespace WorldtreeNexus.Managers {
             } 
 
             
+            Talisman.Print(33, 28, new ColoredString("Hold shift and right click while mousing over tiles to mark X", Color.DarkSlateGray, Color.Black));
+
+            
             int spots = splitDrawing.Where(o => o == 'x').ToList().Count;
             
             if (TalismanInk != null && TalismanInk.GetRef() is Item inkDisp) { 
@@ -4750,6 +4840,7 @@ namespace WorldtreeNexus.Managers {
                                                     if (matchCount > totalCount * 0.9) { // If they match 90% or more of tiles
                                                         GameLoop.WTN.player.TryPickup(tali, outQty);
                                                         GameLoop.WTN.Log.AddMessage("You imbue a spark of magical energy into the paper and ink, and they become talismans.", Color.Turquoise);
+                                                        GameLoop.WTN.player.TryGrantExp("Crafting", outQty * 10, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
                                                     } else {
                                                         GameLoop.WTN.Log.AddMessage("Drawing did not match the guide well enough, and the materials went to waste. (" + ((matchCount / (double) totalCount) * 100) + "% match)",  Color.Crimson);
                                                     } 

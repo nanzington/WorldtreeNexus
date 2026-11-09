@@ -1,5 +1,5 @@
 ﻿using WorldtreeNexus.UI;
-using IrrKlang;
+//using IrrKlang;
 using static WorldtreeNexus.Music;
 using System.Resources;
 using System.Globalization;
@@ -7,7 +7,7 @@ using System.Collections;
 using MeltySynth; 
 
 namespace WorldtreeNexus.Managers {
-    public class SoundManager {        
+    public class SoundManager {     /*   
         public ISoundEngine engine = new();
         public ISoundEngine music = new();
 
@@ -120,6 +120,6 @@ namespace WorldtreeNexus.Managers {
                 music.StopAllSounds();
                 CurrentSong = "None";
             }
-        }
-    }
+        }*/
+    } 
 }

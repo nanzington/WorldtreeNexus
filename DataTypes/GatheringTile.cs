@@ -70,7 +70,7 @@ namespace WorldtreeNexus.DataTypes {
 
                     if (NeedToolCat != "") {  
                         foreach (var kv in p.Equipment) {
-                            if (kv.Value.GetRef() is Item eqp && eqp.MiscString == NeedToolCat) {
+                            if (kv.Value.GetRef() is Item eqp && eqp.MiscString == NeedToolCat && !kv.Value.Noted) {
                                 if (eqp.EquipLevel <= p.GetEffectiveSkillLevel(Skill)) { 
                                     levelDiff = Level - eqp.EquipLevel; // Readjust based on tool used level instead of player level, this is where it can become positive and become a penalty
                                 }
@@ -78,7 +78,7 @@ namespace WorldtreeNexus.DataTypes {
                         }
 
                         for (int i = 0; i < p.Inventory.Count; i++) {
-                            if (p.Inventory[i].GetRef() is Item inv && inv.MiscString == NeedToolCat) {
+                            if (p.Inventory[i].GetRef() is Item inv && inv.MiscString == NeedToolCat && !p.Inventory[i].Noted) {
                                 if (inv.EquipLevel <= p.GetEffectiveSkillLevel(Skill)) {
                                     levelDiff = Level - inv.EquipLevel; // Readjust based on tool used level instead of player level, this is where it can become positive and become a penalty
                                 }
@@ -120,9 +120,9 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 // Check to see if a quest is progressed by gathering from this type of gatherSpot successfully
-                foreach (var quest in GameLoop.WTN.QuestLibrary) { quest.Value.CheckProgress(p, "Gather", ID, 1); }
+                foreach (var quest in GameLoop.WTN.QuestLibrary) { p.TryProgressQuest("Gather", ID); }
                  
-                if (CustomLogMessage != "") { log.AddMessage(new ColoredString(CustomLogMessage, Color.Yellow, Color.Black)); }
+                if (CustomLogMessage != "" && CustomLogMessage != "_") { log.AddMessage(new ColoredString(CustomLogMessage, Color.Yellow, Color.Black)); }
 
                 if (output != null && GameLoop.WTN.ResolveItem(output.ItemID) is Item receive) {
                     if (Skill == "Thieving") { receive.Stolen = true; }
@@ -135,7 +135,7 @@ namespace WorldtreeNexus.DataTypes {
                     }
 
                     // Check to see if a quest is progressed by gathering this specific item
-                    foreach (var quest in GameLoop.WTN.QuestLibrary) { quest.Value.CheckProgress(p, "GatheredItem", output.ItemID, 1); }
+                    foreach (var quest in GameLoop.WTN.QuestLibrary) { p.TryProgressQuest("GatheredItem", output.ItemID); }
 
                     // If the output specifies a different exp gained give that, otherwise give the normal exp
                     if (Skill != "") {
@@ -146,7 +146,9 @@ namespace WorldtreeNexus.DataTypes {
                     int deplete = GameLoop.rand.Next(100) + 1; 
                     if (deplete <= DepleteChance) { LastGathered = Helper.Time(); } 
                 } else {
-                    log.AddMessage(new ColoredString("You " + InteractVerb.ToLower() + " the " + Name.ToLower() + " but got nothing.", Color.Crimson, Color.Black)); 
+                    if (CustomLogMessage == "") {
+                        log.AddMessage(new ColoredString("You " + InteractVerb.ToLower() + " the " + Name.ToLower() + " but got nothing.", Color.Crimson, Color.Black)); 
+                    }
                 } 
             } else {
                 log.AddMessage(new ColoredString("You need " + CanGather(p) + " to do that.", Color.Crimson, Color.Black));
@@ -163,7 +165,7 @@ namespace WorldtreeNexus.DataTypes {
             if (NeedToolCat != "") {
                 bool foundTool = false;
                 foreach (var kv in p.Equipment) {
-                    if (kv.Value.GetRef() is Item eqp && eqp.MiscString == NeedToolCat) {
+                    if (kv.Value.GetRef() is Item eqp && eqp.MiscString == NeedToolCat && !kv.Value.Noted) {
                         if (eqp.EquipLevel <= p.GetEffectiveSkillLevel(Skill)) {
                             foundTool = true;
                         }
@@ -171,7 +173,7 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 for (int i = 0; i < p.Inventory.Count; i++) {
-                    if (p.Inventory[i].GetRef() is Item inv && inv.MiscString == NeedToolCat) {
+                    if (p.Inventory[i].GetRef() is Item inv && inv.MiscString == NeedToolCat && !p.Inventory[i].Noted) {
                         if (inv.EquipLevel <= p.GetEffectiveSkillLevel(Skill)) {
                             foundTool = true;
                         }

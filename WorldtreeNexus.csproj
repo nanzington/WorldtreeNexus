@@ -48,8 +48,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="irrKlang.NET4">
-      <HintPath>..\ZeroPlayersOnline\irrKlang.NET4.dll</HintPath>
+    <Reference Include="Facepunch.Steamworks.Win64">
+      <HintPath>Facepunch.Steamworks.Win64.dll</HintPath>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Reference>
   </ItemGroup>
 
@@ -81,6 +83,9 @@
     <None Update="door.xp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Facepunch.Steamworks.Win64.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="fonts\CheepicusExtended.font">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -94,6 +99,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="irrKlang.NET4.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="steam_api.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="steam_api64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

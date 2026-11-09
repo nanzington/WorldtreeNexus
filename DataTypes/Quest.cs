@@ -24,7 +24,6 @@ namespace WorldtreeNexus.DataTypes {
         public List<Requirement> RequirementsToStart = new();
 
         public Dictionary<int, QuestStage> Stages = new();
-        public List<QuestReward> Rewards = new();
         public List<RunAction> ActionsOnComplete = new();
 
         public Quest(string id, string name, string length, string diff, string desc, int complete, List<string> regions) {
@@ -50,72 +49,20 @@ namespace WorldtreeNexus.DataTypes {
             return allPassed;
         }
 
-
-        public void CheckProgress(Player p, string type, string misc, int num) {
-            if (p.QuestLog.TryGetValue(ID, out QuestStatus? status)) {
-                if (status.CurrentStage == CompleteStage)
-                    return;
-
-                if (Stages.TryGetValue(status.CurrentStage, out QuestStage? stage)) {
-                    if (stage != null) {
-                        if (stage.ProgressType == type && stage.MiscString == misc && stage.MiscInt <= num) {
-                            status.CurrentStage = stage.LeadsToStage;
-                        }
-
-                        if (status.CurrentStage == CompleteStage) {
-                            GameLoop.WTN.Log.AddMessage(new ColoredString("You have completed " + Name + "!", Color.Lime, Color.Black));
-                            ProcessRewards(p);
-                        }
-                    }
-                }
-            } 
-        }
-
-
-        public void ProcessRewards(Player p) {
-            foreach (var kv in Rewards) {
-                if (kv.RewardType == "Experience") {
-                    GameLoop.WTN.Log.AddMessage("You gain " + kv.MiscInt + " " + kv.MiscString + " experience.", Color.Yellow);
-                    p.TryGrantExp(kv.MiscString, kv.MiscInt, GameLoop.WTN.Log, SidebarManager.RecentlyTrainedSkills);
-                }
-
-                if (kv.RewardType == "Item") {
-                    if (kv.MiscString == "Gold") {
-                        GameLoop.WTN.Log.AddMessage("You receive " + kv.MiscInt + " gold.", Color.Yellow);
-                        p.GiveGold(kv.MiscInt); 
-                    } else { 
-                        if (GameLoop.WTN.ItemLibrary.TryGetValue(kv.MiscString, out Item? reward) && reward != null) {
-                            if (kv.MiscInt == 1)
-                                GameLoop.WTN.Log.AddMessage("You receive a" + (Helper.VowelStart(reward.Name.ToLower()) ? "n " : " ") +  reward.Name.ToLower() + ".", Color.Yellow);
-                            else
-                                GameLoop.WTN.Log.AddMessage("You receive " + kv.MiscInt + "x " + reward.Name.ToLower() + ".", Color.Yellow);
-
-                            Item pickup = new(reward);
-                            pickup.Quantity = kv.MiscInt;
-                            p.TryPickup(pickup, pickup.Quantity);
-                        }
-                    }
-                }
-
-                if (kv.RewardType == "RandomItem") {
-                    if (kv.MiscString == "kitten") {
-                        List<string> kittenColors = [ "kittenBlack", "kittenGray", "kittenWhite", "kittenOrange", "kittenBrown", "kittenCalico" ];
-
-                        if (GameLoop.WTN.ResolveItem(kittenColors[GameLoop.rand.Next(kittenColors.Count)]) is Item kitten) { 
-                            GameLoop.WTN.Log.AddMessage("You receive a " + kitten.Name.ToLower(), Color.Yellow);
-                            p.TryPickup(kitten, 1);
-                        }
-                    }
-                }
-            }
-        }
-
         public int CurrentStage() {
             if (GameLoop.WTN.player.QuestLog.TryGetValue(ID, out QuestStatus? status)) {
                 return status.CurrentStage;
             }
 
             return -1;
+        }
+
+        public bool AtAnEnd(bool countFalseEnd = false) {
+            if (Stages.TryGetValue(CurrentStage(), out QuestStage? stage) && stage != null) {
+                if (stage.EndStage == 1 || (stage.EndStage == 2 && countFalseEnd)) { return true; } 
+            }
+
+            return false;
         }
     }
 }

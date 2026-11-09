@@ -54,8 +54,33 @@ namespace WorldtreeNexus.DataTypes {
         public int InventoryLimit = 20;
         public bool CanUseShops = true;
         public bool ShopsAlwaysFullPrice = false;
+        public bool ShopsOnlyStocked = false; // If true, shops only purchase items they sell
         public bool CanUseBanks = true;
         public int FarmGrowthIncrement = 60;
+
+
+        public int SecondsPerFoodTick = 30; // Need ~50 points of food a day
+        public int SecondsPerWaterTick = 15; // Need ~100 points of water a day 
+        public int SecondsPerRestTick = 20; // Need ~75 points of sleep a day 
+        
+        public int HungerCounter = 0; // Each second increment this, when it equals SecondsPerFoodTick reduce hunger bar by 1 and reset
+        public int ThirstCounter = 0;
+        public int RestCounter = 0;
+        
+        public int HungerMode = 1; // 0: HP Regen off and take a point of damage each food tick while at 0, 1: HP Regen off, 2: No penalty / Hunger Disabled
+        public int ThirstMode = 1; // 0: HP Regen off and take a point of damage each water tick while at 0, 1: HP regen off, 2: No penalty / Thirst Disabled
+        public int RestMode = 1; // 0: HP Regen off and take a point of damage each rest tick while at 0, 1: HP regen off, 2: No penalty / Rest Disabled
+        
+        public int HungerBar = 100;
+        public int ThirstBar = 100;
+        public int RestBar = 100;
+
+        
+
+
+
+        public int SecondsPerSpoilageTick = 10; // If set to -1, items do not spoil. If set to 0 they spoil instantly
+        public int SpoilageCounter = 0; // +1 each second, When this equals SecondsPerSpoilageTick reduce all spoilage counters in inventory by 1
 
         // Quality of Life options
         public bool CoinPouch = true; // aka HeldGold allowed to be used, or force player to use the coins item
@@ -101,6 +126,9 @@ namespace WorldtreeNexus.DataTypes {
 
         public int SecondsPlayed = 0;
         public int PoisonStatus = 0;  
+        public int CureCooldown = 0;
+        public int MapTraversals = 0;
+        public bool SpeedrunMode = false; // If true, achievements will log seconds played and map traversals in the log even if the achievement has been earned.
          
 
         public Dictionary<string, int> WorldState = new();
@@ -232,16 +260,16 @@ namespace WorldtreeNexus.DataTypes {
                     }
                 }
             }
-            double strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Strength") / 5f) + 1, 1, 30); 
+            double strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Strength") / 5f), 0, 30); 
 
             if (maging && CombatCasting != null) { 
                 style = "Magic";
                 //strength = (CombatCasting.Tier + 1);
-                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Magic") / 5f) + 1, 1, 30);
+                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Magic") / 5f), 0, 30);
             }
 
             if (style == "Ranged") {
-                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Ranged") / 5f) + 1, 1, 30); 
+                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Ranged") / 5f), 0, 30); 
             }
 
             double partialBoost = 0;
@@ -280,7 +308,7 @@ namespace WorldtreeNexus.DataTypes {
             strength += (int) Math.Floor(partialBoost);
 
             // TODO: think of something better than this 
-            return Math.Clamp(Math.Floor(weaponTier * 2), 1, 22) + strength;
+            return Math.Clamp(Math.Floor(weaponTier * 2), 0, 22) + strength;
             //return ((int) Math.Floor(weaponTier)) + "d" + ((int) Math.Floor(strength));
         }
 
@@ -433,14 +461,15 @@ namespace WorldtreeNexus.DataTypes {
             }
 
             if (GameLoop.WTN.Atlas.TryGetValue(NavLoc, out Location? curr)) {
-                ItemWrapper clone = new(wrap) { Quantity = qty };
+                ItemWrapper clone = new(wrap) { Quantity = qty, Noted = noted };
+
                 if (!alreadyOwned) { 
                     TryProgressQuest("PickupItem", wrap.ID);
 
                     if (!ItemsEverObtained.Contains(wrap.ID)) { ItemsEverObtained.Add(wrap.ID); }
 
                     for (int i = 0; i < Inventory.Count; i++) { 
-                        if (Inventory[i].StacksWith(wrap)) { 
+                        if (Inventory[i].StacksWith(clone)) { 
                             Inventory[i].Quantity += qty; 
                             if (!shop)
                                 wrap.Quantity -= qty;
@@ -497,7 +526,7 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 for (int i = 0; i < curr.ItemsHere.Count; i++) {
-                    if (wrap.StacksWith(curr.ItemsHere[i])) { 
+                    if (wrap.StacksWith(curr.ItemsHere[i], true)) { 
                         curr.ItemsHere[i].Quantity += qty; 
                         return true; 
                     }
@@ -580,7 +609,7 @@ namespace WorldtreeNexus.DataTypes {
                 }
 
                 for (int i = 0; i < curr.ItemsHere.Count; i++) { 
-                    if (curr.ItemsHere[i].StacksWith(item)) { 
+                    if (curr.ItemsHere[i].StacksWith(item, true)) { 
                         curr.ItemsHere[i].Quantity += qty; 
                         return true; 
                     }
@@ -594,15 +623,15 @@ namespace WorldtreeNexus.DataTypes {
         }
 
         public void BankItem(ItemWrapper item) {  
+            item.Noted = false;
+
             for (int j = 0; j < BankedItems.Count; j++) {
-                if (BankedItems[j].ID == item.ID && BankedItems[j].Charges == item.Charges
-                    && (BankedItems[j].Alchemy == null || item.Alchemy == null || (BankedItems[j].Alchemy.CheckMatch(item.Alchemy)))) {
+                if (BankedItems[j].StacksWith(item, true)) { 
                     BankedItems[j].Quantity += item.Quantity; 
                     return; 
                 }
             }
 
-            item.Noted = false;
             BankedItems.Add(item);
         }
 
@@ -653,7 +682,7 @@ namespace WorldtreeNexus.DataTypes {
                             } else {
                                 bool found = false;
                                 for (int j = 0; j < curr.ItemsHere.Count; j++) {
-                                    if (Inventory[i].StacksWith(curr.ItemsHere[j])) {
+                                    if (Inventory[i].StacksWith(curr.ItemsHere[j], true)) {
                                         curr.ItemsHere[j].Quantity += qty;
                                         Inventory[i].Quantity -= qty;
                                         found = true;
@@ -699,6 +728,10 @@ namespace WorldtreeNexus.DataTypes {
                                         
                                         if (!ShopsAlwaysFullPrice && !curr.ShopItemsHere.Contains(Inventory[i].ID)) {
                                             sellValue = (int) (Math.Floor(sellValue / 2.0));
+                                        }
+
+                                        if (GameLoop.WTN.player.ShopsOnlyStocked && !curr.ShopItemsHere.Contains(Inventory[i].ID)) {
+                                            sellValue = 0;
                                         }
 
                                         GiveGold(sellValue * qty);
@@ -832,6 +865,9 @@ namespace WorldtreeNexus.DataTypes {
             NavLoc = NavRespawn;
             CurrentHP = Skills["Hitpoints"].Level;
             PoisonStatus = 0;
+            HungerBar = 100;
+            ThirstBar = 100;
+            RestBar = 100;
         }
 
 
@@ -1606,8 +1642,6 @@ namespace WorldtreeNexus.DataTypes {
         public string CanCast(Spell spell) {
             if (!Skills.ContainsKey("Magic"))
                 return "Malformed skill list, Magic entry not found.";
-            if (spell.Book != MagicBook)
-                return "Incorrect spellbook active.";
             if (spell.Level > Skills["Magic"].Level)
                 return "Need " + spell.Level + " Magic to cast that spell, only have " + Skills["Magic"].Level + ".";
             if (!HasAllItems(spell.Runes, false, true) && !HasAllItems(["tab" + spell.ID])) {
@@ -1636,6 +1670,10 @@ namespace WorldtreeNexus.DataTypes {
                 } else {
                     return "On cooldown, " + timeLeft + " seconds remaining.";
                 }
+            } 
+
+            if (spell.Name.Contains("utilCure") && CureCooldown > 0) {
+                return "On global cure cooldown, " + CureCooldown + " seconds remaining.";
             }
 
             for (int i = 0; i < spell.ToCast.Count; i++) {
@@ -1762,24 +1800,31 @@ namespace WorldtreeNexus.DataTypes {
         }
 
         public void TrySetQuest(string ID, int stage) {
-            if (GameLoop.WTN.QuestLibrary.TryGetValue(ID, out Quest? quest)) {
-                if (QuestLog.TryGetValue(ID, out QuestStatus? status)) {
-                    if (status.CurrentStage < stage) {
-                        status.CurrentStage = stage;
-                        
-                        if (status.CurrentStage == quest.CompleteStage) { 
-                            GameLoop.WTN.Log.AddMessage("You have completed " + quest.Name + "!", Color.Lime);
-                            quest.ProcessRewards(this);
-                        } else {
-                            if (quest.Stages.TryGetValue(status.CurrentStage, out QuestStage? newStage) && newStage != null && newStage.ReachedLog != "") {
-                                GameLoop.WTN.Log.AddMessage(newStage.ReachedLog, Color.Yellow);
-                            } else { 
-                                GameLoop.WTN.QueuedLogs.Add(new(quest.Name + " has been updated.", Color.Turquoise, Color.Black));
-                            } 
-                        }
+            if (GameLoop.WTN.QuestLibrary.TryGetValue(ID, out Quest? quest) && quest != null) {
+                if (QuestLog.TryGetValue(ID, out QuestStatus? status) && status != null) {
+                    if (quest.Stages.TryGetValue(stage, out QuestStage? qStage) && qStage != null) {
+                        if (status.CurrentStage < stage) {
+                            status.CurrentStage = stage;
 
-                        if (status.CurrentStage == 0) {
-                            GameLoop.WTN.Log.AddMessage("You have started the quest: " + quest.Name + ".", Color.Yellow);
+                            if (!status.StageHistory.Contains(status.CurrentStage)) {
+                                status.StageHistory.Add(status.CurrentStage);
+                            }
+                        
+                            if (status.CurrentStage == quest.CompleteStage) { 
+                                GameLoop.WTN.Log.AddMessage("You have completed " + quest.Name + "!", Color.Lime);
+                            } else {
+                                if (quest.Stages.TryGetValue(status.CurrentStage, out QuestStage? newStage) && newStage != null && newStage.ReachedLog != "") {
+                                    GameLoop.WTN.Log.AddMessage(newStage.ReachedLog, Color.Yellow);
+                                } else { 
+                                    GameLoop.WTN.QueuedLogs.Add(new(quest.Name + " has been updated.", Color.Turquoise, Color.Black));
+                                } 
+                            } 
+
+                            if (status.CurrentStage == 0) {
+                                GameLoop.WTN.Log.AddMessage("You have started the quest: " + quest.Name + ".", Color.Yellow);
+                            }
+                             
+                            qStage.ProcessRewards(this, ID);
                         }
                     }
                 }
@@ -1789,23 +1834,31 @@ namespace WorldtreeNexus.DataTypes {
         public void TryProgressQuest(string method, string thing) {
             foreach (var quest in GameLoop.WTN.QuestLibrary) {
                 if (QuestLog.TryGetValue(quest.Key, out QuestStatus? status)) {
-                    if (status.CurrentStage != quest.Value.CompleteStage && quest.Value.Stages.ContainsKey(status.CurrentStage)) {
+                    if (status.CurrentStage != quest.Value.CompleteStage && quest.Value.Stages.ContainsKey(status.CurrentStage)) { 
                         if (quest.Value.Stages[status.CurrentStage].ProgressType == method && quest.Value.Stages[status.CurrentStage].MiscString == thing) {
                             status.NumTracker++;
 
                             if (status.NumTracker >= quest.Value.Stages[status.CurrentStage].MiscInt) {
                                 status.CurrentStage = quest.Value.Stages[status.CurrentStage].LeadsToStage;
+
+                                if (!status.StageHistory.Contains(status.CurrentStage)) {
+                                    status.StageHistory.Add(status.CurrentStage);
+                                }
+
                                 status.NumTracker = 0; 
 
-                                if (status.CurrentStage == quest.Value.CompleteStage) { 
-                                    GameLoop.WTN.Log.AddMessage("You have completed " + quest.Value.Name + "!", Color.Lime);
-                                    quest.Value.ProcessRewards(GameLoop.WTN.player);
-                                } else {
-                                    if (quest.Value.Stages.TryGetValue(status.CurrentStage, out QuestStage? stage) && stage != null && stage.ReachedLog != "") {
-                                        GameLoop.WTN.Log.AddMessage(stage.ReachedLog, Color.Yellow);
-                                    } else { 
-                                        GameLoop.WTN.QueuedLogs.Add(new(quest.Value.Name + " has been updated.", Color.Turquoise, Color.Black));
+                                if (quest.Value.Stages.TryGetValue(status.CurrentStage, out QuestStage? stage) && stage != null) { 
+                                    if (quest.Value.AtAnEnd()) { 
+                                        GameLoop.WTN.Log.AddMessage("You have completed " + quest.Value.Name + "!", Color.Lime);
+                                    } else {
+                                        if (stage.ReachedLog != "") {
+                                            GameLoop.WTN.Log.AddMessage(stage.ReachedLog, Color.Yellow);
+                                        } else { 
+                                            GameLoop.WTN.QueuedLogs.Add(new(quest.Value.Name + " has been updated.", Color.Turquoise, Color.Black));
+                                        }
                                     }
+                                    
+                                    stage.ProcessRewards(GameLoop.WTN.player, quest.Key); 
                                 }
                             }
                         }
@@ -1814,11 +1867,13 @@ namespace WorldtreeNexus.DataTypes {
             }
         }
 
-        public bool QuestCompleted(string id) {
-            if (GameLoop.WTN.QuestLibrary.TryGetValue(id, out Quest? quest)) {
-                if (QuestLog.TryGetValue(id, out QuestStatus? status)) {
-                    if (status.CurrentStage == quest.CompleteStage) {
-                        return true;
+        public bool QuestCompleted(string id, bool countFalseEnd = false) {
+            if (GameLoop.WTN.QuestLibrary.TryGetValue(id, out Quest? quest) && quest != null) {
+                if (QuestLog.TryGetValue(id, out QuestStatus? status) && status != null) {
+                    if (quest.Stages.TryGetValue(status.CurrentStage, out QuestStage? stage) && stage != null) {
+                        if (stage.EndStage == 1 || (stage.EndStage == 2 && countFalseEnd)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -1832,7 +1887,7 @@ namespace WorldtreeNexus.DataTypes {
 
             foreach (var kv in GameLoop.WTN.QuestLibrary) {
                 totalPossibleQP += kv.Value.QuestPoints;
-                if (kv.Value.CurrentStage() == kv.Value.CompleteStage)
+                if (QuestCompleted(kv.Key))
                     questPoints += kv.Value.QuestPoints;
             }
 

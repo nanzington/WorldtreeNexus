@@ -82,12 +82,12 @@ namespace WorldtreeNexus {
                 if (curr.SongHere != "") {
                     if (!player.AllSongsUnlocked && !player.UnlockedSongs.Contains(curr.SongHere)) { 
                         player.UnlockedSongs.Add(curr.SongHere); 
-                        Log.AddMessage("You have unlocked the song: " + curr.SongHere, Color.Turquoise);
+                       //Log.AddMessage("You have unlocked the song: " + curr.SongHere, Color.Turquoise);
                     }
-
+                    /*
                     if (player.MusicMode == "Auto" && GameLoop.SoundManager.CurrentSong != curr.SongHere && GameLoop.SoundManager.PlayingSounds.Count == 0) {
                         GameLoop.SoundManager.PickMusic(curr.SongHere);
-                    }
+                    } */
                 }
 
                 string dispName = curr.DisplayName;
@@ -379,14 +379,15 @@ namespace WorldtreeNexus {
                     mini.Con.Print(37, 35, "(no recipes found)", Color.DarkSlateGray);
                 }
             }
-
+            /*
             mini.Win.PrintClickable(85, 49, ("[" + GameLoop.SoundManager.CurrentSong + "]").Align(HorizontalAlignment.Right, 30, (char) 196), () => {
                 player.MusicMode = "Shuffle UPC";
                 GameLoop.SoundManager.CurrentSong = "";
                 GameLoop.SoundManager.music.StopAllSounds();
                 GameLoop.SoundManager.PickMusic();
-            });
+            }); */
 
+            /*
             mini.Win.Print(120, 49, "[VOLUME:         ]");
             mini.Win.PrintClickable(129, 49, new ColoredString("-", Color.White, Color.Transparent), () => {
                 double qty = 0.01;
@@ -407,7 +408,7 @@ namespace WorldtreeNexus {
                 GameLoop.GlobalOptions.MusicVolume = Math.Clamp(GameLoop.GlobalOptions.MusicVolume + qty, GameLoop.GlobalOptions.MusicVolume, 1.0);
                 GameLoop.SaveGlobalPrefs();
             });
-
+            */
 
             mini.Win.PrintClickable(143, 49, "[SAVE]", () => { ManualSave(); });
         }
@@ -499,7 +500,7 @@ namespace WorldtreeNexus {
             } 
         }
 
-        List<string> activityTabs = new() { "Items", "NPCs", "Processing", "Resources", "Chat", "Shop", "Farming", "Hunter", "Minigame" };
+        List<string> activityTabs = [ "Items", "NPCs", "Processing", "Resources", "Chat", "Shop", "Farming", "Hunter", "Minigame" ];
 
         public void Input(UI_EmbeddedMini mini) {
             Point mousePos = new MouseScreenObjectState(mini.Con, GameHost.Instance.Mouse).CellPosition;
@@ -642,7 +643,7 @@ namespace WorldtreeNexus {
                 //player.TryPickup(new Item(ItemLibrary["ashesPoplar"]), 1); 
                 //player.TryPickup(new Item(ItemLibrary["cleanMidori"]), 1);    
                  
-                player.TryPickup(new Item(ItemLibrary["coinPouchSmall"]), 1);
+                //player.TryPickup(new Item(ItemLibrary["coinPouchSmall"]), 1);
                 //player.NavLoc = "TI_Main";
                 //player.TryGrantExp("Magic", 50000, Log, SidebarManager.RecentlyTrainedSkills);
 
@@ -692,12 +693,14 @@ namespace WorldtreeNexus {
                 Log.AddMessage("Player data saved!");
         }
 
-        public void TickTime() {
+        public void TickTime(bool resting = false) {
             TimeLastTicked = Helper.Time();
 
             SecondsSinceAutosave++;
 
             player.SecondsPlayed++;
+
+            if (player.CureCooldown > 0) { player.CureCooldown--; }
 
             if (SecondsSinceAutosave >= 500) { 
                 ManualSave();
@@ -705,6 +708,87 @@ namespace WorldtreeNexus {
                 SecondsSinceAutosave = 0;
 
                 Log.AddMessage("Player autosave complete.");
+            }
+
+            if (player.HungerMode < 2) {
+                player.HungerCounter++;
+                if (player.HungerCounter == player.SecondsPerFoodTick) {
+                    if (player.HungerBar > 0) {
+                        player.HungerBar--;
+                    } else {
+                        if (player.HungerMode == 0) {
+                            Log.AddMessage("You are starving and take one point of damage.", Color.Crimson);
+                            player.TakeDamage(1, Log); 
+                        }
+                    }
+                    player.HungerCounter = 0;
+                }
+            } 
+
+            if (player.ThirstMode < 2) {
+                player.ThirstCounter++;
+                if (player.ThirstCounter == player.SecondsPerWaterTick) {
+                    if (player.ThirstBar > 0) {
+                        player.ThirstBar--;
+                    } else {
+                        if (player.ThirstMode == 0) {
+                            Log.AddMessage("You are dying of thirst and take one point of damage.", Color.Crimson);
+                            player.TakeDamage(1, Log); 
+                        }
+                    }
+                    player.ThirstCounter = 0;
+                }
+            }
+
+            if (player.RestMode < 2) { // TODO: make this go up if you're resting
+                player.RestCounter++;
+                if (!resting) {
+                    if (player.RestCounter == player.SecondsPerRestTick) {
+                        if (player.RestBar > 0) {
+                            player.RestBar--;
+                        } else {
+                            if (player.RestMode == 0) {
+                                Log.AddMessage("You are sleep deprived and take one point of damage.", Color.Crimson);
+                                player.TakeDamage(1, Log); 
+                            }
+                        }
+                        player.RestCounter = 0;
+                    }
+                } else {
+                    if (player.RestCounter >= 2) {
+                        if (player.RestBar < 100) {
+                            player.RestBar++;
+                        }
+                        player.RestCounter = 0;
+                    }
+                }
+            }
+
+            // Things should generally spoil in 1080 ticks (7 days) for base ingredients, 720 ticks (5 days) for simple foods, and 432 ticks (3 days) for meals
+            if (player.SecondsPerSpoilageTick > 0) {
+                player.SpoilageCounter++;
+                if (player.SpoilageCounter == player.SecondsPerSpoilageTick) {
+                    player.SpoilageCounter = 0;
+
+                    for (int i = player.Inventory.Count - 1; i >= 0; i--) {
+                        ItemWrapper item = player.Inventory[i];
+
+                        if (item.SpoilTimer > 0 && !item.Noted) { item.SpoilTimer--; }
+
+                        if (item.SpoilTimer == 0) {
+                            if (item.GetRef() is Item original && original != null) {
+                                if (original.SpoilsInto != "" && ResolveItem(original.SpoilsInto) is Item spoil && spoil != null) {
+                                    player.Inventory.RemoveAt(i);
+                                    player.TryPickup(spoil, 1);
+                                    Log.AddMessage(original.Name + " spoils, turning into " + spoil.Name.ToLower() + ".", Color.Crimson);
+                                } else {
+                                    player.Inventory.RemoveAt(i); 
+                                    Log.AddMessage(original.Name + " rots away, leaving nothing behind.", Color.Crimson);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             foreach (var kv in player.FarmingPatches) {
@@ -789,7 +873,7 @@ namespace WorldtreeNexus {
             if (player.Inventory.Count > 1) { 
                 bool found = false;
                 foreach (var kv in UseRecipes.Where(o => !o.Value.OutputItem.Contains("_")).ToList()) {
-                    if (player.HasAllItems(new() { kv.Value.FirstItem + "," + Math.Max(1, kv.Value.FirstQty), kv.Value.SecondItem + "," + Math.Max(1, kv.Value.SecondQty)})) {
+                    if (player.HasAllItems([kv.Value.FirstItem + "," + Math.Max(1, kv.Value.FirstQty), kv.Value.SecondItem + "," + Math.Max(1, kv.Value.SecondQty)])) {
                         if (kv.Value.NeededTool == "" || player.HasAllItems([kv.Value.NeededTool + ",1"])) {
                             SidebarManager.LastFoundRecipe = new(kv.Key.first, kv.Key.second); 
                             found = true;
@@ -828,8 +912,8 @@ namespace WorldtreeNexus {
                         }
 
                         if (player.CozyContractSpots.Count > 0 && player.CozyContractSpots.Where(o => !o.Repaired).ToList().Count == 0) { // All spots are repaired, resolve contract
+                            Log.AddMessage(player.CozyPointTotal.ToString());
                             double avg = player.CozyPointTotal / 5.0; // get average level spent on each spot, in case the player didn't do the same level across the board for some reason
-                            avg = avg / 10.0; // turn it into a tier;
                             avg = Math.Floor(avg); // floor it. Level 1 at this point is now worth 1, Level 10 worth 2, up to Level 90 materials worth 10.
 
                             player.TryGrantExp("Construction", (int) avg * 450, Log, SidebarManager.RecentlyTrainedSkills); // Grant 450 exp per tier of resource spent
@@ -837,6 +921,7 @@ namespace WorldtreeNexus {
                             player.CozyContractSpots.Clear(); // Clear their hotspot list so a new contract can be taken
 
                             player.CozyCredits += ((int) avg + 1); // Gain reward points equal to tier plus 1.
+                            player.CozyPointTotal = 0;
 
                             Log.AddMessage("You finished your Cozy Cottages contract, earning " + ((int) avg * 450) + " Construction experience and " + (int) avg + " Cozy Credits.", Color.Green);
                         }
@@ -873,7 +958,7 @@ namespace WorldtreeNexus {
             RebuildLibraries();
 
             Log.Log.Clear();
-            Log.AddMessage(new ColoredString("Press F1 at any time to open/close the guidebook.", Color.Turquoise, Color.Black));
+            Log.AddMessage(new ColoredString("Press F1 at any time to open the guidebook, or F2 to open the compendium.", Color.Turquoise, Color.Black));
         }
 
         public void SoftResetPlayer() {
@@ -930,8 +1015,7 @@ namespace WorldtreeNexus {
             UseRecipes.Clear();
             MonsterLibrary.Clear();
             Atlas.Clear();
-            NPCLibrary.Clear(); 
-            player.FarmingPatches.Clear();
+            NPCLibrary.Clear();
             ClueStepLibrary.Clear();
             CraftLib.Clear();
             QuestLibrary.Clear();
@@ -952,7 +1036,7 @@ namespace WorldtreeNexus {
             HardcodedItemsCooking.InitItems(ItemLibrary);
             HardcodedItemsClues.InitItems(ItemLibrary);
             ItemsFarming.InitItems(ItemLibrary);
-            HardcodedItemsCrafting.InitItems(ItemLibrary);
+            ItemsCrafting.InitItems(ItemLibrary);
             ItemsQuests.InitItems(ItemLibrary);
             HardcodedItemsSmithing.InitItems(ItemLibrary);
             HardcodedItemsMinigames.InitItems(ItemLibrary);
@@ -974,6 +1058,7 @@ namespace WorldtreeNexus {
 
             HardcodedNPCs.InitNPCs(NPCLibrary);
             TutorialNPCs.InitNPCs(NPCLibrary);
+            NexusNPCs.InitNPCs(NPCLibrary);
              
             HardcodedFarmPatches.InitPatches(player.FarmingPatches);
             HardcodedClueSteps.InitClues(ClueStepLibrary);
@@ -1063,7 +1148,7 @@ namespace WorldtreeNexus {
                 if (wrap.GetRef() is Item item) {
                     bool found = false;
                     for (int i = 0; i < curr.ItemsHere.Count; i++) {
-                        if (wrap.StacksWith(curr.ItemsHere[i])) {
+                        if (wrap.StacksWith(curr.ItemsHere[i], true)) {
                             curr.ItemsHere[i].Quantity += wrap.Quantity;
                             found = true;
                             break;

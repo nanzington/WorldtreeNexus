@@ -77,6 +77,9 @@ namespace WorldtreeNexus.DataTypes {
         public AlchemyStats Alchemy = null;
         public bool Stolen = false;
 
+        public int SpoilTimer = -1;
+        public string SpoilsInto = "";
+
         [JsonIgnore]
         public bool Inaccessible = false;
 
@@ -201,6 +204,9 @@ namespace WorldtreeNexus.DataTypes {
             }
 
             Stolen = other.Stolen;
+
+            SpoilTimer = other.SpoilTimer;
+            SpoilsInto = other.SpoilsInto;
         }
 
         public int ColorSum() {
@@ -227,12 +233,13 @@ namespace WorldtreeNexus.DataTypes {
             return true;
         }
 
-        public bool StacksWith(Item other) { 
+        public bool StacksWith(Item other, bool stackOverride = false) { 
             if (ID != other.ID) { return false; }
             if (Alchemy != null && other.Alchemy != null && !Alchemy.CheckMatch(other.Alchemy)) { return false; }
             if (UseInt4 != other.UseInt4) { return false; }
+            if (SpoilTimer != other.SpoilTimer) { return false; }
              
-            if (!Stackable) { return false; } 
+            if (!Stackable && !stackOverride) { return false; } 
             
             return true;
         }
@@ -242,7 +249,7 @@ namespace WorldtreeNexus.DataTypes {
             build += new ColoredString(Name, GetColor(), ColorSum() > 50 ? Color.Black : Color.White);
              
             if (Name.Contains("potion") && charges != 0) {
-                build += new ColoredString(" (" + charges + " doses)", Color.White, Color.Black);
+                build += new ColoredString(" (" + charges + ")", Color.White, Color.Black);
             } else if (charges > 0 && !ID.Contains("seed") && !ID.Contains("plant")) { 
                 build += new ColoredString(" (" + charges + ")", Color.White, Color.Black);
             }
@@ -259,6 +266,18 @@ namespace WorldtreeNexus.DataTypes {
                 build += new ColoredString("li", Color.White, Color.Black);
                 build += new ColoredString("co", Color.Orange, Color.Black);
                 build += new ColoredString(")", Color.White, Color.Black);
+            }
+
+            if (SpoilTimer > 0 && Helper.EitherAlt()) {
+                if (held != null) {
+                    build += new ColoredString(" {", Color.White, Color.Black);
+                    build += new ColoredString(held.SpoilTimer + " " + 7.AsString(), Color.White, Color.Black);
+                    build += new ColoredString("}", Color.White, Color.Black);
+                } else { 
+                    build += new ColoredString(" {", Color.White, Color.Black);
+                    build += new ColoredString(SpoilTimer + " " + 7.AsString(), Color.White, Color.Black);
+                    build += new ColoredString("}", Color.White, Color.Black);
+                }
             }
 
             if (held != null || overrideLoupe) {
@@ -304,6 +323,10 @@ namespace WorldtreeNexus.DataTypes {
 
                 if (GameLoop.WTN.Atlas.TryGetValue(GameLoop.WTN.player.NavLoc, out Location? curr) && curr != null && curr.ShopPriceMultiplier < 1.0) {
                     sellValue = (int) (sellValue * curr.ShopPriceMultiplier);
+
+                    if (GameLoop.WTN.player.ShopsOnlyStocked && !curr.ShopItemsHere.Contains(ID)) {
+                        sellValue = 0;
+                    }
                 }
                                         
                 if (!GameLoop.WTN.player.ShopsAlwaysFullPrice && shop == 1) {
@@ -344,6 +367,10 @@ namespace WorldtreeNexus.DataTypes {
                 build += "(!)";
             }
 
+            if (SpoilTimer > 0 && Helper.EitherAlt()) {
+                build += " {" + SpoilTimer + " " + 7.AsString() + "}";
+            }
+
             if (shop > 0) { 
                 int sellValue = Value;
 
@@ -353,6 +380,10 @@ namespace WorldtreeNexus.DataTypes {
 
                 if (GameLoop.WTN.Atlas.TryGetValue(GameLoop.WTN.player.NavLoc, out Location? curr) && curr != null && curr.ShopPriceMultiplier < 1.0) {
                     sellValue = (int) (sellValue * curr.ShopPriceMultiplier);
+
+                    if (GameLoop.WTN.player.ShopsOnlyStocked && !curr.ShopItemsHere.Contains(ID)) {
+                        sellValue = 0;
+                    }
                 }
                                         
                 if (!GameLoop.WTN.player.ShopsAlwaysFullPrice && shop == 1) {
