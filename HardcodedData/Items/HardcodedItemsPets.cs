@@ -12,8 +12,84 @@ namespace WorldtreeNexus.Hardcodes {
             });
 
             // Skill pets 
-            itemsToAdd.Add(new Item("Woody", "A small wooden golem with an unoriginal name.", "petSkillWoodcutting", Color.BurlyWood, 0, trade: false) {
-                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "Woody tells a lie and his nose grows slightly longer.", "Woody tells a truth and his nose grows slightly shorter. You don't think it's supposed to work like that, but don't question it.", "Woody says, 'got wood?'.", "Woody says, 'what type of tree fits in your hand? A PALM tree!'." ]
+            //itemsToAdd.Add(new Item("", "", "petSkillTemplate", Color.BurlyWood, 0, trade: false) {
+            //    EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            //});
+
+            itemsToAdd.Add(new Item("", "", "petSkillAgility", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("Mixie", "A sentient floating vial of questionable bubbling liquid.", "petSkillAlchemy", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "Mixie's liquid turns red and bubbles ominously.", "Mixie's liquid didn't match a potion recipe and now she has to start over.", "Mixie says, 'don't drink random potions!'", "Mixie says, 'baingani and minnow scales!'" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillAttack", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillConstruction", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillCooking", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillCrafting", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillDefense", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillHitpoints", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillFarming", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillFishing", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillFletching", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillMagic", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillMining", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillPrayer", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillRanged", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillSmithing", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillStrength", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("", "", "petSkillThieving", Color.BurlyWood, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "", "", "", "" ]
+            });
+
+            itemsToAdd.Add(new Item("Hatchet-chan", "A floating steel axe with big anime eyes. She is very kawaii desu ne.", "petSkillWoodcutting", ColorLib.Steel, 0, trade: false) {
+                EquipSlot = "Pet",  Cosmetic = true, PetBlurbs = [ "Hatchet-chan squeals in delight. It is very grating.", "Hatchet-chan's heart goes doaki-doaki.", "Hatchet-chan pretends to ignore you while actually desiring your attention.", "Hatchet-chan says, 'don't swing me so hard, balsa!'" ]
             });
 
 

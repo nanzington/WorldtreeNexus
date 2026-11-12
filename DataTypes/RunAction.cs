@@ -405,6 +405,28 @@ namespace WorldtreeNexus.DataTypes {
                     Log.AddMessage("You sleep until " + MiscString + " at the inn.");
                     player.TakeGold(MiscInt);
                 }
+
+                if (ActionID == "ChangeAttunement") {
+                    switch (GameLoop.WTN.player.ElementalAttunement) {
+                        case "Metal":
+                            GameLoop.WTN.player.ElementalAttunement = "Water";
+                            break;
+                        case "Water":
+                            GameLoop.WTN.player.ElementalAttunement = "Wood";
+                            break;
+                        case "Wood":
+                            GameLoop.WTN.player.ElementalAttunement = "Fire";
+                            break;
+                        case "Fire":
+                            GameLoop.WTN.player.ElementalAttunement = "Earth";
+                            break;
+                        default:
+                            GameLoop.WTN.player.ElementalAttunement = "Metal";
+                            break;
+                    }
+
+                    GameLoop.WTN.Log.AddMessage("You touch the attunement obelisk and your elemental attunement changes to " + GameLoop.WTN.player.ElementalAttunement + ".", Color.MediumPurple);
+                }
             }
         }
     }

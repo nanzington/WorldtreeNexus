@@ -34,7 +34,7 @@ namespace WorldtreeNexus.Hardcodes {
                     new("TI_Temple"),
                     new("TI_WizardHut")
                 ],
-                GatheringSpots = [ "treePoplar", "treePoplar", "treePoplar", "treePoplar", "treePoplar", "treePoplar", "treePoplar", "fishPondShallow", "fishPondShallow" ],
+                GatheringSpots = [ "attunementObelisk", "treePoplar", "treePoplar", "treePoplar", "treePoplar", "treePoplar", "treePoplar", "treePoplar", "fishPondShallow", "fishPondShallow" ],
                 NPCsHere = [ "guyDodgyRanger" ]
             });
 
@@ -181,7 +181,7 @@ namespace WorldtreeNexus.Hardcodes {
                     new("An assortment of products one could almost mistake for knick-knacks line the shelves of this small building. Most of it doesn't appear to be too useful, but there are a few items of interest. There doesn't seem to be a shopkeeper around, but a jar on the counter indicates that the store is running on an honor system.")
                 ],
                 ConnectedLocations = [ new("TI_Main") ],
-                ShopItemsHere = [ "bowlEmpty", "candle", "chisel", "compass", "hatchetCopper", "pickaxeCopper", "knife", "glassblowingPipe", "hammer", "needle", "tinderbox", "rodPoplar", "potEmpty", "seedPotato", "saw", "shears", "shovel", "vialEmpty" ],
+                ShopItemsHere = [ "bedroll", "bowlEmpty", "candle", "chisel", "compass", "hatchetCopper", "pickaxeCopper", "knife", "glassblowingPipe", "hammer", "needle", "tinderbox", "rodPoplar", "potEmpty", "seedPotato", "saw", "shears", "shovel", "vialEmpty", "waterskin" ],
                 GatheringSpots = [ "clueCrates" ],
                 ProcessingStations = [ "Tannery", "Pottery Kiln", "Pottery Wheel" ],
                 NPCsHere = [ "guyTreasure" ],

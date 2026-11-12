@@ -11,6 +11,10 @@ namespace WorldtreeNexus.Hardcodes {
         public static void InitGathers(Dictionary<string, GatheringTile> GatherSpots) {
             // These use ItemDrop tables
             List<GatheringTile> tiles = new();
+            tiles.Add(new GatheringTile("attunementObelisk", "Elemental Obelisk", "Attune Self at", 100, 0, actions: [ new("ChangeAttunement", "", "", 0)], customLog: "_"));
+            tiles.Add(new GatheringTile("shoplift", "Here", "Shoplift", 100, 0, actions: [ new("ChangeAttunement", "", "", 0)], customLog: "_"));
+
+
             tiles.Add(new GatheringTile("plantFlax", "Wild Flax", "Pick", 60, 10, items: [ new("flax") ])); 
             tiles.Add(new GatheringTile("plantPotato", "Potato Plant", "Pick", 100, 5, items: [ new("potato") ])); 
             tiles.Add(new GatheringTile("plantCabbage", "Cabbage Plant", "Pick", 100, 5, items: [ new("cabbage") ])); 

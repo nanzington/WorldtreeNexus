@@ -1442,6 +1442,113 @@ namespace WorldtreeNexus {
             return (returnWhich == "first" ? firstWins : returnWhich == "second" ? secondWins : draws);
         }
 
+        public static int WarCombatSim(CombatSim3 first, CombatSim3 second, int rounds, string returnWhich = "first") {
+            int firstWins = 0;
+            int secondWins = 0;
+            int draws = 0; 
+
+            List<int> firstAtkCopy = [ ..first.AttackDeck ];
+            List<int> firstDefCopy = [ ..first.DefenseDeck ];
+
+            List<int> secondAtkCopy = [ ..second.AttackDeck ];
+            List<int> secondDefCopy = [ ..second.DefenseDeck ];
+
+            int firstAtkSpeed = first.AttackSpeedInMS / 100;
+            int secondAtkSpeed = second.AttackSpeedInMS / 100;
+
+            int firstCounter = 0;
+            int secondCounter = 0;
+
+
+            for (int i = 0; i < rounds; i++) {
+                first.CurrentHP = first.MaxHP;
+                second.CurrentHP = second.MaxHP;
+
+                
+                firstAtkCopy = [ ..first.AttackDeck ];
+                firstAtkCopy.Shuffle();
+                firstDefCopy = [ ..first.DefenseDeck ];
+                firstDefCopy.Shuffle();
+
+                secondAtkCopy = [ ..second.AttackDeck ];
+                secondAtkCopy.Shuffle();
+                secondDefCopy = [ ..second.DefenseDeck ];
+                secondDefCopy.Shuffle();
+
+                bool someoneWon = false;
+
+                for (int time = 0; time < 6000; time++) {
+                    firstCounter++;
+                    if (firstCounter >= firstAtkSpeed) {
+                        firstCounter = 0;
+
+                        int atk = firstAtkCopy.Pop(); 
+                        atk = (int) Math.Ceiling(atk * second.ElementMulti(first.DamageElement)); // If elemental interaction, modify atk card
+                        //atk = atk + second.ElementMulti(first.DamageElement); // If elemental interaction, modify atk card
+
+                        int def = secondDefCopy.Pop();
+                        
+                        int diff = atk - def; 
+                        int dr = first.DamageType == second.WeakType ? 0 : second.DRvsStyle;  
+                        if (diff > 0) { second.CurrentHP -= Math.Clamp(diff - dr, 0, diff); }
+
+                        if (second.CurrentHP <= 0) {
+                            firstWins++;
+                            someoneWon = true;
+                            break;
+                        }
+                    }
+
+                    secondCounter++;
+                    if (secondCounter >= secondAtkSpeed) {
+                        secondCounter = 0;
+
+                        int atk = secondAtkCopy.Pop();
+                        atk = (int) Math.Ceiling(atk * first.ElementMulti(second.DamageElement));
+
+                        int def = firstDefCopy.Pop();
+                        if (second.DamageType == first.WeakType) { def = (int) Math.Floor(def * 0.75); }
+
+                        int diff = atk - def;
+
+                        if (diff > 0) { first.CurrentHP -= Math.Clamp(diff - first.DRvsStyle, 0, diff); }
+
+                        if (first.CurrentHP <= 0) {
+                            secondWins++;
+                            someoneWon = true;
+                            break;
+                        }
+                    }
+
+
+
+                    if (firstAtkCopy.Count == 0) { 
+                        firstAtkCopy = [ ..first.AttackDeck ];
+                        firstAtkCopy.Shuffle();    
+                    }
+
+                    if (firstDefCopy.Count == 0) {  
+                        firstDefCopy = [ ..first.DefenseDeck ];
+                        firstDefCopy.Shuffle();  
+                    }
+
+                    if (secondAtkCopy.Count == 0) {  
+                        secondAtkCopy = [ ..second.AttackDeck ];
+                        secondAtkCopy.Shuffle();   
+                    } 
+
+                    if (secondDefCopy.Count == 0) { 
+                        secondDefCopy = [ ..second.DefenseDeck ];
+                        secondDefCopy.Shuffle();
+                    }
+                }
+
+
+                if (!someoneWon) { draws++; }
+            }
+            return (returnWhich == "first" ? firstWins : returnWhich == "second" ? secondWins : draws);
+        }
+
         public static string ConvertTime(int Minutes, bool twelve) {
             return ConvertTime(Minutes / 60, Minutes % 60, twelve);
         }

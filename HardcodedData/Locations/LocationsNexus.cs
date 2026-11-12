@@ -32,7 +32,7 @@ namespace WorldtreeNexus.Hardcodes {
                     ],
                     //ShopItemsHere = [ "newspaper0" ], 
                     ProcessingStations = [ "Fountain" ],
-                    GatheringSpots = [ "treePoplar", "treePoplar", "treePoplar", "treeElm" ],
+                    GatheringSpots = [ "attunementObelisk", "treePoplar", "treePoplar", "treePoplar", "treeElm" ],
                     NPCsHere = [ "wtnMaxStatz" ]
                 });
             }
@@ -99,7 +99,7 @@ namespace WorldtreeNexus.Hardcodes {
                         new("WTN_ShopGrocery", req: [ new("TimeBetween", 420, miscint2: 1320) ]), // Sells various fruits/vegetables/etc
                         new("WTN_ShopHerbalist", req: [ new("TimeBetween", 420, miscint2: 1320) ]), // Sells some low level herbs and potions
                         new("WTN_ShopBooks", req: [ new("TimeBetween", 420, miscint2: 1320) ]), // Sells books, mostly recreational but maybe some with a purpose
-                        new("WTN_ShopButcher", req: [ new("TimeBetween", 420, miscint2: 1320) ])
+                        new("WTN_ShopCard", req: [ new("TimeBetween", 420, miscint2: 1320) ]), // Sells cards for the TCG, rotating selection of random cards plus some booster packs
                     ],
                     GatheringSpots = [ "stallSeedLow" ]
                 });
@@ -218,13 +218,28 @@ namespace WorldtreeNexus.Hardcodes {
                     ConnectedLocations = [ 
                         new("WTN_Commercial")
                     ],
-                    NPCsHere = [ "wtnCecilia" ],
+                    NPCsHere = [ "wtnVuvu" ],
                     GatheringSpots = [ "jobCraftyCrafters" ],
                     ShopItemsHere = [ 
                     "___Tools_________", "chisel", "glassblowingPipe", "hammer", "knife", "needle", "saw", "shovel",
                     "___Containers____", "bowlEmpty", "bucketEmpty", "cupEmpty", "jugEmpty", "potEmpty",
                     "___Moulds________", "mouldAmulet", "mouldBracelet", "mouldBrooch", "mouldNecklace", "mouldRing",
                     "___Materials_____", "boltXiangdao", "boltVeneficus", "boltZauberer", "boltVolshebnik", "leatherSoft", "leatherHard"]
+                });
+
+                locsToAdd.Add(new Location("WTN_ShopCard", "Starly's Starter Packs", "Worldtree Nexus") { 
+                    Outside = false,
+                    DescriptionBlocks = [
+                        new("This shop is full of display cases showing off various collectible cards, along with racks of unopened booster packs and decks for those interested. A few bins of bulk common cards fill out some of the rest of the space, while the middle of the main room has a few large tables for people to play on.")
+                    ],
+                    ConnectedLocations = [ 
+                        new("WTN_Commercial")
+                    ],
+                    NPCsHere = [ "wtnStarly" ], 
+                    ShopItemsHere = [ 
+                    "___Premade Decks__", 
+                    "___Booster Packs__",
+                    "___Random Cards___"]
                 });
             }
 
@@ -238,11 +253,48 @@ namespace WorldtreeNexus.Hardcodes {
                         new("WTN_Plaza"), 
                         new("WTN_Entertainment"), 
                         new("WTN_Temples"),
-                        new("WTN_SewersResidential", alt: "(Enter Sewer)"), 
+                        new("WTN_SewersResidential", alt: "(Enter Sewer)"),  
+                        new("WTN_PlayerHome"),
                         new("WTN_Apartments"), 
-                        new("WTN_Temples")
+                        new("WTN_HouseVuvu"), // Craft shop owner
+                        new("WTN_HousePrima"), // Prima's Primers owner
+                        new("WTN_House")
                     ]
                 });
+
+                locsToAdd.Add(new Location("WTN_Apartments", "Adequate Apartments - Lobby", "Worldtree Nexus") { 
+                    DescriptionBlocks = [
+                        new("You find yourself in the surprisingly modern lobby of an apartment complex, though things seem to glow with a magical energy rather than being powered by electricity. There are some impressionist paintings hanging on the walls and a few small potted plants that may, upon closer examination, may actually be plastic. A few small benches are placed around the periphery of the room. /n /n Near the front door is a desk behind which a doorman sits, and there are stairs up to the apartments along with some doors to the amenities in the building.")
+                    ],
+                    ConnectedLocations = [ 
+                        new("WTN_Residential"), 
+                        new("WTN_Apartments2", alt: "(Go Upstairs)"),  
+                        new("WTN_ApartmentKitchen")
+                    ]
+                });
+
+                // Apartments
+                {
+                    locsToAdd.Add(new Location("WTN_ApartmentsKitchen", "Adequate Apartments - Kitchen", "Worldtree Nexus") { 
+                        DescriptionBlocks = [
+                            new("A fairly well appointed community kitchen kept adequately clean, all polished metal surfaces and clean ceramic tile. The appliances aren't top of the line but not the cheapest either and should suit most needs residents are likely to have.")
+                        ],
+                        ConnectedLocations = [
+                            new("WTN_Apartments")
+                        ],
+                        ProcessingStations = [ "Range", "Sink" ]
+                    });
+
+                    locsToAdd.Add(new Location("WTN_Apartments2", "Adequate Apartments - 2F Hallway", "Worldtree Nexus") { 
+                        DescriptionBlocks = [
+                            new("A long twisting hallway that all looks the same, with a repeating geometric pattern on the carpet and fading pastel green wallpaper. The doors all appear to be made of walnut, with gold lettering on it denoting the floor and room number. There is a panel near the stairs that lists who lives in each apartment on this floor.")
+                        ],
+                        ConnectedLocations = [
+                            new("WTN_Apartments", alt: "(Go Downstairs)"),
+                            new("WTN_Apartments2_1")
+                        ]
+                    });
+                }
             }
 
 

@@ -6,53 +6,63 @@ namespace WorldtreeNexus.Hardcodes {
         public static void InitMonsters(Dictionary<string, AreaMonster> MonsterLib) {
             List<AreaMonster> toAdd = new();
 
-            toAdd.Add(new("Giant guinea pig", "cuyGiant", lv: 1, hp: 3, dr: 0, atk: 5, def: 5, false, maxhit: 3, weakness: "Slash", element: "Earth", 5, "Melee") { 
+            toAdd.Add(new("Giant guinea pig", "cuyGiant", level: 1, hp: 3, atk: 2, str: 1, def: 1, aggro: false, weak: "Slash", element: "Earth", dmgType: "Melee") {
                 AlchemySecretionID = "bloodCuy",
-                DropTable = [ new("eyeCuy", y: 2), new("bonesRegular"), new("meatRawCuy") ]
+                DropTable = [ new("eyeCuy", y: 2), new("bonesRegular"), new("meatRawCuy") ] 
             });
 
-            toAdd.Add(new("Cow", "cow", lv: 1, hp: 5, dr: 0, atk: 0, def: 5, false, maxhit: 2, weakness: "Stab", element: "Earth", 5, "Melee") { 
+            toAdd.Add(new("Cow", "cow", level: 1, hp: 5, atk: 3, str: 0, def: 2, aggro: false, weak: "Stab", element: "Earth", dmgType: "Melee") {
                 AlchemySecretionID = "bloodCow",
                 DropTable = [ new("bonesRegular"), new("meatRawBeef"), new("cowhide"), new("clueScrollBeginner", y: 128) ] 
             });
 
-            toAdd.Add(new("Chicken", "chicken", lv: 1, hp: 2, dr: 0, atk: 0, def: 0, false, maxhit: 1, weakness: "Stab", element: "Earth", 5, "Melee") {
+            toAdd.Add(new("Chicken", "chicken", level: 1, hp: 2, atk: 1, str: 0, def: 0, aggro: false, weak: "Stab", element: "Earth", dmgType: "Melee") {
                 AlchemySecretionID = "bloodChicken", 
                 DropTable = [ new("bonesRegular"), new("meatRawChicken"), new("feather", 1, 2, 5, 15), new("clueScrollBeginner", y: 300) ]
             });
 
-            toAdd.Add(new("Zombie", "tiZombie", lv: 5, hp: 8, dr: 0, atk: 10, def: 5, false, maxhit: 4, weakness: "Slash", element: "Wood", 10, "Melee") {
-                AlchemySecretionID = "bloodHumanTainted", 
+            toAdd.Add(new("Zombie", "tiZombie", level: 5, hp: 8, atk: 3, str: 2, def: 0, aggro: false, weak: "Slash", element: "Wood", dmgType: "Melee") {
+                AlchemySecretionID = "bloodHumanTainted", AttackSpeedSeconds = 1.2,
                 DropTable = [ new("bonesRegular"), new("coins", 1, 10, 10, 50) ]
             });
 
-            toAdd.Add(new("Man", "manDay", lv: 2, hp: 7, dr: 0, atk: 5, def: 5, false, maxhit: 1, weakness: "Crush", element: "Earth", 1, "Melee", reqs: [ new("TimeBetween", 420, miscint2: 1260) ], seeAnyways: false) { AlchemySecretionID = "bloodHuman", DropTable = [ ..DropTables.GenericHumanTable.But() ] });
-            toAdd.Add(new("Woman", "womanDay", lv: 2, hp: 7, dr: 0, atk: 5, def: 5, false, maxhit: 1, weakness: "Crush", element: "Earth", 1, "Melee", reqs: [ new("TimeBetween", 420, miscint2: 1260) ], seeAnyways: false) { AlchemySecretionID = "bloodHuman", DropTable = [ ..DropTables.GenericHumanTable.But() ] });
-
-            toAdd.Add(new("Man", "manNight", lv: 2, hp: 7, dr: 0, atk: 5, def: 5, false, maxhit: 1, weakness: "Crush", element: "Earth", 1, "Melee", reqs: [ new("TimeOutside", 420, miscint2: 1260) ], seeAnyways: false) { AlchemySecretionID = "bloodHuman", DropTable = [ ..DropTables.GenericHumanTable.But() ] });
-            toAdd.Add(new("Woman", "womanNight", lv: 2, hp: 7, dr: 0, atk: 5, def: 5, false, maxhit: 1, weakness: "Crush", element: "Earth", 1, "Melee", reqs: [ new("TimeOutside", 420, miscint2: 1260) ], seeAnyways: false) { AlchemySecretionID = "bloodHuman", DropTable = [ ..DropTables.GenericHumanTable.But() ] });
-
-
-            toAdd.Add(new("Frog", "frog", lv: 5, hp: 8, dr: 0, atk: 8, def: 10, false, maxhit: 1, weakness: "Bolt", element: "Water", 1, "Melee") { 
+            toAdd.Add(new("Man", "manDay", level: 5, hp: 8, atk: 3, str: 1, def: 3, aggro: false, weak: "Crush", element: "Earth", dmgType: "Melee") {
+                Requirements = [ new("TimeBetween", 420, miscint2: 1260) ], SeeWithoutRequirements = false,
+                AlchemySecretionID = "bloodHuman", DropTable = [ ..DropTables.GenericHumanTable.But() ]
+            });
+            toAdd.Add(new("Woman", "womanDay", level: 5, hp: 8, atk: 3, str: 1, def: 3, aggro: false, weak: "Crush", element: "Earth", dmgType: "Melee") {
+                Requirements = [ new("TimeBetween", 420, miscint2: 1260) ], SeeWithoutRequirements = false,
+                AlchemySecretionID = "bloodHuman", DropTable = [ ..DropTables.GenericHumanTable.But() ]
+            });
+            toAdd.Add(new("Man", "manNight", level: 5, hp: 8, atk: 3, str: 1, def: 3, aggro: false, weak: "Crush", element: "Earth", dmgType: "Melee") {
+                Requirements = [ new("TimeOutside", 420, miscint2: 1260) ], SeeWithoutRequirements = false,
+                AlchemySecretionID = "bloodHuman", DropTable = [ ..DropTables.GenericHumanTable.But() ]
+            });
+            toAdd.Add(new("Woman", "womanNight", level: 5, hp: 8, atk: 3, str: 1, def: 3, aggro: false, weak: "Crush", element: "Earth", dmgType: "Melee") {
+                Requirements = [ new("TimeOutside", 420, miscint2: 1260) ], SeeWithoutRequirements = false,
+                AlchemySecretionID = "bloodHuman", DropTable = [ ..DropTables.GenericHumanTable.But() ]
+            });
+               
+            toAdd.Add(new("Frog", "frog", level: 5, hp: 8, atk: 4, str: 0, def: 3, aggro: false, weak: "Bolt", element: "Water", dmgType: "Melee") {
                 AlchemySecretionID = "bloodFrog",
                 DropTable = [ new("bonesRegular"), new("clueScrollBeginner", y: 90), new("potionSleepingTail", y: 3, reqs: [new("QuestAt", 140, "MI_RomeoJuliet")]) ] 
-            });
+            }); 
 
-            toAdd.Add(new("Snake", "snake", lv: 5, hp: 6, dr: 0, atk: 10, def: 5, false, maxhit: 1, weakness: "Ray", element: "Fire", 1, "Melee") { 
-                AlchemySecretionID = "venomSnake",
+            toAdd.Add(new("Snake", "snake", level: 5, hp: 6, atk: 3, str: 0, def: 5, aggro: false, weak: "Ray", element: "Fire", dmgType: "Melee") {
+                AlchemySecretionID = "venomSnake", PoisonSeverity = 2,
                 DropTable = [ new("bonesRegular"), new("potionSleepingEar", y: 3, reqs: [new("QuestAt", 140, "MI_RomeoJuliet")]) ] 
-            });
+            }); 
 
-            toAdd.Add(new("Rat", "rat", lv: 1, hp: 2, dr: 0, atk: 0, def: 0, false, maxhit: 1, weakness: "Slash", element: "Earth", 1, "Melee", specialCat: "Ratlike") { 
+            toAdd.Add(new("Rat", "rat", level: 1, hp: 2, atk: 1, str: 0, def: 5, aggro: false, weak: "Slash", element: "Earth", dmgType: "Melee") {
                 AlchemySecretionID = "bloodRat",
                 DropTable = [ new("potionSleepingWing", y: 3, reqs: [new("QuestAt", 140, "MI_RomeoJuliet")]) ]
-            });
+            }); 
 
-
-            toAdd.Add(new("Ram", "ram", lv: 2, hp: 8, dr: 0, atk: 10, def: 0, false, maxhit: 1, weakness: "Stab", element: "Earth", 1, "Melee") {
+            toAdd.Add(new("Ram", "ram", level: 2, hp: 8, atk: 3, str: 0, def: 2, aggro: false, weak: "Stab", element: "Earth", dmgType: "Melee") {
                 AlchemySecretionID = "bloodRam", 
                 DropTable = [ new("bonesRegular") ]
-            });
+            }); 
+
             
 
 

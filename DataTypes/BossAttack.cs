@@ -1,7 +1,7 @@
 ﻿namespace WorldtreeNexus.DataTypes {
     public class BossAttack {
         public string WarningText = "";
-        public string DamageDice = "1d3";  
+        public int DamageAdd = 1;  
         public string DamageType = "Typeless";
         public string DamageElement = "Earth";
         public int PoisonSeverity = 0;
@@ -13,9 +13,9 @@
         public string SummonDice = ""; // amount summoned if variable
 
 
-        public BossAttack(string warn, string dmgDice, string dmgType, List<int> lanes, bool relative = false) {
+        public BossAttack(string warn, int dmgAdd, string dmgType, List<int> lanes, bool relative = false) {
             WarningText = warn;
-            DamageDice = dmgDice;
+            DamageAdd = dmgAdd;
             DamageType = dmgType;
             HitsLanes = lanes;
             LanesRelativeToPlayer = relative;

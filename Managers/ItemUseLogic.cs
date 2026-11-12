@@ -1219,6 +1219,9 @@ namespace WorldtreeNexus.Managers {
                     player.Equipment.Add(eqp.EquipSlot, player.Inventory[i]); 
                     player.Inventory.RemoveAt(i); 
 
+                    player.ResetAttackDeck();
+                    player.ResetDefenseDeck();
+
                     return true;
                 }
 

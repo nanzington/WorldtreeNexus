@@ -1,5 +1,6 @@
 ﻿using GoRogue.DiceNotation.Terms;
-using Newtonsoft.Json; 
+using Newtonsoft.Json;
+using WorldtreeNexus.HardcodedData;
 using WorldtreeNexus.Managers;
 
 namespace WorldtreeNexus.DataTypes {
@@ -164,6 +165,10 @@ namespace WorldtreeNexus.DataTypes {
 
         [JsonIgnore]
         public List<HunterCreature> SpawnedCreatures = new();
+        [JsonIgnore]
+        public List<int> AttackDeck = new();
+        [JsonIgnore]
+        public List<int> DefenseDeck = new();
 
         public int GetCombatLevel() {
             int atk = Skills["Attack"].Level;
@@ -171,248 +176,10 @@ namespace WorldtreeNexus.DataTypes {
             int def = Skills["Defense"].Level;
             int con = Skills["Hitpoints"].Level;
             int ran = Skills["Ranged"].Level;
-            int mag = Skills["Magic"].Level; 
+            int mag = Skills["Magic"].Level;
+            int pra = Skills["Prayer"].Level;
             
-            return Math.Clamp((atk + str + def + con + ran + mag) / 4, 1, 999);
-        }
-
-        public string GetDamageDice(bool spellBuilder = false) {
-            double max = SimplerDamageDice(spellBuilder);
-            if (IsMaging() || spellBuilder) { 
-                if (spellBuilder && CombatViewing != null) {  
-                    if (CombatViewing.Speed == 1.5) { max = Math.Clamp(Math.Ceiling(max * 1.5), max + 2, int.MaxValue); }
-                    if (CombatViewing.Speed == 1.25) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
-                    if (CombatViewing.Speed == 0.75) { max = Math.Clamp(Math.Ceiling(max * 0.75), 1, Math.Clamp(max - 1, 1, max)); }
-                    if (CombatViewing.Speed == 0.5) { max = Math.Clamp(Math.Ceiling(max * 0.5), 1, Math.Clamp(max - 2, 1, max)); } 
-                    if (CombatViewing.Empowered) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
-
-                    return "1d" + (int) max;
-                }
-
-                if (CombatCasting != null) {   
-                    if (CombatCasting.Speed == 1.5) { max = Math.Clamp(Math.Ceiling(max * 1.5), max + 2, int.MaxValue); }
-                    if (CombatCasting.Speed == 1.25) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
-                    if (CombatCasting.Speed == 0.75) { max = Math.Clamp(Math.Ceiling(max * 0.75), 1, Math.Clamp(max - 1, 1, max)); }
-                    if (CombatCasting.Speed == 0.5) { max = Math.Clamp(Math.Ceiling(max * 0.5), 1, Math.Clamp(max - 2, 1, max)); } 
-                    if (CombatCasting.Empowered) { max = Math.Clamp(Math.Ceiling(max * 1.25), max + 1, int.MaxValue); }
-
-                    return "1d" + (int) max;
-                }
-            }
-            return "1d" + max; 
-        }
-
-        public int MaxDamage(bool spellBuilder = false) {
-            string dmgDice = GetDamageDice(spellBuilder);
-            //if (dmgDice.Contains("("))
-            //    return GoRogue.DiceNotation.Dice.Roll("(" + dmgDice.Substring(3)); 
-            return GoRogue.DiceNotation.Dice.Roll(dmgDice.Replace("1d", ""));
-        }
-
-        public double SimplerDamageDice(bool spellBuilder) {
-            double weaponTier = 0.5;
-            bool maging = IsMaging() || spellBuilder;
-
-            string style = "Melee";
-
-            if (Equipment.TryGetValue("Weapon", out ItemWrapper? eqpWrap) && eqpWrap.GetRef() is Item eqp) {
-                weaponTier = eqp.EquipTier;
-
-                if (eqp.EquipSkill == "Ranged") {
-                    style = "Ranged";
-                    if (eqp.EquipAmmo == "RangedStandard" || eqp.EquipAmmo == "RangedHeavy") { // Only other option currently is Self, where we don't need to change weaponTier
-                        if (Equipment.TryGetValue("Ammo", out ItemWrapper? ammoWrap) && ammoWrap.GetRef() is Item ammo) {
-                            if (ammo.EquipLevel <= eqp.EquipLevel) {
-                                weaponTier = ammo.EquipTier;
-                            } else {
-                                weaponTier = eqp.EquipTier;
-                            }
-                        } else {
-                            weaponTier = 0;
-                        }
-                    } 
-                }
-
-                if (maging) {
-                    if (eqp.EquipSkill != "Magic") { 
-                        weaponTier = 0; 
-                    } else {
-                        if (spellBuilder) {
-                            if (CombatViewing != null) {
-                                if (weaponTier > CombatViewing.Tier) {
-                                    weaponTier = Math.Min(CombatViewing.Tier, weaponTier);
-                                }
-                            }
-                        }
-                        else {
-                            if (CombatCasting != null) {
-                                if (weaponTier > CombatCasting.Tier) {
-                                    weaponTier = Math.Min(CombatCasting.Tier, weaponTier);
-                                }
-                            } else {
-                                weaponTier = 0;
-                            }
-                        }
-                    }
-                } else {
-                    if (eqp.EquipSkill == "Magic") {
-                        weaponTier = 0;
-                    }
-                }
-            }
-            double strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Strength") / 5f), 0, 30); 
-
-            if (maging && CombatCasting != null) { 
-                style = "Magic";
-                //strength = (CombatCasting.Tier + 1);
-                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Magic") / 5f), 0, 30);
-            }
-
-            if (style == "Ranged") {
-                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Ranged") / 5f), 0, 30); 
-            }
-
-            double partialBoost = 0;
-            foreach (var kv in Equipment) {
-                if (kv.Value.GetRef() is Item item) {
-                    if (item.MiscString == "OmniBoost" || item.MiscString == "OffenseBoost") {
-                        strength += item.EquipTier;
-                    }
-
-                    if (item.MiscString == "PowerMelee" && style == "Melee") {
-                        partialBoost += item.EquipTier / 5.0;
-                    }
-
-                    if (item.MiscString == "PowerRange" && style == "Ranged") {
-                        partialBoost += item.EquipTier / 5.0;
-                    }
-
-                    if (item.MiscString == "PowerMagic" && style == "Magic") {
-                        partialBoost += item.EquipTier / 5.0;
-                    }
-
-                    if ((item.MiscString == "OffenseBoostMelee" && style == "Melee") || (item.MiscString == "Defender" && style == "Melee")) {
-                        partialBoost += item.EquipTier;
-                    }
-                    
-                    if (item.MiscString == "OffenseBoostRange" && style == "Ranged") {
-                        partialBoost += item.EquipTier;
-                    }
-
-                    if (item.MiscString == "OffenseBoostMagic" && style == "Magic") {
-                        partialBoost += item.EquipTier;
-                    }
-                } 
-            }
-
-            strength += (int) Math.Floor(partialBoost);
-
-            // TODO: think of something better than this 
-            return Math.Clamp(Math.Floor(weaponTier * 2), 0, 22) + strength;
-            //return ((int) Math.Floor(weaponTier)) + "d" + ((int) Math.Floor(strength));
-        }
-
-        public string SimpleDamageDice(bool spellBuilder) {
-            double weaponTier = 0.5;
-            bool maging = IsMaging() || spellBuilder;
-
-            string style = "Melee";
-
-            if (Equipment.TryGetValue("Weapon", out ItemWrapper? eqpWrap) && eqpWrap.GetRef() is Item eqp) {
-                weaponTier = eqp.EquipTier;
-
-                if (eqp.EquipSkill == "Ranged") {
-                    style = "Ranged";
-                    if (eqp.EquipAmmo == "RangedStandard" || eqp.EquipAmmo == "RangedHeavy") { // Only other option currently is Self, where we don't need to change weaponTier
-                        if (Equipment.TryGetValue("Ammo", out ItemWrapper? ammoWrap) && ammoWrap.GetRef() is Item ammo) {
-                            if (ammo.EquipLevel <= eqp.EquipLevel) {
-                                weaponTier = ammo.EquipTier;
-                            } else {
-                                weaponTier = eqp.EquipTier;
-                            }
-                        } else {
-                            weaponTier = 0;
-                        }
-                    } 
-                }
-
-                if (maging) {
-                    if (eqp.EquipSkill != "Magic") { 
-                        weaponTier = 0; 
-                    } else {
-                        if (spellBuilder) {
-                            if (CombatViewing != null) {
-                                if (weaponTier > CombatViewing.Tier) {
-                                    weaponTier = Math.Min(CombatViewing.Tier, weaponTier);
-                                }
-                            }
-                        }
-                        else {
-                            if (CombatCasting != null) {
-                                if (weaponTier > CombatCasting.Tier) {
-                                    weaponTier = Math.Min(CombatCasting.Tier, weaponTier);
-                                }
-                            } else {
-                                weaponTier = 0;
-                            }
-                        }
-                    }
-                } else {
-                    if (eqp.EquipSkill == "Magic") {
-                        weaponTier = 0;
-                    }
-                }
-            }
-            double strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Strength") / 5f) + 1, 1, 30); 
-
-            if (maging && CombatCasting != null) { 
-                style = "Magic";
-                //strength = (CombatCasting.Tier + 1);
-                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Magic") / 5f) + 1, 1, 30);
-            }
-
-            if (style == "Ranged") {
-                strength = (int)Math.Clamp(Math.Floor(GetEffectiveSkillLevel("Ranged") / 5f) + 1, 1, 30); 
-            }
-
-            double partialBoost = 0;
-            foreach (var kv in Equipment) {
-                if (kv.Value.GetRef() is Item item) {
-                    if (item.MiscString == "OmniBoost" || item.MiscString == "OffenseBoost") {
-                        strength += item.EquipTier;
-                    }
-
-                    if (item.MiscString == "PowerMelee" && style == "Melee") {
-                        partialBoost += item.EquipTier / 5.0;
-                    }
-
-                    if (item.MiscString == "PowerRange" && style == "Ranged") {
-                        partialBoost += item.EquipTier / 5.0;
-                    }
-
-                    if (item.MiscString == "PowerMagic" && style == "Magic") {
-                        partialBoost += item.EquipTier / 5.0;
-                    }
-
-                    if ((item.MiscString == "OffenseBoostMelee" && style == "Melee") || (item.MiscString == "Defender" && style == "Melee")) {
-                        partialBoost += item.EquipTier;
-                    }
-                    
-                    if (item.MiscString == "OffenseBoostRange" && style == "Ranged") {
-                        partialBoost += item.EquipTier;
-                    }
-
-                    if (item.MiscString == "OffenseBoostMagic" && style == "Magic") {
-                        partialBoost += item.EquipTier;
-                    }
-                } 
-            }
-
-            strength += (int) Math.Floor(partialBoost);
-
-            // TODO: think of something better than this 
-            return "1d" + ((int) Math.Clamp(Math.Floor(weaponTier * 2), 1, 22)) + "+" + strength;
-            //return ((int) Math.Floor(weaponTier)) + "d" + ((int) Math.Floor(strength));
+            return Math.Clamp((atk + str + def + con + ran + mag + (pra / 2)) / 4, 1, 999);
         }
 
         public string GetDamageType() {
@@ -449,6 +216,32 @@ namespace WorldtreeNexus.DataTypes {
             if (Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrapper) && wepWrapper.GetRef() is Item wep)
                 return (int) (wep.AttackSpeed * 2000);
             return 2000;
+        }
+
+        public int GetWeaponTier() {
+            if (Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrap) && wepWrap != null && wepWrap.GetRef() is Item wep && wep != null) { return (int) Math.Floor(wep.EquipTier); }
+            return 0;
+        }
+
+        public int GetStrengthBonus(bool spellBuilder = false) {
+            if (IsMaging() || spellBuilder) { 
+                if (spellBuilder && CombatViewing != null) { return CombatViewing.Tier * 2; }
+                else { if (CombatCasting != null) { return CombatCasting.Tier * 2; } }
+            }
+            if (Equipment.TryGetValue("Weapon", out ItemWrapper? wepWrap) && wepWrap != null && wepWrap.GetRef() is Item wep && wep != null && wep.EquipSkill == "Ranged") { 
+                if (wep.EquipAmmo == "Self") { return (int) Math.Floor((wep.EquipTier - 1) * 2); }
+                if (Equipment.TryGetValue("Ammo", out ItemWrapper? ammoWrap) && ammoWrap != null && ammoWrap.GetRef() is Item ammo && ammo != null) { 
+                    return (int) Math.Floor((ammo.EquipTier - 1) * 2); 
+                }
+            }
+            return GetEffectiveSkillLevel("Strength") / 5;
+        }
+
+        public int GetMaxDamage(bool spellBuilder = false) {
+            if (spellBuilder) {
+                return (GetWeaponTier() * 2) + GetStrengthBonus(spellBuilder);
+            }
+            return (GetWeaponTier() * 2) + GetStrengthBonus();
         }
 
         public bool TryPickup(ItemWrapper wrap, int qty, bool noted = false, bool shop = false, bool fromGround = false) {
@@ -870,22 +663,7 @@ namespace WorldtreeNexus.DataTypes {
             RestBar = 100;
         }
 
-
-
-        public void AddFeat(string feat) {
-            if (LocationLock) {
-                if (!CompletedFeats.Contains(feat)) {
-                    CompletedFeats.Add(feat);
-
-                    foreach (var kv in UnlockedLocations) {
-                        if (!kv.Value.Completed) {
-                            kv.Value.CheckCompletion(this);
-                        }
-                    }
-                }
-            }
-        }   
-
+        
         public int GetEffectiveSkillLevel(string which) {
             if (Skills.TryGetValue(which, out Skill? s)) {
                 if (s != null) {
@@ -920,15 +698,6 @@ namespace WorldtreeNexus.DataTypes {
 
             return 0;  
         }  
-
-        public int GetSkillCheck(string which) {
-            if (Skills.ContainsKey(which)) {
-                int stat = GetEffectiveSkillLevel(which);
-                return stat < 3 ? 10 + stat : 12 + (((stat - 2) / 2) / 4);
-            }
-
-            return 10;
-        }
 
         public bool CanCraft(CraftRecipe craft) {
             if (!Skills.ContainsKey(craft.Skill))
@@ -1529,69 +1298,40 @@ namespace WorldtreeNexus.DataTypes {
                     double num = eqp.EquipTier;
                     if (eqp.EquipSkill == "Defense" || eqp.MiscString == "DefenseAll") {
                         if (eqp.MiscString == "DefenseMelee" || eqp.MiscString == "PowerMelee") {
-                            if (against == "Ranged") {
-                                num *= 2;
-                            }
-                            if (against == "Magic") {
-                                num = (int)Math.Floor(num / 2.0);
-                            }
-
-                            if (eqp.MiscString == "PowerMelee") {
-                                num = Math.Floor(num * 0.8);
-                            }
+                            if (against == "Ranged") { num *= 2; }
+                            if (against == "Magic") { num = (int)Math.Floor(num / 2.0); } 
+                            if (eqp.MiscString == "PowerMelee") { num = Math.Floor(num * 0.8); }
                         }
 
                         if (eqp.MiscString == "Defender") {
-                            if (against == "Melee") {
-                                num = (int)Math.Floor(num / 2.0);
-                            }
-                            if (against == "Magic") {
-                                num = (int)Math.Floor(num / 4.0);
-                            }
+                            if (against == "Melee") { num = (int)Math.Floor(num / 2.0); }
+                            if (against == "Magic") { num = (int)Math.Floor(num / 4.0); }
                         }
 
                         if (eqp.MiscString == "DefenseMagic" || eqp.MiscString == "PowerMagic") {
-                            if (against == "Melee") {
-                                num *= 2;
-                            }
-                            if (against == "Ranged") {
-                                num = Math.Floor(num / 2.0);
-                            }
-
-                            if (eqp.MiscString == "PowerMagic") {
-                                num = Math.Floor(num * 0.8);
-                            }
+                            if (against == "Melee") { num *= 2; }
+                            if (against == "Ranged") { num = Math.Floor(num / 2.0); } 
+                            if (eqp.MiscString == "PowerMagic") { num = Math.Floor(num * 0.8); }
                         }
 
                         if (eqp.MiscString == "DefenseRange" || eqp.MiscString == "PowerRange") {
-                            if (against == "Magic") {
-                                num *= 2;
-                            }
-                            if (against == "Melee") {
-                                num = Math.Floor(num / 2.0);
-                            }
-
-                            if (eqp.MiscString == "PowerRange") {
-                                num = Math.Floor(num * 0.8);
-                            }
+                            if (against == "Magic") { num *= 2; }
+                            if (against == "Melee") { num = Math.Floor(num / 2.0); } 
+                            if (eqp.MiscString == "PowerRange") { num = Math.Floor(num * 0.8); }
                         }
+
+                        if (eqp.MiscString == "OmniBoost") { count += eqp.EquipTier; }
 
                         count += num;
                     }
                 }
-            }
-
-            foreach (var kv in Equipment) {
-                if (kv.Value.GetRef() is Item eqp && eqp.MiscString == "OmniBoost") {
-                    count += eqp.EquipTier;
-                }
-            }
+            } 
 
             count /= 5.0;
 
 
 
-            return (int) Math.Ceiling(count);
+            return (int) Math.Floor(count);
         }
 
 
@@ -1601,12 +1341,8 @@ namespace WorldtreeNexus.DataTypes {
             if (!Skills.ContainsKey("Magic"))
                 return false;
 
-            int spellLevel = CombatCasting.Tier == 1 ? 1 : CombatCasting.Tier * 10;
-            if (spellLevel > GetEffectiveSkillLevel("Magic"))
-                return false;
-
-            if (!HasAllItems(CombatCasting.Talismans(), false, true))
-                return false;
+            if (CanCast(CombatCasting) != "")
+                return false; 
 
             return true;
         }
@@ -1955,8 +1691,8 @@ namespace WorldtreeNexus.DataTypes {
             return (int) Math.Ceiling(bonus);
         }
 
-        public CombatSim GetSimBlock(string attackType) {
-            return new CombatSim(GetEffectiveSkillLevel("Hitpoints"), GetEffectiveSkillLevel("Attack"), GetEffectiveSkillLevel("Defense"), MaxDamage(), GetDamageType(), GetDamageElement(), GetAttackSpeed(), TotalArmorValue(attackType), "", ElementalAttunement);
+        public CombatSim3 GetSimBlock(string attackType) {
+            return new CombatSim3(GetEffectiveSkillLevel("Hitpoints"), GetWeaponTier(), GetStrengthBonus(), GetEffectiveSkillLevel("Defense"), GetDamageType(), GetDamageElement(), GetAttackSpeed(), TotalArmorValue(attackType), "", ElementalAttunement);
         }
 
         public bool Safespotting(string dmgType, bool inaccessible = false) {
@@ -2032,6 +1768,39 @@ namespace WorldtreeNexus.DataTypes {
             }
 
             return 0;
+        }
+
+        public void ResetAttackDeck() {
+            int tier = GetWeaponTier();
+            int strength = GetStrengthBonus();
+
+            AttackDeck = [ ..Enumerable.Range(1 + strength, Math.Max(1, (tier * 2) + 2)) ];
+        }
+
+        public void ResetDefenseDeck() {
+            DefenseDeck = [..Enumerable.Range(0, GetEffectiveSkillLevel("Defense") + 3)];
+        }
+
+        public double ElementMulti(string what) {
+            if (Materials.ElementalWeaknesses.TryGetValue(ElementalAttunement, out string? weak) && weak != null && weak == what) { return 1.25; }
+            if (Materials.ElementalStrengths.TryGetValue(ElementalAttunement, out string? strong) && strong != null && strong == what) { return 0.75; }
+            return 1.0;
+        }
+
+        public void ModifyAttack(ref int atk, ref int def, int enemyHP, ref bool crit, string enemyWeakType, string enemySpecialCat = "") {
+            if (GetDamageType() == enemyWeakType) { def = (int) Math.Floor(def * 0.75); }
+
+            // Mostly for Crumble Undead, but open to similar spells for Demons, Vamps, etc
+            bool eitherDamageSpecial = enemySpecialCat != "" && (GetDamageType() == enemySpecialCat || GetSecondaryDamageType() == enemySpecialCat);
+            if (eitherDamageSpecial) { atk = (int) Math.Ceiling(atk * 1.5f);}
+
+            // Check for critical hit
+            int critTarget = 20; int critRoll = GameLoop.rand.Next(20) + 1; 
+            if (critRoll >= critTarget) { crit = true; atk *= 2; } 
+        }
+        
+        public void ModifyDefense(ref int atk, ref int def) {
+
         }
     }
 }

@@ -9,44 +9,44 @@ namespace WorldtreeNexus.DataTypes {
 
         public string WeakType = "Slash";
         public string Element = "Earth";
-        public List<string> ImmuneTypes = new();
+        public List<string> ImmuneTypes = [];
 
         public int DamageReduction = 0; // Reduce damage by this as a percent unless using their weakness
 
-        public string DefaultDmgDice = "1d3";  
+        public int AttackLv = 1;  
+        public int StrengthLv = 0;
+        public int DefenseLv = 1;
         public string DefaultDmgType = "Typeless"; 
         public int DefaultPoisonSeverity = 0;
-        public List<BossAttack> Specials = new();
+        public List<BossAttack> Specials = [];
           
-        public double AttackSpeedInMS = 1000;
+        public double AttackSpeedSeconds = 1.0;
         public int AttacksBetweenSpecials = 3; 
 
-        public List<BossPhaseCondition> PhaseConditions = new();
+        public List<BossPhaseCondition> PhaseConditions = [];
 
         public int HitActionOdds = 0; // 1 in this that hit actions will be triggeredd
-        public List<RunAction> HitActions = new();
+        public List<RunAction> HitActions = [];
 
-        public List<RunAction> DeathActions = new();
+        public List<RunAction> DeathActions = [];
 
-        public List<Requirement> InvincibleIfAll = new();
-
-        public BossPhase(string name, int maxHP, string weak, int dr, string defDmgDice, string defDmgType, double attackSpeed = 1000, int attacksBetween = 3, bool properName = true, List<string>? immunes = null) {
+        public List<Requirement> InvincibleIfAll = [];
+         
+        public BossPhase(string name, int maxHP, int atk, int str, int def, string weak, string element, string defDmgType, int dr = 0, double attackSpeed = 1.0) {
             Name = name;
-            ProperName = properName;
             MaxHP = maxHP;
             CurrentHP = maxHP;
 
+            Element = element;
             WeakType = weak;
             DamageReduction = dr;
 
-            DefaultDmgDice = defDmgDice;
+            AttackLv = atk;
+            StrengthLv = str;
+            DefenseLv = def;
+             
             DefaultDmgType = defDmgType;
-            AttackSpeedInMS = attackSpeed;
-            AttacksBetweenSpecials = attacksBetween;
-
-            if (immunes != null) {
-                ImmuneTypes = immunes;
-            }
+            AttackSpeedSeconds = attackSpeed; 
         }
     }
 }

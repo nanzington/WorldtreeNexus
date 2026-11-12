@@ -8,6 +8,21 @@ To-do for new launch:
 - Make a decent number of spells to use
 - FILL OUT GUIDE THIS TIME
 - Place a bunch of Cozy Cottages locations in the nexus
+- Look over the compendium to make sure everything is displaying all data again, lots of changes since it was made
+
+
+
+WarCombat to-do
+- Hook up Prayer stuff and make sure that's working
+- Some enchanted jewellery to modify your deck in various ways
+- Make sure inaccessibility still works
+- Make sure ammo / talismans are taken
+
+
+Bugs to fix / immediate tasks and such
+- Romeo and Juliet: tweak it so the player takes the brittle sword directly to Tybalt instead of returning it to the sword shop, maybe he's at the Leptoc estate
+- Combat auto-retaliate, and make aggressive enemies not aggressive after the AFK timer lapses
+
 
 
 Random thoughts
@@ -36,6 +51,17 @@ Random thoughts
 - TV shows and news broadcasts that air periodically as you go through days, new episode on a specific day each week and a random rerun on another
 - Random garbage piles that stack up around the WTN or are otherwise only visible sometimes, can be cleaned up for a random bit of semi-useful loot. Maybe tie to a minigame job to clean up the city.
 # # Possibly cleaning a pile gives a reward point thing and you redeem those for money, rather than an "active" job with a timer or anything
+
+Conducts
+- Ever Ate (maybe split into ever ate specific types of food?)
+- Ever Drank
+- Ever Rested
+- Ever Died
+- Ever used Prayer 
+
+
+Achievement Ideas?
+- Reach WTN Plaza, without skipping Tutorial Island, with Hunger/Rest/Thist modes all set to 0, without having ever refilled them or dying.
 
 
 Still need to prune/remake:
@@ -86,10 +112,13 @@ Crossroads Inn Games?
 - Could Golf and Bowling be made to work in an interesting way?
 - Social deduction thing / two rooms and a boom basically
 
-
-Bugs to fix / immediate tasks and such
-- Romeo and Juliet: tweak it so the player takes the brittle sword directly to Tybalt instead of returning it to the sword shop, maybe he's at the Leptoc estate
-- Combat auto-retaliate, and make aggressive enemies not aggressive after the AFK timer lapses
+NPCS to place
+- Trevor, losing in casino but sure the next play will win big
+- Starly, owns the TCG shop
+- Vivian, cooking guild leader
+- Vuvu, craft shop owner
+- Silver, anywhere
+- Rose, rancher outside city
 
 Worldtree Nexus Layout
 - Plaza

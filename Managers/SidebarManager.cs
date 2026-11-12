@@ -92,10 +92,7 @@ namespace WorldtreeNexus.Managers {
                 mini.Con.Print(16, 4, player.RestBar.ToString().Align(HorizontalAlignment.Right, 3) + 24.AsString(), Color.Crimson);
             }
 
-
-
-            mini.Con.Print(0, 6, "Level: " + player.GetCombatLevel(), Color.Yellow); 
-
+             
             bool magic = player.IsMaging();
 
             string dmgType = player.GetDamageType();
@@ -104,7 +101,7 @@ namespace WorldtreeNexus.Managers {
 
             dmgDisp += " " + player.GetDamageElement();
 
-            mini.Con.Print(0, 7, "MaxHit: " + player.MaxDamage() + " " + dmgDisp, Color.Yellow); 
+            mini.Con.Print(0, 7, "Dmg: " + player.GetMaxDamage() + " " + dmgDisp, Color.Yellow); 
             mini.Con.Print(0, 8, "DR: " + player.TotalArmorValue("Melee") + 20.AsString() + " / " + player.TotalArmorValue("Magic") + 19.AsString() + " / " + player.TotalArmorValue("Ranged") + 18.AsString(), Color.Yellow); 
 
 
@@ -1229,7 +1226,7 @@ namespace WorldtreeNexus.Managers {
                         mini.Con.Print(1, 33, "Talisman Cost: ");
                         mini.Con.Print(1, 34, build);
 
-                        mini.Con.Print(23, 33, "Theoretical Max Damage  : " + player.MaxDamage(true));
+                        mini.Con.Print(23, 33, "Theoretical Max Damage  : " + player.GetMaxDamage(true));
                         mini.Con.PrintClickable(46, 33, new ColoredString("?", Color.MediumPurple, Color.Black), () => { GameLoop.WTN.Log.AddMessage("Magic damage is based on spell tier and Magic level, but spell tier is capped by the tier of your equipped weapon.", Color.Yellow); });
                     } else {
                         List<Spell> spells = new();

@@ -35,8 +35,7 @@ namespace WorldtreeNexus.Hardcodes {
                 toAdd.Add(new("Anvil", "Smithing", metal.Level, metal.ExpMultiplier, ["bar" + metal.Name + "," + 1], "nails" + metal.Name, 15, tool: "hammer")); 
                 toAdd.Add(new("Anvil", "Smithing", metal.Level, metal.ExpMultiplier, ["bar" + metal.Name + "," + 1], "hook" + metal.Name, tool: "hammer")); 
             }
-            
-            toAdd.Add(new("Anvil", "Smithing", 20, 75, ["barIron" + "," + 1], "studsIron", tool: "hammer"));
+             
             toAdd.Add(new("Anvil", "Smithing", 26, 25, ["barIron" + "," + 1], "oilLanternFrame", tool: "hammer"));
 
 
@@ -48,6 +47,8 @@ namespace WorldtreeNexus.Hardcodes {
                 toAdd.Add(new("Needle", "Crafting", leather.Level, leather.ExpMultiplier, [leather.SimpleName + "," + 1], "boots" + leather.Name, tool: "needle"));
                 toAdd.Add(new("Needle", "Crafting", leather.Level, leather.ExpMultiplier * 2, [leather.SimpleName + "," + 2], "shield" + leather.Name, tool: "needle"));
             }
+
+            toAdd.Add(new("Needle", "Crafting", 1, 25, ["leatherSoft,4", "boltCloth,2"], "bedroll", tool: "needle"));
 
             foreach (var cloth in Materials.Cloths) { 
                 toAdd.Add(new("Needle", "Crafting", cloth.Level, cloth.ExpMultiplier, ["bolt" + cloth.Name + "," + 1], "hood" + cloth.Name, tool: "needle"));

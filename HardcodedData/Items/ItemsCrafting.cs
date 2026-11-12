@@ -46,11 +46,84 @@ namespace WorldtreeNexus.Hardcodes {
             // Price: jewel + metal, +10% rounded up
             // Function: maybe rotate slots? Teleport, skilling efficiency, combat efficiency, general utility, specific skill booster
             { 
-                itemsToAdd.Add(new Item("Quartz ring (e)", "An enchanted quartz ring.", "ringQuartzE", Color.DarkGray, 72) { EquipSlot = "Ring" }); 
+                // Quartz: 1/1, (combat eff2, general utility, teleport, skilling eff, combat eff)
+                itemsToAdd.Add(new Item("Ring of reprisal", "When you take damage from an enemy, deal one point of damage to them.", "ringQuartzE", Color.DarkGray, 72) { EquipSlot = "Ring" }); 
                 itemsToAdd.Add(new Item("Quartz amulet (e)", "An enchanted quartz amulet.", "amuletQuartzE", Color.DarkGray, 72) { EquipSlot = "Amulet" });
                 itemsToAdd.Add(new Item("Quartz necklace (e)", "An enchanted quartz necklace.", "necklaceQuartzE", Color.DarkGray, 72) { EquipSlot = "Amulet" });
                 itemsToAdd.Add(new Item("Quartz bracelet (e)", "An enchanted quartz bracelet.", "braceletQuartzE", Color.DarkGray, 72) { EquipSlot = "Hands" });
                 itemsToAdd.Add(new Item("Quartz brooch (e)", "An enchanted quartz brooch.", "broochQuartzE", Color.DarkGray, 72) { EquipSlot = "Pocket" });
+
+                // Garnet: 2/10 (combat eff, combat eff2, general utility, teleport, skilling eff)
+                itemsToAdd.Add(new Item("Garnet ring (e)", "An enchanted garnet ring.", "ringGarnetE", Color.Orange, 160) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Garnet amulet (e)", "An enchanted garnet amulet.", "amuletGarnetE", Color.Orange, 160) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Garnet necklace (e)", "An enchanted garnet necklace.", "necklaceGarnetE", Color.Orange, 160) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Garnet bracelet (e)", "An enchanted garnet bracelet.", "braceletGarnetE", Color.Orange, 160) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Garnet brooch (e)", "An enchanted garnet brooch.", "broochGarnetE", Color.Orange, 160) { EquipSlot = "Pocket" });
+
+                // Emerald: 3/20 (Skilling eff, combat eff, combat eff2, general utility, teleport)
+                itemsToAdd.Add(new Item("Emerald ring (e)", "An enchanted emerald ring.", "ringEmeraldE", Color.Lime, 429) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Emerald amulet (e)", "An enchanted emerald amulet.", "amuletEmeraldE", Color.Lime, 429) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Emerald necklace (e)", "An enchanted emerald necklace.", "necklaceEmeraldE", Color.Lime, 429) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Emerald bracelet (e)", "An enchanted emerald bracelet.", "braceletEmeraldE", Color.Lime, 429) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Emerald brooch (e)", "An enchanted emerald brooch.", "broochEmeraldE", Color.Lime, 429) { EquipSlot = "Pocket" });
+
+                // Sapphire: 4/30 (Teleport, skilling eff, combat eff, combat eff2, general utility)
+                itemsToAdd.Add(new Item("Sapphire ring (e)", "An enchanted sapphire ring.", "ringSapphireE", Color.DodgerBlue, 748) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Sapphire amulet (e)", "An enchanted sapphire amulet.", "amuletSapphireE", Color.DodgerBlue, 748) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Sapphire necklace (e)", "An enchanted sapphire necklace.", "necklaceSapphireE", Color.DodgerBlue, 748) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Sapphire bracelet (e)", "An enchanted sapphire bracelet.", "braceletSapphireE", Color.DodgerBlue, 748) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Brooch of wealth", "Rolls drops one extra time while worn.", "broochSapphireE", Color.DodgerBlue, 748) { EquipSlot = "Pocket" });
+
+                // Ruby: 5/40 (general utility, teleport, skilling eff, combat eff, combat eff2)
+                itemsToAdd.Add(new Item("Ruby ring (e)", "An enchanted ruby ring.", "ringRubyE", Color.Crimson, 1496) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Ruby amulet (e)", "An enchanted ruby amulet.", "amuletRubyE", Color.Crimson, 1496) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Ruby necklace (e)", "An enchanted ruby necklace.", "necklaceRubyE", Color.Crimson, 1496) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Ruby bracelet (e)", "An enchanted ruby bracelet.", "braceletRubyE", Color.Crimson, 1496) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Ruby brooch (e)", "An enchanted ruby brooch.", "broochRubyE", Color.Crimson, 1496) { EquipSlot = "Pocket" });
+
+                // Amethyst: 6/50 (combat eff2, general utility, teleport, skilling eff, combat eff)
+                itemsToAdd.Add(new Item("Amethyst ring (e)", "An enchanted amethyst ring.", "ringAmethystE", Color.MediumPurple, 4092) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Amethyst amulet (e)", "An enchanted amethyst amulet.", "amuletAmethystE", Color.MediumPurple, 4092) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Amethyst necklace (e)", "An enchanted amethyst necklace.", "necklaceAmethystE", Color.MediumPurple, 4092) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Amethyst bracelet (e)", "An enchanted amethyst bracelet.", "braceletAmethystE", Color.MediumPurple, 4092) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Amethyst brooch (e)", "An enchanted amethyst brooch.", "broochAmethystE", Color.MediumPurple, 4092) { EquipSlot = "Pocket" });
+
+                // Morganite: 7/60 (combat eff, combat eff2, general utility, teleport, skilling eff)
+                itemsToAdd.Add(new Item("Morganite ring (e)", "An enchanted morganite ring.", "ringMorganiteE", Color.HotPink, 7150) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Morganite amulet (e)", "An enchanted morganite amulet.", "amuletMorganiteE", Color.HotPink, 7150) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Morganite necklace (e)", "An enchanted morganite necklace.", "necklaceMorganiteE", Color.HotPink, 7150) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Morganite bracelet (e)", "An enchanted morganite bracelet.", "braceletMorganiteE", Color.HotPink, 7150) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Morganite brooch (e)", "An enchanted morganite brooch.", "broochMorganiteE", Color.HotPink, 7150) { EquipSlot = "Pocket" });
+
+                // Heliodor: 8/70 (skilling eff, combat eff, combat eff2, general utility, teleport)
+                itemsToAdd.Add(new Item("Heliodor ring (e)", "An enchanted heliodor ring.", "ringHeliodorE", Color.Yellow, 14300) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Heliodor amulet (e)", "An enchanted heliodor amulet.", "amuletHeliodorE", Color.Yellow, 14300) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Heliodor necklace (e)", "An enchanted heliodor necklace.", "necklaceHeliodorE", Color.Yellow, 14300) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Heliodor bracelet (e)", "An enchanted heliodor bracelet.", "braceletHeliodorE", Color.Yellow, 14300) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Heliodor brooch (e)", "An enchanted heliodor brooch.", "broochHeliodorE", Color.Yellow, 14300) { EquipSlot = "Pocket" });
+
+                // Diamond: 9/80 (Teleport, skilling eff, combat eff, combat eff2, general utility)
+                itemsToAdd.Add(new Item("Diamond ring (e)", "An enchanted diamond ring.", "ringDiamondE", Color.White, 39600) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Diamond amulet (e)", "An enchanted diamond amulet.", "amuletDiamondE", Color.White, 39600) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Diamond necklace (e)", "An enchanted diamond necklace.", "necklaceDiamondE", Color.White, 39600) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Diamond bracelet (e)", "An enchanted diamond bracelet.", "braceletDiamondE", Color.White, 39600) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Brooch of fortune", "Rolls drops two extra times while worn.", "broochDiamondE", Color.White, 39600) { EquipSlot = "Pocket" });
+
+                // Obsidian: 10/90 (general utility, teleport, skilling eff, combat eff, combat eff2)
+                itemsToAdd.Add(new Item("Obsidian ring (e)", "An enchanted obsidian ring.", "ringObsidianE", Color.DimGray, 68200) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Obsidian amulet (e)", "An enchanted obsidian amulet.", "amuletObsidianE", Color.DimGray, 68200) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Obsidian necklace (e)", "An enchanted obsidian necklace.", "necklaceObsidianE", Color.DimGray, 68200) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Obsidian bracelet (e)", "An enchanted obsidian bracelet.", "braceletObsidianE", Color.DimGray, 68200) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Obsidian brooch (e)", "An enchanted obsidian brooch.", "broochObsidianE", Color.DimGray, 68200) { EquipSlot = "Pocket" });
+
+                // Spacetime: 11/100 (combat eff2, general utility, teleport, skilling eff, combat eff)
+                itemsToAdd.Add(new Item("Spacetime ring (e)", "An enchanted spacetime ring.", "ringSpacetimeE", Color.Purple, 136400) { EquipSlot = "Ring" }); 
+                itemsToAdd.Add(new Item("Spacetime amulet (e)", "An enchanted spacetime amulet.", "amuletSpacetimeE", Color.Purple, 136400) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Spacetime necklace (e)", "An enchanted spacetime necklace.", "necklaceSpacetimeE", Color.Purple, 136400) { EquipSlot = "Amulet" });
+                itemsToAdd.Add(new Item("Spacetime bracelet (e)", "An enchanted spacetime bracelet.", "braceletSpacetimeE", Color.Purple, 136400) { EquipSlot = "Hands" });
+                itemsToAdd.Add(new Item("Spacetime brooch (e)", "An enchanted spacetime brooch.", "broochSpacetimeE", Color.Purple, 136400) { EquipSlot = "Pocket" });
+
+
             }
 
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorldtreeNexus.HardcodedData;
 
 namespace WorldtreeNexus.DataTypes {
     public class AreaMonster {
@@ -11,19 +12,19 @@ namespace WorldtreeNexus.DataTypes {
         public string ID = "";
         public bool ProperName = false;
 
-        public int Level = 1;
+        public int Level = 1; // Just kind of a meaningless guess to try to indicate how strong an enemy might be
         public int CurrentHP = 1;
         public int MaxHP = 1;
 
         public int AttackLv = 1;
+        public int StrengthLv = 0;
         public int DefenseLv = 1;
 
         public int DamageReduction = 0;
 
         public int AggroLevel = 0; // If the players combat level is below this, the monster will automatically attack them 
-        public bool AlwaysAggro = false;
+        public bool Aggressive = false;
 
-        public int MaxHit = 3; 
         public string WeakType = "Slash";
         public string Element = "Earth";
         public string DamageType = "Typeless";
@@ -32,7 +33,7 @@ namespace WorldtreeNexus.DataTypes {
         public int PoisonSeverity = 0;
 
 
-        public int RespawnTime = 1;
+        public int RespawnTime = 5;
 
         public List<ItemDrop> DropTable = new();
 
@@ -54,37 +55,33 @@ namespace WorldtreeNexus.DataTypes {
         public bool AttackingPlayer = false;
         [JsonIgnore]
         public double TimeLastAttacked = 0;
+        [JsonIgnore]
+        public List<int> AttackDeck = new();
+        [JsonIgnore]
+        public List<int> DefenseDeck = new();
 
-        public AreaMonster(string n, string id, int lv, int hp, int dr, int atk, int def, bool aggro, int maxhit, string weakness, string element, int respawn, string dtype, double atkSpeed = 1.0, List<Requirement>? reqs = null, bool seeAnyways = true, bool inaccessible = false, string specialCat = "", bool proper = false, bool temp = false) {
-            Name = n;
+        public AreaMonster(string name, string id, int level, int hp, int atk, int str, int def, bool aggro, string weak, string element, string dmgType, int dr = 0, double atkSpeed = 1.0) {
+            Name = name;
             ID = id;
-            Level = lv;
+            Level = level;
             MaxHP = hp;
             CurrentHP = hp;
-            DamageReduction = dr;
 
             AttackLv = atk;
+            StrengthLv = str;
             DefenseLv = def;
 
-            AggroLevel = (lv * 2) + 1;
-            AlwaysAggro = aggro;
+            AggroLevel = (level * 2) + 1;
+            Aggressive = aggro;
 
-            MaxHit = maxhit; 
-            WeakType = weakness;
-            DamageType = dtype;
-            AttackSpeedSeconds = atkSpeed;
+            WeakType = weak;
             Element = element;
+            DamageType = dmgType;
 
-            RespawnTime = respawn;
-            Inaccessible = inaccessible;
-            SpecialCategory = specialCat; 
+            DamageReduction = dr;
 
-            if (reqs != null)
-                Requirements = reqs;
-            SeeWithoutRequirements = seeAnyways;
+            AttackSpeedSeconds = atkSpeed;
 
-            ProperName = proper;
-            Temporary = temp;
         } 
 
         public bool AllReqsMet(Player p) {
@@ -104,7 +101,7 @@ namespace WorldtreeNexus.DataTypes {
         public string GetSummary() {
             string build = "";
 
-            build += Name + ": Deals up to " + MaxHit + " " + DamageType + " damage. Weak to " + WeakType + ". " + Element + "-aligned.";
+            build += Name + ": Deals up to " + (AttackLv + StrengthLv) + " " + DamageType + " damage. Weak to " + WeakType + ". " + Element + "-aligned.";
 
             if (DamageReduction > 0)
                 build += " " + DamageReduction + " DR.";
@@ -116,8 +113,22 @@ namespace WorldtreeNexus.DataTypes {
             return build;
         }
 
-        public CombatSim GetSimBlock() {
-            return new CombatSim(MaxHP, AttackLv, DefenseLv, MaxHit, DamageType, Element, (int) (AttackSpeedSeconds * 2000), DamageReduction, WeakType, Element);
+        public CombatSim3 GetSimBlock() {
+            return new CombatSim3(MaxHP, AttackLv, StrengthLv, DefenseLv, DamageType, Element, (int) (AttackSpeedSeconds * 2000), DamageReduction, WeakType, Element); 
+        }
+
+        public void ResetAttackDeck() {
+            AttackDeck = [ ..Enumerable.Range(1 + StrengthLv, Math.Max(1, (AttackLv * 2) + 2)) ]; 
+        }
+
+        public void ResetDefenseDeck() { 
+            DefenseDeck = [ ..Enumerable.Range(0, (DefenseLv + 3)) ];
+        }
+
+        public double ElementMulti(string what) {
+            if (Materials.ElementalWeaknesses.TryGetValue(Element, out string? weak) && weak != null && weak == what) { return 1.25; }
+            if (Materials.ElementalStrengths.TryGetValue(Element, out string? strong) && strong != null && strong == what) { return 0.75; }
+            return 1.0;
         }
     }
 }
